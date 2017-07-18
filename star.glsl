@@ -1,11 +1,9 @@
   // The star will be centered on st=(0, 0) and extend
   // from -size to +size.
 float star(vec2 st, float sharpness, float size) {
-  float vert = 1.0 - pow(abs(st.x), 1.0/sharpness);
-  vert = clamp(vert, 0.0, 1.0);
-  float horiz = 1.0 - pow(abs(st.y), 1.0/sharpness);
-  horiz = clamp(horiz, 0.0, 1.0);
-  float glare = pow(vert * horiz, 1.0/size);
+  vec2 star = vec2(1.0) - pow(st, vec2(1.0/sharpness));
+  star = clamp(star, 0.0, 1.0);
+  float glare = pow(star.x * star.y, 1.0/size);
   glare *= sharpness;
 
   float alpha = clamp(glare, 0.0, 1.0);
