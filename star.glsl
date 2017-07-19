@@ -1,7 +1,7 @@
   // The star will be centered on st=(0, 0) and extend
   // from -size to +size.
 float star(vec2 st, float sharpness, float size) {
-  vec2 star = vec2(1.0) - pow(st, vec2(1.0/sharpness));
+  vec2 star = vec2(1.0) - pow(abs(st), vec2(1.0/sharpness));
   star = clamp(star, 0.0, 1.0);
   float glare = pow(star.x * star.y, 1.0/size);
   glare *= sharpness;
@@ -38,10 +38,9 @@ void main() {
     -sqrt2over2, sqrt2over2
   );
   uv *= rotateBy45deg;
-  // uv = map(uv, -sqrt2over2, sqrt2over2, -1.0, 1.0);
 
-  float brightness = star(uv, 2.0, 1.0);
-  // brightness = step(0.01, brightness);
+  float brightness = star(uv, 6.0, 1.0);
+  // brightness = step(0.5, brightness);
 
 	gl_FragColor = vec4(brightness, brightness, brightness, 1.0);
   // gl_FragColor = vec4(uv.x * 0.5 + 0.5, 0.0, 0.0, 1.0);
