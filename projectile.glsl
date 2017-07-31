@@ -1,15 +1,16 @@
-vec3 projectile(vec3 force, float mass, vec3 pos0, vec3 vel0, float t) {
+vec3 projectile(vec3 acceleration, float mass, vec3 pos0, vec3 vel0, float t) {
   vec3 position = pos0;
   position += vel0 * t;
-  position += 0.5 * force/mass * t * t;
+  position += 0.5 * acceleration/mass * t * t;
   return position;
 }
 
 // https://cl.ly/3u320h0T1o1O/projectile_with_drag.jpg
-vec3 projectileWithDrag(float drag, vec3 force, float mass, vec3 pos0, vec3 vel0, float t) {
+// except replacing `g` with `acceleration * mass`
+vec3 projectileWithDrag(float drag, vec3 acceleration, float mass, vec3 pos0, vec3 vel0, float t) {
   vec3 position = pos0;
-  position += force * t / drag;
-  position += (mass / (drag*drag)) * (force - drag * vel0) * (exp(-drag * t / mass) - 1.0);
+  position += mass * acceleration * t / drag;
+  position += (mass / (drag*drag)) * (mass * acceleration - drag * vel0) * (exp(-drag * t / mass) - 1.0);
   return position;
 }
 
@@ -40,10 +41,10 @@ void main() {
   position = projectile(gravity, mass, pos0, vel0, t);
   color += vec3(1.0, 0.0, 0.0) * circle(position.xy, 20.0, uv);
 
-  position = projectileWithDrag(1.0, gravity, mass, pos0, vel0, t);
+  position = projectileWithDrag(0.25, gravity, mass, pos0, vel0, t);
   color += vec3(0.0, 1.0, 0.0) * circle(position.xy, 20.0, uv);
 
-  position = projectileWithDrag(2.0, gravity, mass, pos0, vel0, t);
+  position = projectileWithDrag(4.0, gravity, mass, pos0, vel0, t);
   color += vec3(0.0, 0.0, 1.0) * circle(position.xy, 20.0, uv);
 
   gl_FragColor = vec4(color, 1.0);
