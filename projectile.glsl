@@ -6,11 +6,12 @@ vec3 projectile(vec3 acceleration, vec3 pos0, vec3 vel0, float t) {
 }
 
 // https://cl.ly/3u320h0T1o1O/projectile_with_drag.jpg
-// except replacing `g` with `acceleration * mass`
-vec3 projectileWithDrag(float drag, vec3 acceleration, float mass, vec3 pos0, vec3 vel0, float t) {
+// except replacing `g` with `gravity * mass`
+vec3 projectileWithDrag(float drag, vec3 gravity, float mass, vec3 pos0, vec3 vel0, float t) {
+  float massOverDrag = mass / drag;
   vec3 position = pos0;
-  position += mass * acceleration * t / drag;
-  position += (mass / (drag*drag)) * (mass * acceleration - drag * vel0) * (exp(-drag * t / mass) - 1.0);
+  position += massOverDrag * gravity * t;
+  position += massOverDrag * (massOverDrag * gravity - vel0) * (exp(-t / massOverDrag) - 1.0);
   return position;
 }
 
@@ -18,7 +19,7 @@ float circle(vec2 center, float radius, vec2 st) {
   vec2 d = center - st;
   float distanceSq = dot(d, d);
   if (distanceSq < radius * radius) {
-  return 1.0;
+    return 1.0;
   }
   return 0.0;
 }
