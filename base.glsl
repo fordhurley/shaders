@@ -1,5 +1,6 @@
-float map(float value, float inMin, float inMax, float outMin, float outMax) {
-  return outMin + (outMax - outMin) * (value - inMin) / (inMax - inMin);
+// From range [a1, a2] to range [b1, b2]
+float map(float x, float a1, float a2, float b1, float b2) {
+  return b1 + (b2 - b1) * (x - a1) / (a2 - a1);
 }
 
 void main() {
