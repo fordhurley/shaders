@@ -2,10 +2,10 @@ const float PI = 3.14159;
 const float TWOPI = 2.0 * PI;
 
 float radialLine(vec2 st, float minR, float maxR, float a, float w) {
-  float radius = length(st);
+  float radiusSq = dot(st, st);
 
   // Make a ring:
-  float v = step(minR, radius) - step(maxR, radius);
+  float v = step(minR*minR, radiusSq) - step(maxR*maxR, radiusSq);
 
   // Signed distance from point to radial line defined by equation:
   //    y - tanA * x = 0
