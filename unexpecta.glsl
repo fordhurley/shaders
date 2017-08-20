@@ -1,50 +1,46 @@
 const float PI = 3.14159;
 const float TWOPI = 2.0 * PI;
 
-struct Polar {
-  float r;
-  float a;
-};
-
-Polar toPolar(vec2 st) {
+float radialLine(vec2 st, float minR, float maxR, float a, float w) {
   float radius = length(st);
-  float angle = atan(st.y, st.x);
-  angle = mod(angle, TWOPI);
-  return Polar(radius, angle);
-}
 
-// TODO: make edges parallel?
-float radialLine(Polar p, float minR, float maxR, float a, float w) {
-  float v = step(minR, p.r) - step(maxR, p.r);
+  // Make a ring:
+  float v = step(minR, radius) - step(maxR, radius);
 
-  // TODO: deal with the wrap around at PI=0 and PI=2PI
-  float minA = a - 0.5 * w;
-  float maxA = a + 0.5 * w;
+  // Signed distance from point to radial line defined by equation:
+  //    y - tanA * x = 0
+  float tanA = tan(a);
+  float d = st.x - tanA * st.y;
+  d /= sqrt(1.0 + tanA*tanA);
 
-  v *= step(minA, p.a) - step(maxA, p.a);
+  v *= step(-0.5*w, d) - step(0.5*w, d);
+
   return v;
 }
 
 void main() {
   vec2 uv = gl_FragCoord.xy / iResolution.xy;
   vec2 st = uv * 2.0 - 1.0;
-  Polar polar = toPolar(st);
 
   const float loopTime = 1.2;
-  float t = mod(iGlobalTime, loopTime);
+  float t = iGlobalTime;
+  // t /= 4.0; // slow mo
+  t = mod(t, loopTime);
   t /= loopTime;
 
   float innerRadius = smoothstep(0.0, 1.0, t);
-  float outerRadius = smoothstep(0.0, 0.75, t);
-  float lineWidth = 0.1;
+  float outerRadius = smoothstep(0.0, 0.7, t);
+  float lineWidth = 0.1 * smoothstep(0.0, 1.0, t);
 
-  vec3 color = vec3(0.0);
+  vec3 color = vec3(0.25, 0.0, 0.0);
 
-  const int num = 12;
-  for (int i = 0; i < num; i++) {
-    float a = float(i) * 2.0 * PI / float(num);
-    color += radialLine(polar, innerRadius, outerRadius, a, lineWidth);
+  const int numLines = 10;
+  for (int i = 0; i < numLines/2; i++) {
+    float a = float(i) * 2.0 * PI / float(numLines);
+    color += radialLine(st, innerRadius, outerRadius, a, lineWidth);
   }
+
+  color = clamp(color, 0.0, 1.0);
 
   gl_FragColor = vec4(color, 1.0);
 }
