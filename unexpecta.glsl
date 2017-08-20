@@ -18,13 +18,14 @@ float radialLine(vec2 st, float minR, float maxR, float a, float w) {
   return v;
 }
 
-float radialLines(vec2 st, float t) {
+float radialLines(vec2 st, float t, int numLines) {
   float v = 0.0;
-  const int numLines = 10;
+  const int NUM_LOOPS = 6;
   float innerRadius = smoothstep(0.0, 1.0, t);
   float outerRadius = smoothstep(0.0, 0.7, t);
   float lineWidth = 0.1 * smoothstep(0.0, 1.0, t);
-  for (int i = 0; i < numLines/2; i++) {
+  for (int i = 0; i < NUM_LOOPS; i++) {
+    if (i > numLines/2) { break; }
     float a = float(i) * 2.0 * PI / float(numLines);
     v += radialLine(st, innerRadius, outerRadius, a, lineWidth);
   }
@@ -39,19 +40,13 @@ void main() {
   float t = mod(iGlobalTime, loopTime);
   t /= loopTime;
 
-  int loopIndex = int(mod(iGlobalTime / loopTime, 5.0));
+  int loopIndex = int(mod(iGlobalTime / loopTime, 2.0));
 
   vec3 color = vec3(0.25, 0.0, 0.0);
   if (loopIndex == 0) {
-    color += radialLines(st, t);
+    color += radialLines(st, t, 8);
   } else if (loopIndex == 1) {
-    color += radialLines(st+0.5, t);
-  } else if (loopIndex == 2) {
-    color += radialLines(st-0.5, t);
-  } else if (loopIndex == 3) {
-    color += radialLines(st-vec2(-0.5, 0.5), t);
-  } else if (loopIndex == 4) {
-    color += radialLines(st-vec2(0.5, -0.5), t);
+    color += radialLines(st, t, 10);
   }
   color = clamp(color, 0.0, 1.0);
   gl_FragColor = vec4(color, 1.0);
