@@ -40,9 +40,9 @@ float radialLine(vec2 st, float minR, float maxR, float a, float w) {
 float radialLines(vec2 st, float t, int numLines) {
   float v = 0.0;
   const int NUM_LOOPS = 6;
-  float innerRadius = smoothstep(0.0, 1.0, t);
-  float outerRadius = smoothstep(0.0, 0.7, t);
-  float lineWidth = 0.1 * smoothstep(0.0, 1.0, t);
+  float innerRadius = smoothstep(0.0, 0.6, t);
+  float outerRadius = smoothstep(0.0, 0.4, t);
+  float lineWidth = 0.2 * smoothstep(0.2, 1.0, t) + 0.01;
   for (int i = 0; i < NUM_LOOPS; i++) {
     if (i > numLines/2) { break; }
     float a = float(i) * 2.0 * PI / float(numLines);
@@ -84,9 +84,9 @@ float radialDiamond(vec2 st, float r, float a, float w, float h) {
 float radialDiamonds(vec2 st, float t, int numDiamonds) {
   float v = 0.0;
   const int NUM_LOOPS = 10;
-  float w = 0.15 * smoothstep(0.25, 1.0, t) + 0.02;
-  float h = 0.25 * smoothstep(0.0, 0.5, t);
-  float r = 2.0 * smoothstep(0.25, 1.0, t) + h/2.0;
+  float w = 0.2 * smoothstep(0.25, 1.0, t) + 0.02;
+  float h = 0.25 * smoothstep(0.0, 0.5, t) - 0.25 * smoothstep(0.5, 1.0, t);
+  float r = 1.0 * smoothstep(0.0, 1.0, t);
   for (int i = 0; i < NUM_LOOPS; i++) {
     if (i > numDiamonds) { break; }
     float a = float(i) * 2.0 * PI / float(numDiamonds);
@@ -106,11 +106,11 @@ void main() {
   int loopIndex = int(mod(iGlobalTime / loopTime, 2.0));
 
   vec3 color = vec3(0.25, 0.0, 0.0);
-  // if (loopIndex == 0) {
-    // color += radialLines(st, t, 8);
-  // } else if (loopIndex == 1) {
+  if (loopIndex == 0) {
+    color += radialLines(st, t, 12);
+  } else if (loopIndex == 1) {
     color += radialDiamonds(st, t, 10);
-  // }
+  }
   color = clamp(color, 0.0, 1.0);
   gl_FragColor = vec4(color, 1.0);
 }
