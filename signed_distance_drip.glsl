@@ -1,14 +1,37 @@
-// Oriented vertically (round cap is at the bottom, centered at 0, 0), and
-// infinitely tall.
-float drip(vec2 st, float radius) {
-  float left = -st.x - radius;
-  float right = st.x - radius;
-  float bottom = -st.y;
-  float circle = length(st) - radius;
+float rect(vec2 st, vec2 size) {
+  vec2 d = abs(st) - size/2.0;
+  // d is negative on the inside, so take the more positive, which is the
+  // distance to the closest edge:
+  float inside = max(d.x, d.y);
+  // d is positive outside, so the max(d, 0) zeros any components that are
+  // inside, e.g. when vertically above the box we only care about the y
+  // distance. When we're fully outside (diagonally) the box, this is the
+  // length from the nearest corner.
+  float outside = length(max(d, 0.0));
+  return min(inside, 0.0) + outside;
+}
 
-  float d = max(left, right);
-  d = max(d, bottom);
-  d = min(d, circle);
+float circle(vec2 st, float radius) {
+  return length(st) - radius;
+}
+
+// Oriented vertically. Round caps at top and bottom. The entire shape is
+// centered on (0, 0).
+float drip(vec2 st, vec2 size) {
+  // The total height is radius + rectHeight + radius, where the radius is half
+  // the width.
+  float rectHeight = size.y - size.x;
+  // If the size is wider than it is tall, we end up with a circle.
+  rectHeight = max(rectHeight, 0.0);
+
+  float dRect = rect(st, vec2(size.x, rectHeight));
+  float dCapTop = circle(st + vec2(0.0, rectHeight/2.0), size.x/2.0);
+  float dCapBottom = circle(st - vec2(0.0, rectHeight/2.0), size.x/2.0);
+
+  // Union the three shapes:
+  float d = dRect;
+  d = min(d, dCapTop);
+  d = min(d, dCapBottom);
   return d;
 }
 
@@ -41,14 +64,23 @@ void main() {
   float t = fract(iGlobalTime / loopTime);
   float loopIndex = floor(iGlobalTime / loopTime);
 
-  const float dripRadius = 0.5;
-  vec2 dripPos = vec2(0.0, 0.0);
-  dripPos.y = mix(1.0, -1.0 + dripRadius, t);
-
-  float d = drip(st - dripPos, dripRadius);
-
   const float noiseScale = 0.2;
   const float noiseFreq = 2.0;
+
+  const float dripRadius = 0.25;
+  const float maxDripRadius = dripRadius * (1.0 + noiseScale);
+  const vec2 dripStart = vec2(0.0, 1.0 - maxDripRadius);
+  const vec2 dripEnd = vec2(0.0, -1.0 + maxDripRadius);
+
+  const float dripHeightStart = 2.0 * dripRadius;
+  const float dripHeightEnd = 2.0; // Full height
+  float dripHeight = mix(dripHeightStart, dripHeightEnd, t);
+  vec2 dripPos = mix(dripStart, dripEnd, t);
+
+  vec2 dripST = st - vec2(0.0, 1.0 - dripHeight/2.0);
+
+  float d = drip(dripST, vec2(dripRadius*2.0, dripHeight));
+
   d += noiseScale * valueNoise(st * noiseFreq + loopIndex);
 
   vec3 shape = vec3(1.0 - step(0.0, d));
