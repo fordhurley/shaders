@@ -1,13 +1,14 @@
 float rect(vec2 st, vec2 size) {
-  float right = st.x - size.x;
-  float left = -size.x - st.x;
-
-  float top = st.y - size.y;
-  float bottom = -size.y - st.y;
-
-  float horizontal = max(right, left);
-  float vertical = max(top, bottom);
-  return max(horizontal, vertical);
+  vec2 d = abs(st) - size;
+  // d is negative on the inside, so take the more positive, which is the
+  // distance to the closest edge:
+  float inside = max(d.x, d.y);
+  // d is positive outside, so the max(d, 0) zeros any components that are
+  // inside, e.g. when vertically above the box we only care about the y
+  // distance. When we're fully outside (diagonally) the box, this is the
+  // length from the nearest corner.
+  float outside = length(max(d, 0.0));
+  return min(inside, 0.0) + outside;
 }
 
 // Comment out to show the shape:
@@ -22,7 +23,7 @@ void main() {
 
   vec3 color = vec3(0.0);
 
-  float d = rect(st, vec2(0.75, 0.5));
+  float d = rect(st, vec2(0.5, 0.25));
   color += 1.0 - step(0.0, d);
 
   #ifdef SHOW_FIELD
