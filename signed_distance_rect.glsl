@@ -1,14 +1,13 @@
 float rect(vec2 st, vec2 size) {
   float right = st.x - size.x;
   float left = -size.x - st.x;
+
   float top = st.y - size.y;
   float bottom = -size.y - st.y;
 
-  float d = max(right, left);
-  d = max(d, top);
-  d = max(d, bottom);
-
-  return d;
+  float horizontal = max(right, left);
+  float vertical = max(top, bottom);
+  return max(horizontal, vertical);
 }
 
 // Comment out to show the shape:
@@ -23,7 +22,7 @@ void main() {
 
   vec3 color = vec3(0.0);
 
-  float d = rect(st, vec2(0.5, 0.25));
+  float d = rect(st, vec2(0.75, 0.5));
   color += 1.0 - step(0.0, d);
 
   #ifdef SHOW_FIELD
