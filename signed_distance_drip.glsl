@@ -11,9 +11,6 @@ float drip(vec2 st, float radius) {
   return d;
 }
 
-// Comment out to show the shape:
-#define SHOW_FIELD
-
 void main() {
   vec2 uv = gl_FragCoord.xy / iResolution.xy;
   float aspect = iResolution.x / iResolution.y;
@@ -30,17 +27,19 @@ void main() {
 
   float d = drip(st - dripPos, dripRadius);
 
-  vec3 color = vec3(0.0);
-  color += 1.0 - step(0.0, d);
+  vec3 shape = vec3(1.0 - step(0.0, d));
 
-  #ifdef SHOW_FIELD
-    color = vec3(0.0);
-    if (d < 0.0) {
-      color.r -= d; // Negative parts are red
-    } else {
-      color.b += d; // Positive parts are blue
-    }
-  #endif
+    // Negative parts are red / Positive parts are blue / Green is hard to for me
+    // to see / So I don't use that color...
+  vec3 field = vec3(0.0);
+  if (d < 0.0) {
+    field.r = -d;
+  } else {
+    field.b = d;
+  }
+
+  // Move the mouse horizontally to visualize the field and the shape together.
+  vec3 color = mix(shape, field, iMouse.x);
 
   gl_FragColor = vec4(color, 1.0);
 }
