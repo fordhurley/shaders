@@ -1,5 +1,5 @@
 float rect(vec2 st, vec2 size) {
-  vec2 d = abs(st) - size;
+  vec2 d = abs(st) - size/2.0;
   // d is negative on the inside, so take the more positive, which is the
   // distance to the closest edge:
   float inside = max(d.x, d.y);
@@ -23,7 +23,7 @@ void main() {
 
   vec3 color = vec3(0.0);
 
-  float d = rect(st, vec2(0.5, 0.25));
+  float d = rect(st, vec2(1.0, 0.5));
   color += 1.0 - step(0.0, d);
 
   #ifdef SHOW_FIELD
