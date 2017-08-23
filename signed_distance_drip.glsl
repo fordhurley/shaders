@@ -37,8 +37,9 @@ void main() {
 
   vec2 st = uv * 2.0 - 1.0; // [-1, 1] in xy
 
-  const float loopTime = 2.0;
+  const float loopTime = 4.0;
   float t = fract(iGlobalTime / loopTime);
+  float loopIndex = floor(iGlobalTime / loopTime);
 
   const float dripRadius = 0.5;
   vec2 dripPos = vec2(0.0, 0.0);
@@ -48,7 +49,7 @@ void main() {
 
   const float noiseScale = 0.2;
   const float noiseFreq = 2.0;
-  d += noiseScale * valueNoise(st * noiseFreq);
+  d += noiseScale * valueNoise(st * noiseFreq + loopIndex);
 
   vec3 shape = vec3(1.0 - step(0.0, d));
 
