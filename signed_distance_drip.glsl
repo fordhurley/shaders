@@ -17,7 +17,8 @@ float circle(vec2 st, float radius) {
 
 // Oriented vertically. Round caps at top and bottom. The top of the top cap
 // will just touch (0, 1).
-float drip(vec2 st, vec2 size) {
+// Return value is (nx, ny, nz, d)
+vec4 dripNormalAndDist(vec2 st, vec2 size) {
   float radius = size.x * 0.5;
   // The total height is radius + rectHeight + radius:
   float rectHeight = size.y - radius - radius;
@@ -36,24 +37,19 @@ float drip(vec2 st, vec2 size) {
   float d = dCapTop;
   d = min(d, dRect);
   d = min(d, dCapBottom);
-  return d;
-}
 
-vec3 dripNormal(vec2 st, vec2 size) {
-  float radius = size.x * 0.5;
+  // Normalize st so it reaches 1 at the center of the bottom cap (where our
+  // blob of water is):
+  st /= radius;
 
-  vec2 dripBottomST = st;
-  dripBottomST.y -= 1.0;
-  dripBottomST.y += size.y - radius;
-  dripBottomST /= radius; // normalize
-
-  float radiusSq = dot(dripBottomST, dripBottomST);
+  float rSquared = dot(st, st);
 
   vec3 normal = vec3(0.0, 0.0, 1.0);
-  if (radiusSq < 1.0) {
-    normal = vec3(dripBottomST, sqrt(1.0 - radiusSq));
+  if (rSquared < 1.0) {
+    normal = vec3(st, sqrt(1.0 - rSquared));
   }
-  return normal;
+
+  return vec4(normal, d);
 }
 
 vec2 vec2Random(vec2 st) {
@@ -108,8 +104,10 @@ void main() {
 
   float dripHeight = mix(dripHeightStart, dripHeightEnd, t);
   vec2 dripSize = vec2(dripRadius*2.0, dripHeight);
-  float dist = drip(st, dripSize);
-  vec3 normal = dripNormal(st, dripSize);
+
+  vec4 normalAndDist = dripNormalAndDist(st, dripSize);
+  vec3 normal = normalAndDist.xyz;
+  float dist = normalAndDist.w;
 
   vec3 shape = vec3(1.0 - step(0.0, dist));
 
