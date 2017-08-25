@@ -15,22 +15,26 @@ float circle(vec2 st, float radius) {
   return length(st) - radius;
 }
 
-// Oriented vertically. Round caps at top and bottom. The entire shape is
-// centered on (0, 0).
+// Oriented vertically. Round caps at top and bottom. The top of the top cap
+// will just touch (0, 1).
 float drip(vec2 st, vec2 size) {
-  // The total height is radius + rectHeight + radius, where the radius is half
-  // the width.
-  float rectHeight = size.y - size.x;
-  // If the size is wider than it is tall, we end up with a circle.
-  rectHeight = max(rectHeight, 0.0);
+  float radius = size.x * 0.5;
+  // The total height is radius + rectHeight + radius:
+  float rectHeight = size.y - radius - radius;
 
+  st.y -= 1.0;
+  st.y += radius;
+  float dCapTop = circle(st, radius);
+
+  st.y += rectHeight * 0.5;
   float dRect = rect(st, vec2(size.x, rectHeight));
-  float dCapTop = circle(st + vec2(0.0, rectHeight/2.0), size.x/2.0);
-  float dCapBottom = circle(st - vec2(0.0, rectHeight/2.0), size.x/2.0);
+
+  st.y += rectHeight * 0.5;
+  float dCapBottom = circle(st, radius);
 
   // Union the three shapes:
-  float d = dRect;
-  d = min(d, dCapTop);
+  float d = dCapTop;
+  d = min(d, dRect);
   d = min(d, dCapBottom);
   return d;
 }
@@ -65,30 +69,37 @@ void main() {
   float t = fract(iGlobalTime / loopTime);
   float loopIndex = floor(iGlobalTime / loopTime);
 
+  // t = 0.85;
+
   const float noiseScale = 0.2;
-  const float noiseFreq = 2.0;
+  const float noiseFreq = 2.5;
 
   const float dripRadius = 0.25;
   const float maxDripRadius = dripRadius * (1.0 + noiseScale);
   const float dripHeightStart = 2.0 * dripRadius;
-  const float dripHeightEnd = 2.0 - dripRadius*(1.0 + noiseScale) / 2.0;
+  // The shape will be distorted by (up to) noiseScale in all directions, so we
+  // need to keep it shorter than the full height to keep it from clipping. This
+  // allows for the extreme case where the top edge pushes up by noiseScale and
+  // the bottom edge pushes down by noiseScale.
+  const float dripHeightEnd = 2.0 - 2.0*noiseScale;
+  // Similarly, we need to move everything down a little to avoid clipping at
+  // the top edge:
+  st.y += noiseScale;
+
   float dripHeight = mix(dripHeightStart, dripHeightEnd, t);
-
-  vec2 dripST = st - vec2(0.0, 1.0 - dripHeight/2.0 - dripRadius*noiseScale);
-
-  float d = drip(dripST, vec2(dripRadius*2.0, dripHeight));
+  float dist = drip(st, vec2(dripRadius*2.0, dripHeight));
   float noise = noiseScale * valueNoise(st * noiseFreq + loopIndex);
-  d += noise;
+  dist += noise;
 
-  vec3 shape = vec3(1.0 - step(0.0, d));
+  vec3 shape = vec3(1.0 - step(0.0, dist));
 
-    // Negative parts are red / Positive parts are blue / Green is hard to for me
-    // to see / So I don't use that color...
+  // Negative parts are red / Positive parts are blue / Green is hard to for me
+  // to see / So I don't use that color...
   vec3 field = vec3(0.0);
-  if (d < 0.0) {
-    field.r = -d;
+  if (dist < 0.0) {
+    field.r = -dist;
   } else {
-    field.b = d;
+    field.b = dist;
   }
 
   // Move the mouse horizontally to visualize the field and the shape together.
