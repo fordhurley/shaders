@@ -57,6 +57,7 @@ void main() {
   vec2 uv = gl_FragCoord.xy / iResolution.xy;
   float aspect = iResolution.x / iResolution.y;
   uv.x *= aspect;
+  uv.x += (1.0 - aspect)/2.0;
 
   vec2 st = uv * 2.0 - 1.0; // [-1, 1] in xy
 
@@ -69,19 +70,15 @@ void main() {
 
   const float dripRadius = 0.25;
   const float maxDripRadius = dripRadius * (1.0 + noiseScale);
-  const vec2 dripStart = vec2(0.0, 1.0 - maxDripRadius);
-  const vec2 dripEnd = vec2(0.0, -1.0 + maxDripRadius);
-
   const float dripHeightStart = 2.0 * dripRadius;
-  const float dripHeightEnd = 2.0; // Full height
+  const float dripHeightEnd = 2.0 - dripRadius*(1.0 + noiseScale) / 2.0;
   float dripHeight = mix(dripHeightStart, dripHeightEnd, t);
-  vec2 dripPos = mix(dripStart, dripEnd, t);
 
-  vec2 dripST = st - vec2(0.0, 1.0 - dripHeight/2.0);
+  vec2 dripST = st - vec2(0.0, 1.0 - dripHeight/2.0 - dripRadius*noiseScale);
 
   float d = drip(dripST, vec2(dripRadius*2.0, dripHeight));
-
-  d += noiseScale * valueNoise(st * noiseFreq + loopIndex);
+  float noise = noiseScale * valueNoise(st * noiseFreq + loopIndex);
+  d += noise;
 
   vec3 shape = vec3(1.0 - step(0.0, d));
 
