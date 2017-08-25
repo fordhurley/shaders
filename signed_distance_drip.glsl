@@ -39,6 +39,23 @@ float drip(vec2 st, vec2 size) {
   return d;
 }
 
+vec3 dripNormal(vec2 st, vec2 size) {
+  float radius = size.x * 0.5;
+
+  vec2 dripBottomST = st;
+  dripBottomST.y -= 1.0;
+  dripBottomST.y += size.y - radius;
+  dripBottomST /= radius; // normalize
+
+  float radiusSq = dot(dripBottomST, dripBottomST);
+
+  vec3 normal = vec3(0.0, 0.0, 1.0);
+  if (radiusSq < 1.0) {
+    normal = vec3(dripBottomST, sqrt(1.0 - radiusSq));
+  }
+  return normal;
+}
+
 vec2 vec2Random(vec2 st) {
   st = vec2(dot(st, vec2(0.040,-0.250)),
   dot(st, vec2(269.5,183.3)));
@@ -90,7 +107,9 @@ void main() {
   st += noise;
 
   float dripHeight = mix(dripHeightStart, dripHeightEnd, t);
-  float dist = drip(st, vec2(dripRadius*2.0, dripHeight));
+  vec2 dripSize = vec2(dripRadius*2.0, dripHeight);
+  float dist = drip(st, dripSize);
+  vec3 normal = dripNormal(st, dripSize);
 
   vec3 shape = vec3(1.0 - step(0.0, dist));
 
@@ -105,18 +124,6 @@ void main() {
 
   // Move the mouse horizontally to visualize the field and the shape together.
   vec3 color = mix(shape, field, iMouse.x);
-
-  vec2 dripBottomST = st;
-  dripBottomST.y -= 1.0;
-  dripBottomST.y += dripHeight - dripRadius;
-  dripBottomST /= dripRadius; // normalize
-
-  float radiusSq = dot(dripBottomST, dripBottomST);
-
-  vec3 normal = vec3(0.0, 0.0, 1.0);
-  if (radiusSq < 1.0) {
-    normal = vec3(dripBottomST, sqrt(1.0 - radiusSq));
-  }
 
   // Move the mouse vertically to visualize the normals.
   color = mix(color, normal, iMouse.y);
