@@ -70,6 +70,11 @@ float valueNoise(vec2 st) {
                    dot(vec2Random(i + vec2(1.0,1.0)), f - vec2(1.0,1.0)), u.x), u.y);
 }
 
+uniform sampler2D tex; // ./textures/brickwall.jpg
+uniform sampler2D texBlurred; // ./textures/brickwall_blurred.jpg
+
+#define DEBUG // comment to show the final image
+
 void main() {
   vec2 uv = gl_FragCoord.xy / iResolution.xy;
   float aspect = iResolution.x / iResolution.y;
@@ -82,7 +87,8 @@ void main() {
   float t = fract(iGlobalTime / loopTime);
   float loopIndex = floor(iGlobalTime / loopTime);
 
-  // t = 0.85; // for capturing stills
+  t = 0.85; // for capturing stills
+  loopIndex = 4.0;
 
   const float noiseScale = 0.2;
   const float noiseFreq = 2.5;
@@ -120,11 +126,27 @@ void main() {
     field.b = dist;
   }
 
-  // Move the mouse horizontally to visualize the field and the shape together.
-  vec3 color = mix(shape, field, iMouse.x);
+  #ifdef DEBUG
+    // Move the mouse horizontally to visualize the field and the shape together.
+    vec3 color = mix(shape, field, iMouse.x);
+    // Move the mouse vertically to visualize the normals.
+    color = mix(color, normal, iMouse.y);
+  #else
+    vec3 view = vec3(0.0, 0.0, -1.0);
+    vec3 refraction = refract(view, normal, 0.5);
+    const float distanceToBackground = 0.25;
+    uv.x += -distanceToBackground * refraction.x / refraction.z;
+    uv.y += -distanceToBackground * refraction.y / refraction.z;
 
-  // Move the mouse vertically to visualize the normals.
-  color = mix(color, normal, iMouse.y);
+    vec3 color;
+    if (dist < 0.0) {
+      color = texture2D(tex, uv).rgb;
+    } else {
+      color = texture2D(texBlurred, uv).rgb;
+      color = mix(color, vec3(1.0), 0.25); // fog
+    }
+    // TODO: fog back up behind the drip?
+  #endif
 
   gl_FragColor = vec4(color, 1.0);
 }
