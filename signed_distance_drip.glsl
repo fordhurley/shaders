@@ -86,10 +86,11 @@ void main() {
   // the top edge:
   st.y += noiseScale;
 
+  float noise = noiseScale * valueNoise(st * noiseFreq + loopIndex);
+  st += noise;
+
   float dripHeight = mix(dripHeightStart, dripHeightEnd, t);
   float dist = drip(st, vec2(dripRadius*2.0, dripHeight));
-  float noise = noiseScale * valueNoise(st * noiseFreq + loopIndex);
-  dist += noise;
 
   vec3 shape = vec3(1.0 - step(0.0, dist));
 
