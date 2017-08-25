@@ -69,7 +69,7 @@ void main() {
   float t = fract(iGlobalTime / loopTime);
   float loopIndex = floor(iGlobalTime / loopTime);
 
-  // t = 0.85;
+  // t = 0.85; // for capturing stills
 
   const float noiseScale = 0.2;
   const float noiseFreq = 2.5;
@@ -105,6 +105,21 @@ void main() {
 
   // Move the mouse horizontally to visualize the field and the shape together.
   vec3 color = mix(shape, field, iMouse.x);
+
+  vec2 dripBottomST = st;
+  dripBottomST.y -= 1.0;
+  dripBottomST.y += dripHeight - dripRadius;
+  dripBottomST /= dripRadius; // normalize
+
+  float radiusSq = dot(dripBottomST, dripBottomST);
+
+  vec3 normal = vec3(0.0, 0.0, 1.0);
+  if (radiusSq < 1.0) {
+    normal = vec3(dripBottomST, sqrt(1.0 - radiusSq));
+  }
+
+  // Move the mouse vertically to visualize the normals.
+  color = mix(color, normal, iMouse.y);
 
   gl_FragColor = vec4(color, 1.0);
 }
