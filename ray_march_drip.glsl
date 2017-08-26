@@ -1,4 +1,4 @@
-#define EPSILON 1e-6
+#define EPSILON 1e-3
 
 float unionSDF(float a, float b) {
   return min(a, b);
@@ -6,6 +6,13 @@ float unionSDF(float a, float b) {
 
 float subtractSDF(float a, float b) {
   return max(a, -b);
+}
+
+// polynomial smooth min
+// http://iquilezles.org/www/articles/smin/smin.htm
+float smin(float a, float b, float k) {
+  float h = clamp(0.5+0.5*(b-a)/k, 0.0, 1.0);
+  return mix(b, a, h) - k*h*(1.0-h);
 }
 
 float boxSDF(vec3 p, vec3 size) {
@@ -39,6 +46,8 @@ float sceneSDF(vec3 p) {
   const float loopTime = 4.0;
   float t = fract(iGlobalTime / loopTime);
 
+  // t = 1.0; // for still captures 
+
   float r = 0.25;
   float h = 1.0 * t;
 
@@ -46,10 +55,12 @@ float sceneSDF(vec3 p) {
 
   float d = diskSDF(p, r);
   d = unionSDF(d, rectSDF(p + vec3(0.0, h/2.0, 0.0), vec2(2.0*r, h)));
+  // Put another disk on the back, for better merging with the semisphere
+  d = unionSDF(d, diskSDF(p + vec3(0.0, h, 0.0), r));
 
   float semisphere = subtractSDF(sphereSDF(p + vec3(0.0, h, 0.0), r), p.z);
 
-  d = unionSDF(d, semisphere);
+  d = smin(d, semisphere, 0.1);
   return d;
 }
 
@@ -91,7 +102,7 @@ void main() {
 
   vec2 st = uv * 2.0 - 1.0; // [-1, 1] in xy
 
-  vec3 eyePos = vec3(st, 1.0); // Needs to be far enough in z to be outside
+  vec3 eyePos = vec3(st, 1.5); // Needs to be far enough in z to be outside
   vec3 viewDir = vec3(0.0, 0.0, -1.0); // Orthogonal projection
   float maxDepth = 2.0;
 
