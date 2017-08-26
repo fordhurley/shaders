@@ -87,8 +87,9 @@ void main() {
   float t = fract(iGlobalTime / loopTime);
   float loopIndex = floor(iGlobalTime / loopTime);
 
-  t = 0.85; // for capturing stills
-  loopIndex = 4.0;
+  // For capturing stills:
+  // t = 0.85;
+  // loopIndex = 4.0;
 
   const float noiseScale = 0.2;
   const float noiseFreq = 2.5;
