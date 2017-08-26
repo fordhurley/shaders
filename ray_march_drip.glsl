@@ -1,4 +1,22 @@
-#define EPSILON 1e-3
+#define EPSILON 1e-4
+
+vec2 vec2Random(vec2 st) {
+  st = vec2(dot(st, vec2(0.040,-0.250)),
+  dot(st, vec2(269.5,183.3)));
+  return -1.0 + 2.0 * fract(sin(st) * 43758.633);
+}
+
+float valueNoise(vec2 st) {
+    vec2 i = floor(st);
+    vec2 f = fract(st);
+
+    vec2 u = smoothstep(0.0, 1.0, f);
+
+    return mix(mix(dot(vec2Random(i + vec2(0.0,0.0)), f - vec2(0.0,0.0)),
+                   dot(vec2Random(i + vec2(1.0,0.0)), f - vec2(1.0,0.0)), u.x),
+               mix(dot(vec2Random(i + vec2(0.0,1.0)), f - vec2(0.0,1.0)),
+                   dot(vec2Random(i + vec2(1.0,1.0)), f - vec2(1.0,1.0)), u.x), u.y);
+}
 
 float unionSDF(float a, float b) {
   return min(a, b);
@@ -38,6 +56,7 @@ float sphereSDF(vec3 p, float radius) {
 }
 
 float diskSDF(vec3 p, float radius) {
+  // TODO: this is actually a hemisphere sticking into negative z
   float sphere = sphereSDF(p, radius);
   return max(sphere, p.z);
 }
@@ -45,8 +64,12 @@ float diskSDF(vec3 p, float radius) {
 float sceneSDF(vec3 p) {
   const float loopTime = 4.0;
   float t = fract(iGlobalTime / loopTime);
+  float loopIndex = floor(iGlobalTime / loopTime);
 
-  // t = 1.0; // for still captures 
+  const float noiseScale = 0.2;
+  const float noiseFreq = 2.52;
+  float noise = noiseScale * valueNoise(p.xy * noiseFreq + loopIndex);
+  p.xy += noise;
 
   float r = 0.25;
   float h = 1.0 * t;
@@ -55,12 +78,12 @@ float sceneSDF(vec3 p) {
 
   float d = diskSDF(p, r);
   d = unionSDF(d, rectSDF(p + vec3(0.0, h/2.0, 0.0), vec2(2.0*r, h)));
-  // Put another disk on the back, for better merging with the semisphere
+  // Put another disk on the back, for better merging with the blob
   d = unionSDF(d, diskSDF(p + vec3(0.0, h, 0.0), r));
 
-  float semisphere = subtractSDF(sphereSDF(p + vec3(0.0, h, 0.0), r), p.z);
+  float blob = subtractSDF(sphereSDF(p + vec3(0.0, h, 0.0), r), p.z);
+  d = smin(d, blob, 0.1);
 
-  d = smin(d, semisphere, 0.1);
   return d;
 }
 
