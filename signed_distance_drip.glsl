@@ -73,7 +73,7 @@ float valueNoise(vec2 st) {
 uniform sampler2D tex; // ./textures/brickwall.jpg
 uniform sampler2D texBlurred; // ./textures/brickwall_blurred.jpg
 
-#define DEBUG // comment to show the final image
+// #define DEBUG // comment to show the final image
 
 void main() {
   vec2 uv = gl_FragCoord.xy / iResolution.xy;
@@ -135,9 +135,11 @@ void main() {
   #else
     vec3 view = vec3(0.0, 0.0, -1.0);
     vec3 refraction = refract(view, normal, 0.5);
-    const float distanceToBackground = 0.25;
+    const float distanceToBackground = 0.35;
     uv.x += -distanceToBackground * refraction.x / refraction.z;
     uv.y += -distanceToBackground * refraction.y / refraction.z;
+
+    uv = fract(uv);
 
     vec3 color;
     if (dist < 0.0) {
