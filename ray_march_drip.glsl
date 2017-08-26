@@ -61,18 +61,11 @@ float diskSDF(vec3 p, float radius) {
   return max(sphere, p.z);
 }
 
-float sceneSDF(vec3 p) {
-  const float loopTime = 4.0;
-  float t = fract(iGlobalTime / loopTime);
-  float loopIndex = floor(iGlobalTime / loopTime);
-
+float dripSDF(vec3 p, float r, float h, float seed) {
   const float noiseScale = 0.2;
   const float noiseFreq = 2.52;
-  float noise = noiseScale * valueNoise(p.xy * noiseFreq + loopIndex);
+  float noise = noiseScale * valueNoise(p.xy * noiseFreq + seed);
   p.xy += noise;
-
-  float r = 0.25;
-  float h = 1.0 * t;
 
   p.y -= 0.5;
 
@@ -83,7 +76,18 @@ float sceneSDF(vec3 p) {
 
   float blob = subtractSDF(sphereSDF(p + vec3(0.0, h, 0.0), r), p.z);
   d = smin(d, blob, 0.1);
+  return d;
+}
 
+float sceneSDF(vec3 p) {
+  const float loopTime = 4.0;
+  float t = fract(iGlobalTime / loopTime);
+  float loopIndex = floor(iGlobalTime / loopTime);
+
+  float r = 0.25;
+  float h = 1.0 * t;
+
+  float d = dripSDF(p, r, h, loopIndex);
   return d;
 }
 
