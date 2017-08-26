@@ -100,10 +100,15 @@ void main() {
   vec3 pointOnSurface = eyePos + viewDir * d;
   vec3 normalOnSurface = normal(pointOnSurface);
 
-  vec3 color = vec3(0.0, 0.0, 0.0);
+  vec3 lightPos = vec3(0.0, 0.0, 1.0);
+  lightPos.xy = iMouse * 2.0 - 1.0;
+
+  vec3 lightDir = normalize(-lightPos);
+
+  vec3 color = vec3(0.0);
   if (d < maxDepth - EPSILON) {
     // Hit the surface:
-    color = normalOnSurface;
+    color = vec3(dot(normalOnSurface, -lightDir));
   }
 
   gl_FragColor = vec4(color, 1.0);
