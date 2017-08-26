@@ -1,3 +1,8 @@
+uniform sampler2D tex; // ./textures/nyc_night.jpg
+uniform sampler2D texBlurred; // ./textures/nyc_night_blur.jpg
+
+// #define DEBUG // comment to show the final image
+
 float rect(vec2 st, vec2 size) {
   vec2 d = abs(st) - size/2.0;
   // d is negative on the inside, so take the more positive, which is the
@@ -70,10 +75,12 @@ float valueNoise(vec2 st) {
                    dot(vec2Random(i + vec2(1.0,1.0)), f - vec2(1.0,1.0)), u.x), u.y);
 }
 
-uniform sampler2D tex; // ./textures/brickwall.jpg
-uniform sampler2D texBlurred; // ./textures/brickwall_blurred.jpg
-
-// #define DEBUG // comment to show the final image
+float fog(vec2 uv) {
+  float fogFrequency = 5.0;
+  float fogNoise = valueNoise(uv * fogFrequency);
+  fogNoise += 0.5 * valueNoise(uv * fogFrequency * 2.0);
+  return 0.5 + 0.5 * fogNoise; // ~[0, 1]
+}
 
 void main() {
   vec2 uv = gl_FragCoord.xy / iResolution.xy;
@@ -135,20 +142,17 @@ void main() {
   #else
     vec3 view = vec3(0.0, 0.0, -1.0);
     vec3 refraction = refract(view, normal, 0.5);
-    const float distanceToBackground = 0.35;
+    const float distanceToBackground = 0.5;
     uv.x += -distanceToBackground * refraction.x / refraction.z;
     uv.y += -distanceToBackground * refraction.y / refraction.z;
-
     uv = fract(uv);
 
-    vec3 color;
-    if (dist < 0.0) {
-      color = texture2D(tex, uv).rgb;
-    } else {
-      color = texture2D(texBlurred, uv).rgb;
-      color = mix(color, vec3(1.0), 0.25); // fog
-    }
-    // TODO: fog back up behind the drip?
+    vec3 clearColor = texture2D(tex, uv).rgb;
+    vec3 foggyColor = texture2D(texBlurred, uv).rgb;
+    foggyColor = mix(foggyColor, vec3(1.0), 0.25*fog(uv));
+
+    float mixture = smoothstep(-0.01, 0.01, dist);
+    vec3 color = mix(clearColor, foggyColor, mixture);
   #endif
 
   gl_FragColor = vec4(color, 1.0);
