@@ -1,3 +1,6 @@
+uniform sampler2D tex; // ./textures/nyc_night.jpg
+uniform sampler2D texBlurred; // ./textures/nyc_night_blur.jpg
+
 #define EPSILON 1e-4
 
 vec2 vec2Random(vec2 st) {
@@ -121,6 +124,11 @@ vec3 normal(vec3 p) {
   ));
 }
 
+// map x from [a1, a2] to [b1, b2]
+float map(float x, float a1, float a2, float b1, float b2) {
+	return b1 + (b2 - b1) * (x - a1) / (a2 - a1);
+}
+
 void main() {
   vec2 uv = gl_FragCoord.xy / iResolution.xy;
   float aspect = iResolution.x / iResolution.y;
@@ -138,25 +146,23 @@ void main() {
   vec3 pointOnSurface = eyePos + viewDir * d;
   vec3 normalOnSurface = normal(pointOnSurface);
 
-  vec3 lightPos = vec3(0.0, 0.0, 1.5);
-  lightPos.xy = iMouse * 2.0 - 1.0;
+  vec2 clearUV = uv;
+  vec3 refraction = refract(viewDir, normalOnSurface, 0.5);
+  float distanceToBackground = 0.75;
+  clearUV.x += -distanceToBackground * refraction.x / refraction.z;
+  clearUV.y += -distanceToBackground * refraction.y / refraction.z;
+  vec3 clearColor = texture2D(tex, clearUV).rgb;
 
-  vec3 lightDir = pointOnSurface - lightPos;
-  float lightDistance = length(lightDir);
-  lightDir = normalize(lightDir);
+  vec3 foggyColor = texture2D(texBlurred, uv).rgb;
+  float fogFrequenccy = 5.0;
+  float fogNoise = valueNoise(uv * fogFrequenccy);
+  fogNoise += 0.5 * valueNoise(uv * fogFrequenccy * 2.0);
+  float fogOpacity = map(fogNoise, -1.0, 1.0, 0.1, 0.2);
+  foggyColor = mix(foggyColor, vec3(1.0), fogOpacity);
 
-  vec3 color = vec3(0.0);
-  if (d < maxDepth - EPSILON) {
-    float lightIntensity = dot(normalOnSurface, -lightDir);
-    lightIntensity /= lightDistance; // linear fall off
-    lightIntensity = clamp(lightIntensity, 0.0, 1.0);
-
-    vec3 lightColor = vec3(1);
-    color = lightColor * lightIntensity;
-
-    vec3 ambientLight = vec3(0.05, 0.05, 0.15);
-    color += ambientLight;
-  }
+  // Foggy if we didn't hit the surface:
+  float fogginess = step(maxDepth-EPSILON, d);
+  vec3 color = mix(clearColor, foggyColor, fogginess);
 
   gl_FragColor = vec4(color, 1.0);
 }
