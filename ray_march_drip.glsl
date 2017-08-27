@@ -3,6 +3,11 @@ uniform sampler2D texBlurred; // ./textures/nyc_night_blur.jpg
 
 #define EPSILON 1e-4
 
+// map x from [a1, a2] to [b1, b2]
+float map(float x, float a1, float a2, float b1, float b2) {
+	return b1 + (b2 - b1) * (x - a1) / (a2 - a1);
+}
+
 vec2 vec2Random(vec2 st) {
   st = vec2(dot(st, vec2(0.040,-0.250)),
   dot(st, vec2(269.5,183.3)));
@@ -64,10 +69,8 @@ float diskSDF(vec3 p, float radius) {
   return max(sphere, p.z);
 }
 
-float dripSDF(vec3 p, float r, float h, float seed) {
-  const float noiseScale = 0.2;
-  const float noiseFreq = 2.52;
-  float noise = noiseScale * valueNoise(p.xy * noiseFreq + seed);
+float dripSDF(vec3 p, float r, float h, float noiseScale, float noiseFreq, float noiseSeed) {
+  float noise = noiseScale * valueNoise(p.xy * noiseFreq + noiseSeed);
   p.xy += noise;
 
   p.y -= 0.5;
@@ -78,7 +81,7 @@ float dripSDF(vec3 p, float r, float h, float seed) {
   d = unionSDF(d, diskSDF(p + vec3(0.0, h, 0.0), r));
 
   float blob = subtractSDF(sphereSDF(p + vec3(0.0, h, 0.0), r), p.z);
-  d = smin(d, blob, 0.1);
+  d = smin(d, blob, 0.1); // TODO: k proportional to r
   return d;
 }
 
@@ -87,10 +90,15 @@ float sceneSDF(vec3 p) {
   float t = fract(iGlobalTime / loopTime);
   float loopIndex = floor(iGlobalTime / loopTime);
 
-  float r = 0.25;
-  float h = 1.0 * t;
+  // t = 1.0;
 
-  float d = dripSDF(p, r, h, loopIndex);
+  float r = 0.15;
+  float h = 1.0 * t;
+  float noiseScale = 0.13;
+  float noiseFreq = 20.0 * noiseScale;
+  float noiseSeed = loopIndex;
+
+  float d = dripSDF(p, r, h, noiseScale, noiseFreq, noiseSeed);
   return d;
 }
 
@@ -122,11 +130,6 @@ vec3 normal(vec3 p) {
     sceneSDF(vec3(p.x, p.y + EPSILON, p.z)) - sceneSDF(vec3(p.x, p.y - EPSILON, p.z)),
     sceneSDF(vec3(p.x, p.y, p.z  + EPSILON)) - sceneSDF(vec3(p.x, p.y, p.z - EPSILON))
   ));
-}
-
-// map x from [a1, a2] to [b1, b2]
-float map(float x, float a1, float a2, float b1, float b2) {
-	return b1 + (b2 - b1) * (x - a1) / (a2 - a1);
 }
 
 void main() {
