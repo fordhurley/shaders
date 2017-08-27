@@ -90,7 +90,7 @@ void main() {
 
   vec2 st = uv * 2.0 - 1.0; // [-1, 1] in xy
 
-  const float loopTime = 4.0;
+  const float loopTime = 9.0;
   float t = fract(iGlobalTime / loopTime);
   float loopIndex = floor(iGlobalTime / loopTime);
 
@@ -108,10 +108,11 @@ void main() {
   // need to keep it shorter than the full height to keep it from clipping. This
   // allows for the extreme case where the top edge pushes up by noiseScale and
   // the bottom edge pushes down by noiseScale.
-  const float dripHeightEnd = 2.0 - 2.0*noiseScale;
+  const float dripHeightEnd = 5.0;
   // Similarly, we need to move everything down a little to avoid clipping at
   // the top edge:
-  st.y += noiseScale;
+  // st.y += noiseScale;
+  st.y -= 0.5;
 
   float noise = noiseScale * valueNoise(st * noiseFreq + loopIndex);
   st += noise;
@@ -151,7 +152,13 @@ void main() {
     vec3 foggyColor = texture2D(texBlurred, uv).rgb;
     foggyColor = mix(foggyColor, vec3(1.0), 0.25*fog(uv));
 
-    float mixture = smoothstep(-0.01, 0.01, dist);
+    if (dist < 0.01) {
+      dist += 0.5 * (st.y - 1.0 + 3.0*t);
+      dist -= t * 0.3 * valueNoise(st * 12.0 + loopIndex);
+      dist -= t * 0.1 * valueNoise(st * 20.0 + loopIndex);
+    }
+    // shape = vec3(-st.y + 0.5);
+    float mixture = smoothstep(-0.02, 0.0, dist);
     vec3 color = mix(clearColor, foggyColor, mixture);
   #endif
 
