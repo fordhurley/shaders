@@ -174,7 +174,10 @@ void main() {
 
   // Foggy if we didn't hit the surface:
   float fogginess = step(maxDepth-EPSILON, d);
-  vec3 color = mix(clearColor, foggyColor, fogginess);
+  float wetness = 1.0 - fogginess;
+  wetness -= 1.5 * distance(st, dripHead(t).xy) * map(2.0*valueNoise(8.0 * (st + loopIndex)), -1.0, 1.0, 0.0, 1.0);
+  wetness = clamp(wetness, 0.0, 1.0);
+  vec3 color = mix(foggyColor, clearColor, wetness);
 
   gl_FragColor = vec4(color, 1.0);
 }
