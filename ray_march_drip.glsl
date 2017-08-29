@@ -87,7 +87,7 @@ float dripSDF(vec3 p, float r, float h, float noiseScale, float noiseFreq, float
 }
 
 float dripHeight(float t) {
-  return t;
+  return 1.5*t;
 }
 
 vec3 dripHead(float t) {
