@@ -36,7 +36,7 @@ float subtractSDF(float a, float b) {
 
 // polynomial smooth min
 // http://iquilezles.org/www/articles/smin/smin.htm
-float smin(float a, float b, float k) {
+float smoothUnion(float a, float b, float k) {
   float h = clamp(0.5+0.5*(b-a)/k, 0.0, 1.0);
   return mix(b, a, h) - k*h*(1.0-h);
 }
@@ -82,7 +82,7 @@ float dripSDF(vec3 p, float r, float h, float noiseScale, float noiseFreq, float
   d = unionSDF(d, diskSDF(p + vec3(0.0, h, 0.0), r));
 
   float blob = subtractSDF(sphereSDF(p + vec3(0.0, h, 0.0), r), p.z);
-  d = smin(d, blob, 0.1); // TODO: k proportional to r
+  d = smoothUnion(d, blob, 0.1); // TODO: k proportional to r
   return d;
 }
 
