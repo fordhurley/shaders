@@ -5,7 +5,7 @@ uniform sampler2D texBlurred; // ./textures/nyc_night_blur.jpg
 
 // map x from [a1, a2] to [b1, b2]
 float map(float x, float a1, float a2, float b1, float b2) {
-	return b1 + (b2 - b1) * (x - a1) / (a2 - a1);
+  return b1 + (b2 - b1) * (x - a1) / (a2 - a1);
 }
 
 vec2 vec2Random(vec2 st) {
@@ -69,11 +69,12 @@ float diskSDF(vec3 p, float radius) {
   return max(sphere, p.z);
 }
 
+// Head of the drip will be at p.
 float dripSDF(vec3 p, float r, float h, float noiseScale, float noiseFreq, float noiseSeed) {
+  p.y -= h;
+
   float noise = noiseScale * valueNoise(p.xy * noiseFreq + noiseSeed);
   p.xy += noise;
-
-  p.y -= 0.5;
 
   float d = diskSDF(p, r);
   d = unionSDF(d, rectSDF(p + vec3(0.0, h/2.0, 0.0), vec2(2.0*r, h)));
@@ -85,30 +86,34 @@ float dripSDF(vec3 p, float r, float h, float noiseScale, float noiseFreq, float
   return d;
 }
 
-float sceneSDF(vec3 p) {
-  const float loopTime = 4.0;
-  float t = fract(iGlobalTime / loopTime);
-  float loopIndex = floor(iGlobalTime / loopTime);
+float dripHeight(float t) {
+  return t;
+}
 
-  // t = 1.0;
+vec3 dripHead(float t) {
+  float h = dripHeight(t);
+  return vec3(0.0, 0.75 - h, 0.0);
+}
 
+float sceneSDF(vec3 p, float t, float seed) {
   float r = 0.15;
-  float h = 1.0 * t;
+  float h = dripHeight(t);
   float noiseScale = 0.13;
   float noiseFreq = 20.0 * noiseScale;
-  float noiseSeed = loopIndex;
 
-  float d = dripSDF(p, r, h, noiseScale, noiseFreq, noiseSeed);
+  p -= dripHead(t);
+
+  float d = dripSDF(p, r, h, noiseScale, noiseFreq, seed);
   return d;
 }
 
 // Ray marching from
 // http://jamie-wong.com/2016/07/15/ray-marching-signed-distance-functions
-float depth(vec3 eyePos, vec3 viewDir, float maxDepth) {
+float depth(vec3 eyePos, vec3 viewDir, float maxDepth, float t, float seed) {
   float depth = 0.0;
   for (int i = 0; i < 255; i++) {
     vec3 p = eyePos + depth * viewDir;
-    float dist = sceneSDF(p);
+    float dist = sceneSDF(p, t, seed);
     if (dist < EPSILON) {
       // We're inside the scene surface!
       return depth;
@@ -124,12 +129,12 @@ float depth(vec3 eyePos, vec3 viewDir, float maxDepth) {
   return maxDepth;
 }
 
-vec3 normal(vec3 p) {
-  return normalize(vec3(
-    sceneSDF(vec3(p.x + EPSILON, p.y, p.z)) - sceneSDF(vec3(p.x - EPSILON, p.y, p.z)),
-    sceneSDF(vec3(p.x, p.y + EPSILON, p.z)) - sceneSDF(vec3(p.x, p.y - EPSILON, p.z)),
-    sceneSDF(vec3(p.x, p.y, p.z  + EPSILON)) - sceneSDF(vec3(p.x, p.y, p.z - EPSILON))
-  ));
+vec3 normal(vec3 p, float t, float seed) {
+  vec3 n = vec3(0.0);
+  n.x = sceneSDF(vec3(p.x + EPSILON, p.y, p.z), t, seed) - sceneSDF(vec3(p.x - EPSILON, p.y, p.z), t, seed);
+  n.y = sceneSDF(vec3(p.x, p.y + EPSILON, p.z), t, seed) - sceneSDF(vec3(p.x, p.y - EPSILON, p.z), t, seed);
+  n.z = sceneSDF(vec3(p.x, p.y, p.z + EPSILON), t, seed) - sceneSDF(vec3(p.x, p.y, p.z - EPSILON), t, seed);
+  return normalize(n);
 }
 
 void main() {
@@ -144,10 +149,14 @@ void main() {
   vec3 viewDir = vec3(0.0, 0.0, -1.0); // Orthogonal projection
   float maxDepth = 2.0;
 
-  float d = depth(eyePos, viewDir, maxDepth);
+  const float loopTime = 4.0;
+  float t = fract(iGlobalTime / loopTime);
+  float loopIndex = floor(iGlobalTime / loopTime);
+
+  float d = depth(eyePos, viewDir, maxDepth, t, loopIndex);
 
   vec3 pointOnSurface = eyePos + viewDir * d;
-  vec3 normalOnSurface = normal(pointOnSurface);
+  vec3 normalOnSurface = normal(pointOnSurface, t, loopIndex);
 
   vec2 clearUV = uv;
   vec3 refraction = refract(viewDir, normalOnSurface, 0.5);
