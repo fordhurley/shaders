@@ -1,9 +1,6 @@
-float circle(vec2 st, float radius) {
+float circleSDF(vec2 st, float radius) {
   return length(st) - radius;
 }
-
-// Comment out to show the shape:
-#define SHOW_FIELD
 
 void main() {
   vec2 uv = gl_FragCoord.xy / iResolution.xy;
@@ -12,19 +9,21 @@ void main() {
 
   vec2 st = uv * 2.0 - 1.0; // [-1, 1] in xy
 
-  vec3 color = vec3(0.0);
+  float d = circleSDF(st, 0.5);
 
-  float d = circle(st, 0.5);
-  color += 1.0 - step(0.0, d);
+  vec3 shape = vec3(1.0 - step(0.0, d));
 
-  #ifdef SHOW_FIELD
-    color = vec3(0.0);
-    if (d < 0.0) {
-      color.r -= d; // Negative parts are red
-    } else {
-      color.b += d; // Positive parts are blue
-    }
-  #endif
+  // Negative parts are red / Positive parts are blue / Green is hard to for me
+  // to see / So I don't use that color...
+  vec3 field = vec3(0.0);
+  if (d < 0.0) {
+    field.r = -d;
+  } else {
+    field.b = d;
+  }
+
+  // Move the mouse horizontally to show the field:
+  vec3 color = mix(shape, field, iMouse.x);
 
   gl_FragColor = vec4(color, 1.0);
 }
