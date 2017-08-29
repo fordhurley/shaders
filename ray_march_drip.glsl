@@ -41,45 +41,45 @@ float smoothUnion(float a, float b, float k) {
   return mix(b, a, h) - k*h*(1.0-h);
 }
 
-float boxSDF(vec3 p, vec3 size) {
-  vec3 d = abs(p) - size/2.0;
+// This is a 3D distance field, but it just extends in z to negative infinity
+// (positive z is outside the shape).
+float rectSDF(vec3 p, vec2 size) {
+  vec2 d = abs(p.xy) - size/2.0;
   // d is negative on the inside, so take the more positive, which is the
   // distance to the closest edge:
-  float inside = max(max(d.x, d.y), d.z);
+  float inside = max(d.x, d.y);
   // d is positive outside, so the max(d, 0) zeros any components that are
   // inside, e.g. when vertically above the box we only care about the y
   // distance. When we're fully outside (diagonally) the box, this is the
   // length from the nearest corner.
   float outside = length(max(d, 0.0));
-  return min(inside, 0.0) + outside;
+  float dist = min(inside, 0.0) + outside;
+  dist = max(dist, p.z);
+  return dist;
 }
 
-float rectSDF(vec3 p, vec2 size) {
-  float box = boxSDF(p, vec3(size, EPSILON));
-  return max(box, p.z);
+// Similar to rectSDF, this also produces a 3D SDF, but will be shaped like a
+// cylinder parallel to the z axis, that extends from z = [0, -inf].
+float circleSDF(vec3 p, float radius) {
+  float dist = length(p.xy) - radius;
+  return max(dist, p.z);
 }
 
 float sphereSDF(vec3 p, float radius) {
   return length(p) - radius;
 }
 
-float diskSDF(vec3 p, float radius) {
-  // TODO: this is actually a hemisphere sticking into negative z
-  float sphere = sphereSDF(p, radius);
-  return max(sphere, p.z);
-}
-
-// Head of the drip will be at p.
+// Head of the drip will be centered at p.
 float dripSDF(vec3 p, float r, float h, float noiseScale, float noiseFreq, float noiseSeed) {
   p.y -= h;
 
   float noise = noiseScale * valueNoise(p.xy * noiseFreq + noiseSeed);
   p.xy += noise;
 
-  float d = diskSDF(p, r);
+  float d = circleSDF(p, r);
   d = unionSDF(d, rectSDF(p + vec3(0.0, h/2.0, 0.0), vec2(2.0*r, h)));
   // Put another disk on the back, for better merging with the blob
-  d = unionSDF(d, diskSDF(p + vec3(0.0, h, 0.0), r));
+  d = unionSDF(d, circleSDF(p + vec3(0.0, h, 0.0), r));
 
   float blob = subtractSDF(sphereSDF(p + vec3(0.0, h, 0.0), r), p.z);
   d = smoothUnion(d, blob, 0.1); // TODO: k proportional to r
