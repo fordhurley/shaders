@@ -160,6 +160,7 @@ void main() {
 
   vec2 clearUV = uv;
   vec3 refraction = refract(viewDir, normalOnSurface, 0.5);
+  // TODO: try double refraction based on pointOnSurface.z
   float distanceToBackground = 0.75;
   clearUV.x += -distanceToBackground * refraction.x / refraction.z;
   clearUV.y += -distanceToBackground * refraction.y / refraction.z;
