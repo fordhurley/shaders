@@ -2,6 +2,10 @@ float circleSDF(vec2 st, float radius) {
   return length(st) - radius;
 }
 
+float outline(float d, float w) {
+  return 1.0 - step(w/2.0, d) - (1.0 - step(-w/2.0, d));
+}
+
 void main() {
   vec2 uv = gl_FragCoord.xy / iResolution.xy;
   float aspect = iResolution.x / iResolution.y;
@@ -11,7 +15,9 @@ void main() {
 
   float d = circleSDF(st, 0.5);
 
-  vec3 shape = vec3(1.0 - step(0.0, d));
+  // Move the mouse vertically to change the width of the outline:
+  float w = iMouse.y;
+  vec3 shape = vec3(outline(d, w));
 
   // Negative parts are red / Positive parts are blue / Green is hard to for me
   // to see / So I don't use that color...
