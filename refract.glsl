@@ -26,6 +26,11 @@ void main() {
   vec2 uv = gl_FragCoord.xy / iResolution.xy;
   float aspect = iResolution.x / iResolution.y;
   uv.x *= aspect;
+  uv.x += 0.5 - aspect/2.0;
+  if (aspect < 1.0) {
+    uv -= 0.5 - aspect/2.0;
+    uv /= aspect;
+  }
 
   vec3 color = vec3(0.0);
 
