@@ -37,11 +37,14 @@ void main() {
   radiusSq += valueNoise(st * 2.129 + 20.123 + iGlobalTime / 2.0);
 
   if (radiusSq < 1.0) {
-    vec3 normal = vec3(st.xy, sqrt(1.0 - radiusSq));
+    float z = sqrt(1.0 - radiusSq);
+    vec3 normal = vec3(st.xy, z);
     normal = normalize(normal);
     vec3 view = vec3(0.0, 0.0, -1.0);
     float refractionRatio = 0.5;
-    st = refract(view, normal, refractionRatio).xy;
+    vec3 refracted = refract(view, normal, refractionRatio);
+    st.x += -z * refracted.x / refracted.z;
+    st.y += -z * refracted.y / refracted.z;
   }
   color += checker(st, 0.1);
   color.r *= st.y;
