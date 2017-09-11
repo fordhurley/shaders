@@ -28,17 +28,19 @@ void main() {
   uv.x *= aspect;
 
   float t = iGlobalTime;
-  uv += 0.25 * vec2(cos(t * 0.1), sin(t * 0.2));
+  // uv += 0.25 * vec2(cos(t * 0.1), sin(t * 0.2));
 
   vec3 color = vec3(0.0, 0.28, 0.62);
 
   float repeat = 15.0;
   uv *= repeat;
 
-  float verticalStipes = valueNoise(vec2(uv.x, 123.129));
+  vec2 grid = floor(uv);
+
+  float verticalStipes = valueNoise(vec2(uv.x, grid.y));
   verticalStipes = step(verticalStipes, 0.0);
 
-  float horizontalStripes = valueNoise(vec2(uv.y + 14.1, 1.2));
+  float horizontalStripes = valueNoise(vec2(grid.x, uv.y));
   horizontalStripes = step(horizontalStripes, 0.0);
 
   color *= verticalStipes + 0.5 * horizontalStripes;
