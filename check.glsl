@@ -4,6 +4,24 @@ vec3 noise(vec2 uv) {
   return texture2D(noiseTex, fract(uv)).rgb;
 }
 
+vec2 vec2Random(vec2 st) {
+  st = vec2(dot(st, vec2(0.040,-0.250)),
+  dot(st, vec2(269.5,183.3)));
+  return -1.0 + 2.0 * fract(sin(st) * 43758.633);
+}
+
+float valueNoise(vec2 st) {
+    vec2 i = floor(st);
+    vec2 f = fract(st);
+
+    vec2 u = smoothstep(0.0, 1.0, f);
+
+    return mix(mix(dot(vec2Random(i + vec2(0.0,0.0)), f - vec2(0.0,0.0)),
+                   dot(vec2Random(i + vec2(1.0,0.0)), f - vec2(1.0,0.0)), u.x),
+               mix(dot(vec2Random(i + vec2(0.0,1.0)), f - vec2(0.0,1.0)),
+                   dot(vec2Random(i + vec2(1.0,1.0)), f - vec2(1.0,1.0)), u.x), u.y);
+}
+
 void main() {
   vec2 uv = gl_FragCoord.xy / iResolution.xy;
   float aspect = iResolution.x / iResolution.y;
@@ -15,9 +33,14 @@ void main() {
   vec3 color = vec3(0.0, 0.28, 0.62);
 
   float repeat = 15.0;
-  vec2 grid = floor(uv * repeat);
-  float verticalStipes = mod(grid.x, 2.0); // 0 or 1
-  float horizontalStripes = mod(grid.y, 2.0); // 0 or 1
+  uv *= repeat;
+
+  float verticalStipes = valueNoise(vec2(uv.x, 123.129));
+  verticalStipes = step(verticalStipes, 0.0);
+
+  float horizontalStripes = valueNoise(vec2(uv.y + 14.1, 1.2));
+  horizontalStripes = step(horizontalStripes, 0.0);
+
   color *= verticalStipes + 0.5 * horizontalStripes;
 
   color += 0.1 * noise(uv).x;
