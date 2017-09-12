@@ -27,24 +27,20 @@ void main() {
   float aspect = iResolution.x / iResolution.y;
   uv.x *= aspect;
 
-  float t = iGlobalTime;
-  // uv += 0.25 * vec2(cos(t * 0.1), sin(t * 0.2));
-
-  vec3 color = vec3(0.0, 0.28, 0.62);
+  float t = iGlobalTime * 0.1;
+  uv += 0.25 * vec2(cos(t), sin(t * 2.0));
 
   float repeat = 15.0;
   uv *= repeat;
 
-  vec2 grid = floor(uv);
-
-  float verticalStipes = valueNoise(vec2(uv.x, grid.y));
+  float verticalStipes = valueNoise(vec2(uv.x, t));
   verticalStipes = step(verticalStipes, 0.0);
 
-  float horizontalStripes = valueNoise(vec2(grid.x, uv.y));
+  float horizontalStripes = valueNoise(vec2(t, uv.y));
   horizontalStripes = step(horizontalStripes, 0.0);
 
+  vec3 color = vec3(0.0, 0.28, 0.62);
   color *= verticalStipes + 0.5 * horizontalStripes;
-
   color += 0.1 * noise(uv).x;
 
   gl_FragColor = vec4(color, 1.0);
