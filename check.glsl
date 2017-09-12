@@ -27,11 +27,14 @@ void main() {
   float aspect = iResolution.x / iResolution.y;
   uv.x *= aspect;
 
-  float t = iGlobalTime * 0.1;
-  uv += 0.25 * vec2(cos(t), sin(t * 2.0));
+  float t = iGlobalTime;
+  uv.x += 0.05 * t;
+  uv.y += 0.25 * sin(t * 0.1);
 
   float repeat = 15.0;
   uv *= repeat;
+
+  t *= 0.1;
 
   float verticalStipes = valueNoise(vec2(uv.x, t));
   verticalStipes = step(verticalStipes, 0.0);
