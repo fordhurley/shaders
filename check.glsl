@@ -1,7 +1,7 @@
 uniform sampler2D noiseTex; // textures/noise.png
 
-vec3 noise(vec2 uv) {
-  return texture2D(noiseTex, fract(uv)).rgb;
+vec3 grain(vec2 uv) {
+  return texture2D(noiseTex, fract(uv)).rgb * 2.0 - 1.0;
 }
 
 vec2 vec2Random(vec2 st) {
@@ -40,6 +40,7 @@ void main() {
   uv.x *= aspect;
 
   float t = iGlobalTime;
+  t = 1.0;
   uv.x += 0.05 * t;
   uv.y += 0.25 * sin(t * 0.1);
 
@@ -56,7 +57,7 @@ void main() {
 
   vec3 color = vec3(0.0, 0.28, 0.62);
   color *= verticalStipes + 0.5 * horizontalStripes;
-  color += 0.1 * noise(uv).x;
+  color += 0.15 * grain(uv).x;
 
   gl_FragColor = vec4(color, 1.0);
 }
