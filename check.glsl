@@ -22,6 +22,18 @@ float valueNoise(vec2 st) {
                    dot(vec2Random(i + vec2(1.0,1.0)), f - vec2(1.0,1.0)), u.x), u.y);
 }
 
+float octaveNoise(vec2 st) {
+  float freq = 1.0;
+  float ampl = 1.0;
+  float v = 0.0;
+  for (int i = 0; i < 6; i++) {
+    v += ampl * valueNoise(st * freq);
+    freq *= 2.0;
+    ampl /= 2.0;
+  }
+  return v;
+}
+
 void main() {
   vec2 uv = gl_FragCoord.xy / iResolution.xy;
   float aspect = iResolution.x / iResolution.y;
@@ -31,15 +43,15 @@ void main() {
   uv.x += 0.05 * t;
   uv.y += 0.25 * sin(t * 0.1);
 
-  float repeat = 15.0;
+  float repeat = 9.0;
   uv *= repeat;
 
   t *= 0.1;
 
-  float verticalStipes = valueNoise(vec2(uv.x, t));
+  float verticalStipes = octaveNoise(vec2(uv.x, t));
   verticalStipes = step(verticalStipes, 0.0);
 
-  float horizontalStripes = valueNoise(vec2(t, uv.y));
+  float horizontalStripes = octaveNoise(vec2(t, uv.y));
   horizontalStripes = step(horizontalStripes, 0.0);
 
   vec3 color = vec3(0.0, 0.28, 0.62);
