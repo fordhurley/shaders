@@ -6,12 +6,12 @@ vec3 projectile(vec3 acceleration, vec3 pos0, vec3 vel0, float t) {
 }
 
 // https://cl.ly/3u320h0T1o1O/projectile_with_drag.jpg
-// except replacing `g` with `gravity * mass`
-vec3 projectileWithDrag(float drag, vec3 gravity, float mass, vec3 pos0, vec3 vel0, float t) {
+// except replacing `g` with `acceleration * mass`
+vec3 projectileWithDrag(float drag, vec3 acceleration, float mass, vec3 pos0, vec3 vel0, float t) {
   float massOverDrag = mass / drag;
   vec3 position = pos0;
-  position += massOverDrag * gravity * t;
-  position += massOverDrag * (massOverDrag * gravity - vel0) * (exp(-t / massOverDrag) - 1.0);
+  position += massOverDrag * acceleration * t;
+  position += massOverDrag * (massOverDrag * acceleration - vel0) * (exp(-t / massOverDrag) - 1.0);
   return position;
 }
 
@@ -27,7 +27,7 @@ float circle(vec2 center, float radius, vec2 st) {
 void main() {
   vec2 uv = gl_FragCoord.xy;
 
-  float loopTime = 4.0;
+  float loopTime = 2.5;
 
   vec3 gravity = vec3(0.0, -2000.0, 0.0);
   float mass = 2.0;
