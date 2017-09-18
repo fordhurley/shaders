@@ -4,6 +4,11 @@ vec3 grain(vec2 uv) {
   return texture2D(noiseTex, fract(uv)).rgb * 2.0 - 1.0;
 }
 
+float fabric(vec2 uv) {
+  // Diagonal stripes with a gradient running across it.
+  return mod(uv.x - uv.y, 2.0) - 1.0;
+}
+
 vec2 vec2Random(vec2 st) {
   st = vec2(dot(st, vec2(0.040,-0.250)),
   dot(st, vec2(269.5,183.3)));
@@ -60,6 +65,9 @@ void main() {
 
   vec3 color = mix(bg, fg, stripes);
   color += 0.02 * grain(uv).x;
+
+  float fabricRepeat = 240.0;
+  color += 0.03 * fabric(uv * fabricRepeat);
 
   gl_FragColor = vec4(color, 1.0);
 }
