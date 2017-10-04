@@ -60,8 +60,8 @@ void main() {
   float stripes = verticalStipes + 0.5 * horizontalStripes;
   stripes /= 1.5;
 
-  vec3 bg = vec3(0.0, 0.28, 0.62);
-  vec3 fg = vec3(0.1);
+  vec3 bg = vec3(0.106, 0.082, 0.047);
+  vec3 fg = vec3(0, 0.22, 0.51);
 
   vec3 color = mix(bg, fg, stripes);
   color += 0.02 * grain(uv).x;
