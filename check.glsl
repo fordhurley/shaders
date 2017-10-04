@@ -37,7 +37,7 @@ float octaveNoise(vec2 st) {
   float freq = 1.0;
   float ampl = 1.0;
   float v = 0.0;
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 2; i++) {
     v += ampl * valueNoise(st * freq);
     freq *= 2.0;
     ampl /= 2.0;
