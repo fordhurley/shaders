@@ -55,12 +55,24 @@ void main() {
   uv.y += 0.25 * sin(t * 0.1);
 
   float repeat = 9.0;
-  float speed = 0.1;
+  float speed = 0.;
 
-  float verticalStipes = octaveNoise(vec2(uv.x * repeat, t * speed));
+  float edgeNoisiness = 0.05;
+
+  vec3 grainNoise = grain(uv);
+
+  vec2 stripeUV = vec2(uv.x * repeat, t * speed);
+  float edgeNoise = grainNoise.r;
+  edgeNoise *= edgeNoise;
+  stripeUV.x += edgeNoisiness * edgeNoise;
+  float verticalStipes = octaveNoise(stripeUV);
   verticalStipes = step(verticalStipes, 0.0);
 
-  float horizontalStripes = octaveNoise(vec2(t * speed, uv.y * repeat));
+  stripeUV = vec2(t * speed, uv.y * repeat);
+  edgeNoise = grainNoise.g;
+  edgeNoise *= edgeNoise;
+  stripeUV.y += edgeNoisiness * edgeNoise;
+  float horizontalStripes = octaveNoise(stripeUV);
   horizontalStripes = step(horizontalStripes, 0.0);
 
   float stripes = verticalStipes + 0.5 * horizontalStripes;
@@ -70,7 +82,7 @@ void main() {
   vec3 fg = vec3(0.29, 0.471, 0.573);
 
   vec3 color = mix(bg, fg, stripes);
-  color += 0.04 * grain(uv).x;
+  color += 0.04 * grainNoise.b;
 
   float fabricRepeat = 240.0;
   color += 0.04 * fabric(uv * fabricRepeat);
