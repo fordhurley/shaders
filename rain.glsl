@@ -1,23 +1,31 @@
 uniform sampler2D noiseTex; // textures/noise.png
-uniform sampler2D bgTex; // textures/nyc_night_blur.jpg
 
-
-vec2 vec2Random(vec2 st) {
-  st = vec2(dot(st, vec2(0.040,-0.250)),
-  dot(st, vec2(269.5,183.3)));
-  return -1.0 + 2.0 * fract(sin(st) * 43758.633);
+vec2 hash(vec2 st) {
+  st = vec2(dot(st, vec2(0.040, -0.250)), dot(st, vec2(269.5, 183.3)));
+  return fract(sin(st) * 43758.633) * 2.0 - 1.0;
 }
 
 float valueNoise(vec2 st) {
     vec2 i = floor(st);
     vec2 f = fract(st);
 
+    float v00 = dot(hash(i + vec2(0.0, 0.0)), f - vec2(0.0, 0.0));
+    float v10 = dot(hash(i + vec2(1.0, 0.0)), f - vec2(1.0, 0.0));
+    float v01 = dot(hash(i + vec2(0.0, 1.0)), f - vec2(0.0, 1.0));
+    float v11 = dot(hash(i + vec2(1.0, 1.0)), f - vec2(1.0, 1.0));
+
     vec2 u = smoothstep(0.0, 1.0, f);
 
-    return mix(mix(dot(vec2Random(i + vec2(0.0,0.0)), f - vec2(0.0,0.0)),
-                   dot(vec2Random(i + vec2(1.0,0.0)), f - vec2(1.0,0.0)), u.x),
-               mix(dot(vec2Random(i + vec2(0.0,1.0)), f - vec2(0.0,1.0)),
-                   dot(vec2Random(i + vec2(1.0,1.0)), f - vec2(1.0,1.0)), u.x), u.y);
+    float v0 = mix(v00, v10, u.x);
+    float v1 = mix(v01, v11, u.x);
+
+    float v = mix(v0, v1, u.y);
+
+    return v;
+}
+
+float map(float value, float inMin, float inMax, float outMin, float outMax) {
+	return outMin + (outMax - outMin) * (value - inMin) / (inMax - inMin);
 }
 
 float rain(vec2 uv, float t, float raininess, float slant) {
@@ -35,6 +43,7 @@ float rain(vec2 uv, float t, float raininess, float slant) {
   uv *= 100.0;
 
   float alpha = valueNoise(uv);
+  alpha -= clamp(0.5 - raininess, 0.0, 1.0);
   alpha *= raininess;
   alpha = clamp(alpha, 0.0, 1.0);
   return alpha;
@@ -45,19 +54,17 @@ void main() {
   float aspect = iResolution.x / iResolution.y;
   uv.x *= aspect;
 
-  vec3 color = texture2D(bgTex, uv).rgb;
-  color += 0.1;
-  vec3 rainColor = vec3(0.0);
+  vec3 color = vec3(0.3, 0.38, map(uv.y, 0.0, 1.0, 0.6, 0.5));
+  vec3 rainColor = vec3(0.87, 0.87, 0.91);
 
-  float speed = 1.0;
   float t = iGlobalTime;
-  t *= speed;
 
-  float raininess = 0.15;
+  float raininess = map(sin(t / 2.0), -1.0, 1.0, 0.15, 0.4);
   float rainAlpha = rain(uv, t, raininess, 0.2);
   rainAlpha += rain(uv * 2.0 + 2.0, t, raininess, 0.1);
-  rainAlpha = clamp(rainAlpha, 0.0, uv.y + 0.25); // fade at the bottom
-  rainAlpha *= 0.5; // fade overall
+  rainAlpha = clamp(rainAlpha, 0.0, 1.0);
+  rainAlpha *= uv.y + 0.1; // fade at the bottom
+  rainAlpha *= 0.85; // fade overall
 
   color = mix(color, rainColor, rainAlpha);
 
