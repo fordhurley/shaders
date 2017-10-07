@@ -66,14 +66,14 @@ void main() {
   float stripes = verticalStipes + 0.5 * horizontalStripes;
   stripes /= 1.5;
 
-  vec3 bg = vec3(0.106, 0.082, 0.047);
-  vec3 fg = vec3(0, 0.22, 0.51);
+  vec3 bg = vec3(0.11, 0.133, 0.235);
+  vec3 fg = vec3(0.29, 0.471, 0.573);
 
   vec3 color = mix(bg, fg, stripes);
-  color += 0.02 * grain(uv).x;
+  color += 0.04 * grain(uv).x;
 
   float fabricRepeat = 240.0;
-  color += 0.03 * fabric(uv * fabricRepeat);
+  color += 0.04 * fabric(uv * fabricRepeat);
 
   gl_FragColor = vec4(color, 1.0);
 }
