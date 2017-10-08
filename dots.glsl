@@ -1,5 +1,5 @@
-#pragma glslify: colormap = require('glsl-colormap/rainbow-soft')
-#pragma glslify: map = require('./map')
+#pragma glslify: colormap = require('glsl-colormap/summer')
+#pragma glslify: map = require('./lib/map')
 
 #define PI 3.14149
 #define ALL_ONES vec2(1.0)
@@ -10,11 +10,11 @@ float pattern(const vec2 st, float t) {
   float v = 0.0;
   float f = 1.0;
   float edge = map(t, 0.0, 1.0, -1.0, 1.0);
+
   for (int i = 0; i < numOctaves; i++) {
     v += step(edge, dot(cos(st * 2.0 * PI * f), ALL_ONES) * 0.5);
     f *= 2.0;
   }
-
   v /= float(numOctaves);
 
   return v;
@@ -37,9 +37,6 @@ void main() {
   st *= repeat;
 
   float v = pattern(st, t);
-  v += 0.6;
-  v = fract(v);
-  v = map(v, 0.0, 1.0, 0.5, 1.0);
   vec3 color = colormap(v).rgb;
 
   gl_FragColor = vec4(color, 1.0);
