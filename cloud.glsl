@@ -26,7 +26,7 @@ float fbm(vec2 st) {
   return value;
 }
 
-vec3 cloud(vec2 st, float t) {
+vec4 cloud(vec2 st, float t) {
   vec2 q = vec2(0.0);
   q.x = fbm(st);
   q.y = fbm(st + 1.0);
@@ -37,16 +37,37 @@ vec3 cloud(vec2 st, float t) {
 
   float f = fbm(st + r);
 
-  vec3 color0 = vec3(0.1, 0.62, 0.67);
-  vec3 color1 = vec3(0.67, 0.67, 0.5);
-  vec3 color2 = vec3(0.0, 0.0, 0.16);
-  vec3 color3 = vec3(0.67, 1.0, 1.0);
+  vec3 color1 = vec3(0.5);
+  vec3 color2 = vec3(0.8);
+  vec3 color3 = vec3(1.0);
 
-  vec3 color = mix(color0, color1, clamp01(f * f * 4.0));
-  color = mix(color, color2, clamp01(length(q)));
+  vec3 color = mix(color1, color2, clamp01(length(q)));
   color = mix(color, color3, clamp01(r.x));
 
-  return (f*f*f + 0.6*f*f + 0.5*f) * color;
+  float alpha = 1.0 - clamp01(f * f * 3.0);
+
+  return vec4(color, alpha);
+}
+
+// http://iquilezles.org/www/articles/functions/functions.htm
+float gain(float x, float k) {
+  float a = 0.5*pow(2.0*((x<0.5)?x:1.0-x), k);
+  return (x<0.5)?a:1.0-a;
+}
+
+vec3 skyGradient(vec2 uv) {
+  return mix(
+    vec3(0.012, 0.6, 0.741),
+    vec3(0.314, 0.686, 0.894),
+    clamp01(uv.y + 0.5)
+  );
+}
+
+float cloudShapes(vec2 st) {
+  float alpha = fbm(st);
+  alpha = map(alpha, 0.0, 1.0, -0.5, 1.3);
+  alpha = gain(alpha, 10.0);
+  return clamp01(alpha);
 }
 
 void main() {
@@ -54,12 +75,22 @@ void main() {
   uv.x *= u_resolution.x / u_resolution.y;
 
   float t = u_time;
-  float speed = 1.0;
-  t *= speed;
 
-  vec2 repeat = vec2(3.5);
-  vec2 offset = vec2(12.5);
+  vec3 color = skyGradient(uv);
+
+  vec2 repeat = vec2(2.0, 10.0);
+  vec2 offset = vec2(22.5);
   uv = uv * repeat + offset;
 
-  gl_FragColor = vec4(cloud(uv, t), 1.0);
+  float scrollSpeed = 0.05;
+  uv.x += t * scrollSpeed;
+
+  float warpSpeed = 1.25;
+  vec4 cloudColor = cloud(uv, t * warpSpeed);
+
+  float alpha = cloudColor.a;
+  alpha *= cloudShapes(uv);
+  color = mix(color, cloudColor.rgb, alpha);
+
+  gl_FragColor = vec4(color, 1.0);
 }
