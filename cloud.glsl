@@ -56,11 +56,12 @@ float gain(float x, float k) {
 }
 
 vec3 skyGradient(vec2 uv) {
-  return mix(
-    vec3(0.012, 0.6, 0.741),
-    vec3(0.314, 0.686, 0.894),
-    clamp01(uv.y + 0.5)
-  );
+  vec3 bg = vec3(0.012, 0.6, 0.741);
+  vec3 fg = vec3(0.314, 0.686, 0.894);
+
+  float k = uv.y;
+  k *= map(noise(uv), -1.0, 1.0, 0.0, 1.5);
+  return mix(bg, fg, clamp01(k));
 }
 
 float cloudShapes(vec2 st) {
