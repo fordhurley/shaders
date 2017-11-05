@@ -26,7 +26,9 @@ float fbm(vec2 st) {
   return value;
 }
 
-vec4 cloud(vec2 st, float t) {
+vec4 cloud(vec2 uv, vec2 repeat, vec2 offset, float t) {
+  vec2 st = uv * repeat + offset;
+
   vec2 q = vec2(0.0);
   q.x = fbm(st);
   q.y = fbm(st + 1.0);
@@ -44,7 +46,7 @@ vec4 cloud(vec2 st, float t) {
   vec3 color = mix(color1, color2, clamp01(length(q)));
   color = mix(color, color3, clamp01(r.x));
 
-  float alpha = 1.0 - clamp01(f * f * 3.0);
+  float alpha = clamp01(f * f * 3.0);
 
   return vec4(color, alpha);
 }
@@ -64,10 +66,16 @@ vec3 skyGradient(vec2 uv) {
   return mix(bg, fg, clamp01(k));
 }
 
-float cloudShapes(vec2 st) {
+float cloudShapes(vec2 uv, vec2 repeat, vec2 offset) {
+  vec2 st = uv * repeat + offset;
+
   float alpha = fbm(st);
-  alpha = map(alpha, 0.0, 1.0, -0.5, 1.3);
-  alpha = gain(alpha, 10.0);
+  alpha = map(alpha, 0.0, 1.0, -0.2, 1.9);
+  alpha *= map(noise(st), -1.0, 1.0, 0.0, 1.0);
+  alpha = gain(alpha, 6.0);
+  alpha = clamp01(alpha);
+
+  alpha *= map(uv.y, 0.2, 1.0, 0.0, 1.0);
   return clamp01(alpha);
 }
 
@@ -79,18 +87,17 @@ void main() {
 
   vec3 color = skyGradient(uv);
 
-  vec2 repeat = vec2(2.0, 10.0);
-  vec2 offset = vec2(22.5);
-  uv = uv * repeat + offset;
-
   float scrollSpeed = 0.05;
   uv.x += t * scrollSpeed;
 
-  float warpSpeed = 1.25;
-  vec4 cloudColor = cloud(uv, t * warpSpeed);
+  vec2 repeat = vec2(2.0, 10.0);
+  vec2 offset = vec2(15.0);
+
+  float warpSpeed = 2.5;
+  vec4 cloudColor = cloud(uv, repeat, offset, t * warpSpeed);
 
   float alpha = cloudColor.a;
-  alpha *= cloudShapes(uv);
+  alpha *= cloudShapes(uv, repeat * 2.0, offset);
   color = mix(color, cloudColor.rgb, alpha);
 
   gl_FragColor = vec4(color, 1.0);
