@@ -47,7 +47,7 @@ vec4 cloud(vec2 st, float t) {
   color = mix(color, vec3(0.7), clamp01(length(q)));
   color = mix(color, vec3(0.9), clamp01(r.x));
 
-  float alpha = gain(f, 10.0);
+  float alpha = gain(f, 12.0);
   alpha = clamp01(alpha);
 
   return vec4(color, alpha);
@@ -78,10 +78,11 @@ void main() {
 
   vec2 st = uv * repeat + offset;
 
-  float warpSpeed = 1.5;
+  float warpSpeed = 0.5;
   vec4 cloudColor = cloud(st, t * warpSpeed);
 
   cloudColor.a *= map(uv.y, 0.2, 1.0, 0.0, 1.4);
+  cloudColor.a = clamp01(cloudColor.a);
 
   color = mix(color, cloudColor.rgb, cloudColor.a);
 
