@@ -43,12 +43,9 @@ vec4 cloud(vec2 st, float t) {
 
   float f = fbm(st + r);
 
-  vec3 color1 = vec3(1.0);
-  vec3 color2 = vec3(0.7);
-  vec3 color3 = vec3(0.9);
-
-  vec3 color = mix(color1, color2, clamp01(length(q)));
-  color = mix(color, color3, clamp01(r.x));
+  vec3 color = vec3(1.0);
+  color = mix(color, vec3(0.7), clamp01(length(q)));
+  color = mix(color, vec3(0.9), clamp01(r.x));
 
   float alpha = gain(f, 10.0);
   alpha = clamp01(alpha);
