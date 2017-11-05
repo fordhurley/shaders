@@ -59,7 +59,8 @@ vec3 skyGradient(vec2 uv) {
 
   float k = uv.y;
   k *= map(noise(uv), -1.0, 1.0, 0.0, 1.5);
-  return mix(bg, fg, clamp01(k));
+  k = clamp01(k);
+  return mix(bg, fg, k);
 }
 
 void main() {
@@ -67,8 +68,9 @@ void main() {
   uv.x *= u_resolution.x / u_resolution.y;
 
   float t = u_time;
+  t *= 4.0;
 
-  vec3 color = skyGradient(uv);
+  vec3 color = skyGradient(uv + vec2(0.01 * t, 0.0));
 
   vec2 repeat = vec2(2.0, 10.0);
   vec2 offset = vec2(15.0);
