@@ -1,7 +1,9 @@
+#pragma glslify: colorizeSDF = require(./lib/colorizeSDF)
+
 uniform sampler2D tex; // ./textures/nyc_night.jpg
 uniform sampler2D texBlurred; // ./textures/nyc_night_blur.jpg
 
-// #define DEBUG // comment to show the final image
+#define DEBUG // comment to show the final image
 
 float rect(vec2 st, vec2 size) {
   vec2 d = abs(st) - size/2.0;
@@ -126,14 +128,7 @@ void main() {
 
   vec3 shape = vec3(1.0 - step(0.0, dist));
 
-  // Negative parts are red / Positive parts are blue / Green is hard to for me
-  // to see / So I don't use that color...
-  vec3 field = vec3(0.0);
-  if (dist < 0.0) {
-    field.r = -dist;
-  } else {
-    field.b = dist;
-  }
+  vec3 field = colorizeSDF(dist);
 
   #ifdef DEBUG
     // Move the mouse horizontally to visualize the field and the shape together.

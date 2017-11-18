@@ -1,3 +1,5 @@
+#pragma glslify: colorizeSDF = require(./lib/colorizeSDF)
+
 float circleSDF(vec2 st, float radius) {
   return length(st) - radius;
 }
@@ -19,17 +21,9 @@ void main() {
   float w = iMouse.y;
   vec3 shape = vec3(outline(d, w));
 
-  // Negative parts are red / Positive parts are blue / Green is hard to for me
-  // to see / So I don't use that color...
-  vec3 field = vec3(0.0);
-  if (d < 0.0) {
-    field.r = -d;
-  } else {
-    field.b = d;
-  }
-
   // Move the mouse horizontally to show the field:
-  vec3 color = mix(shape, field, iMouse.x);
+  vec3 field = colorizeSDF(d);
+  vec3 color = mix(shape, field, 1.0 - iMouse.x);
 
   gl_FragColor = vec4(color, 1.0);
 }

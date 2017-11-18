@@ -1,3 +1,5 @@
+#pragma glslify: colorizeSDF = require(./lib/colorizeSDF)
+
 float circleSDF(vec3 p, float radius) {
   float dist = length(p.xy) - radius;
   return max(dist, p.z);
@@ -17,12 +19,7 @@ void main() {
   float d = circleSDF(p, 0.5);
   vec3 shape = vec3(1.0 - step(0.0, d));
 
-  vec3 field = vec3(0.0);
-  if (d < 0.0) {
-    field.r -= d; // Negative parts are red
-  } else {
-    field.b += d; // Positive parts are blue
-  }
+  vec3 field = colorizeSDF(d);
 
   // Move mouse horizontally to visualize field:
   vec3 color = mix(shape, field, iMouse.x);

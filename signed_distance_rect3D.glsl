@@ -1,3 +1,5 @@
+#pragma glslify: colorizeSDF = require(./lib/colorizeSDF)
+
 float rectSDF(vec3 p, vec2 size) {
   vec2 d = abs(p.xy) - size/2.0;
   // d is negative on the inside, so take the more positive, which is the
@@ -31,12 +33,7 @@ void main() {
   color += 1.0 - step(0.0, d);
 
   #ifdef SHOW_FIELD
-    color = vec3(0.0);
-    if (d < 0.0) {
-      color.r -= d; // Negative parts are red
-    } else {
-      color.b += d; // Positive parts are blue
-    }
+    color = colorizeSDF(d);
   #endif
 
   gl_FragColor = vec4(color, 1.0);
