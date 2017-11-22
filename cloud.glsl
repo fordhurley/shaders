@@ -6,6 +6,10 @@ float clamp01(float x) {
   return clamp(x, 0.0, 1.0);
 }
 
+vec3 clamp01(vec3 v) {
+  return clamp(v, 0.0, 1.0);
+}
+
 // https://thebookofshaders.com/13/
 
 float fbm(vec2 st) {
@@ -38,11 +42,12 @@ vec4 cloud(vec2 st, float t) {
 
   float f = fbm(st + r);
 
-  vec3 color = vec3(1.0);
-  color = mix(color, vec3(0.7), clamp01(length(q)));
-  color = mix(color, vec3(0.9), clamp01(r.x));
+  vec3 color = vec3(0.0);
+  color = mix(color, vec3(0.4, 0.5, 0.8), clamp01(length(q)));
+  color = mix(color, vec3(1.5), clamp01(r.x));
+  color = clamp01(color);
 
-  float alpha = gain(f, 12.0);
+  float alpha = gain(f, 10.0);
   alpha = clamp01(alpha);
 
   return vec4(color, alpha);
@@ -78,8 +83,9 @@ void main() {
   float warpSpeed = 0.5;
   vec4 cloudColor = cloud(st, t * warpSpeed);
 
-  cloudColor.a *= map(uv.y, 0.2, 1.0, 0.0, 1.4);
-  cloudColor.a = clamp01(cloudColor.a);
+  // Fade top to bottom:
+  // cloudColor.a *= map(uv.y, 0.2, 1.0, 0.0, 1.4);
+  // cloudColor.a = clamp01(cloudColor.a);
 
   color = mix(color, cloudColor.rgb, cloudColor.a);
 
