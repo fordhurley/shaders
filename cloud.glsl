@@ -1,14 +1,9 @@
 #pragma glslify: map = require(./lib/map)
 #pragma glslify: noise = require(./lib/valueNoise)
+#pragma glslify: gain = require(./lib/iq/gain)
 
 float clamp01(float x) {
   return clamp(x, 0.0, 1.0);
-}
-
-// http://iquilezles.org/www/articles/functions/functions.htm
-float gain(float x, float k) {
-  float a = 0.5*pow(2.0*((x<0.5)?x:1.0-x), k);
-  return (x<0.5)?a:1.0-a;
 }
 
 // https://thebookofshaders.com/13/
