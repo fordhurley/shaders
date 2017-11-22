@@ -44,7 +44,7 @@ vec4 cloud(vec2 st, float t) {
 
   vec3 color = vec3(0.0);
   color = mix(color, vec3(0.4, 0.5, 0.8), clamp01(length(q)));
-  color = mix(color, vec3(1.5), clamp01(r.x));
+  color = mix(color, vec3(1.0), clamp01(1.5 * r.x));
   color = clamp01(color);
 
   float alpha = gain(f, 10.0);
@@ -84,8 +84,8 @@ void main() {
   vec4 cloudColor = cloud(st, t * warpSpeed);
 
   // Fade top to bottom:
-  // cloudColor.a *= map(uv.y, 0.2, 1.0, 0.0, 1.4);
-  // cloudColor.a = clamp01(cloudColor.a);
+  cloudColor.a *= map(uv.y, 0.2, 0.7, 0.0, 1.0);
+  cloudColor.a = clamp01(cloudColor.a);
 
   color = mix(color, cloudColor.rgb, cloudColor.a);
 
