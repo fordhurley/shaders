@@ -1,6 +1,7 @@
 #pragma glslify: map = require(./lib/map)
-#pragma glslify: noise = require(./lib/valueNoise)
 #pragma glslify: gain = require(./lib/iq/gain)
+#pragma glslify: noise = require(glsl-noise/classic/3d)
+
 
 float clamp01(float x) {
   return clamp(x, 0.0, 1.0);
@@ -12,42 +13,43 @@ vec3 clamp01(vec3 v) {
 
 // https://thebookofshaders.com/13/
 
-float fbm(vec2 st) {
+float fbm(vec3 p) {
   float value = 0.0;
   float amplitude = 0.5;
-  vec2 shift = vec2(100.0);
+  vec3 shift = vec3(100.0);
   // Rotate to reduce axial bias
-  mat2 rotation = mat2(
-    cos(0.5), sin(0.5),
-    -sin(0.5), cos(0.5)
+  mat3 rotation = mat3(
+    cos(0.5), sin(0.5), 0.0,
+    -sin(0.5), cos(0.5), 0.0,
+    0.0, 0.0, 1.0
   );
-  for (int i = 0; i < 5; i++) {
-    value += amplitude * map(noise(st), -1.0, 1.0, 0.0, 1.0);
-    st = rotation * st;
-    st *= 2.0;
-    st += shift;
+  for (int i = 0; i < 4; i++) {
+    value += amplitude * map(noise(p), -1.0, 1.0, 0.0, 1.0);
+    p = rotation * p;
+    p *= 2.0;
+    p += shift;
     amplitude *= 0.5;
   }
   return value;
 }
 
-vec4 cloud(vec2 st, float t) {
-  vec2 q = vec2(0.0);
-  q.x = fbm(st);
-  q.y = fbm(st + 1.0);
+vec4 cloud(vec3 p, float t) {
+  vec3 q = vec3(0.0);
+  q.x = fbm(p);
+  q.y = fbm(p + 1.0);
 
-  vec2 r = vec2(0.0);
-  r.x = fbm(st + q + vec2(1.7, 9.2) + 0.15 * t);
-  r.y = fbm(st + q + vec2(8.3, 2.8) + 0.13 * t);
+  vec3 r = vec3(0.0);
+  r.x = fbm(p + q + vec3(1.7, 9.2, 3.1) - 0.05 * t);
+  r.y = fbm(p + q + vec3(8.3, 2.8, 5.4) + 0.03 * t);
 
-  float f = fbm(st + r);
+  float f = fbm(p + r);
 
   vec3 color = vec3(0.0);
-  color = mix(color, vec3(0.4, 0.5, 0.8), clamp01(length(q)));
+  color = mix(color, vec3(0.4, 0.4, 0.8), clamp01(length(q)));
   color = mix(color, vec3(1.0), clamp01(1.5 * r.x));
   color = clamp01(color);
 
-  float alpha = gain(f, 10.0);
+  float alpha = gain(f, 9.0);
   alpha = clamp01(alpha);
 
   return vec4(color, alpha);
@@ -58,7 +60,7 @@ vec3 skyGradient(vec2 uv) {
   vec3 fg = vec3(0.314, 0.686, 0.894);
 
   float k = uv.y;
-  k *= map(noise(uv), -1.0, 1.0, 0.0, 1.5);
+  k *= map(noise(vec3(uv, 1.5)), -1.0, 1.0, 0.0, 1.5);
   k = clamp01(k);
   return mix(bg, fg, k);
 }
@@ -75,13 +77,14 @@ void main() {
   vec2 repeat = vec2(2.0, 10.0);
   vec2 offset = vec2(15.0);
 
-  float scrollSpeed = 0.07;
+  float scrollSpeed = 0.04;
   offset.x += t * scrollSpeed;
 
   vec2 st = uv * repeat + offset;
+  vec3 p = vec3(st, u_mouse.x);
 
-  float warpSpeed = 0.5;
-  vec4 cloudColor = cloud(st, t * warpSpeed);
+  float warpSpeed = 0.3;
+  vec4 cloudColor = cloud(p, t * warpSpeed);
 
   // Fade top to bottom:
   cloudColor.a *= map(uv.y, 0.2, 0.7, 0.0, 1.0);
