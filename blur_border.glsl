@@ -14,9 +14,12 @@ void main() {
     smoothstep(0.0, thickness.y, distanceToEdge.y),
     cornerSmoothness
   );
-  alpha = 1.0 - alpha;
 
-  // FIXME: alpha isn't 0 in the center
+  // I'm not sure why, but this value isn't 1 unless cornerSmoothness is 0. We
+  // can use this to properly invert alpha, so that it reaches 0 at the center
+  // of the frame.
+  float unionOfOne = smoothUnion(1.0, 1.0, cornerSmoothness);
+  alpha = unionOfOne - alpha;
 
   gl_FragColor = vec4(vec3(alpha), 1.0);
 }
