@@ -1,7 +1,5 @@
 #pragma glslify: map = require(./lib/map)
 #pragma glslify: clamp01 = require(./lib/clamp01)
-#pragma glslify: valueNoise = require(./lib/valueNoise)
-#pragma glslify: cubicPulse = require(./lib/iq/cubicPulse)
 
 #pragma glslify: noise = require(glsl-noise/periodic/2d)
 
