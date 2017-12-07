@@ -5,9 +5,7 @@
 
 #define TWOPI 2.0 * 3.14159
 
-#define ANIMATION_LOOP_TIME 2.0
-
-float streaks(vec2 uv, float t) {
+float streaks(vec2 uv) {
   float theta = atan(uv.y, uv.x);
   theta /= TWOPI;
 
@@ -16,14 +14,6 @@ float streaks(vec2 uv, float t) {
   const int streakRepeat = 10;
 
   float v = noise(vec2(theta + offset) * float(streakRepeat), vec2(float(streakRepeat)));
-
-  // const float pulseDuration = 0.1;
-  // float pulseCenter = ANIMATION_LOOP_TIME - pulseDuration;
-  //
-  // t = mod(t, ANIMATION_LOOP_TIME);
-  // float threshold = cubicPulse(pulseCenter, pulseDuration, t);
-  // threshold = map(threshold, 0.0, 1.0, 0.1, -0.03);
-  // return step(threshold, v);
 
   return step(0.0, v);
 }
@@ -55,8 +45,7 @@ void main() {
 
   vec3 color = bgColor;
 
-  float t = u_time;
-  color = mix(color, streakColor, streaks(uv, t));
+  color = mix(color, streakColor, streaks(uv));
 
   vec2 gridSize = u_resolution / 40.0;
   color = mix(color, dotColor, dots(uv, gridSize));
