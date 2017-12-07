@@ -1,22 +1,25 @@
-#define EPSILON 1e-6
+#pragma glslify: noise = require('glsl-noise/simplex/4d')
 
 float sphereSDF(vec3 p, float radius) {
   return length(p) - radius;
 }
 
 float sceneSDF(vec3 p) {
-  float d = sphereSDF(p, 0.5);
+  float radius = 0.5;
+  radius += 0.17 * noise(vec4(p, u_time));
+  float d = sphereSDF(p, radius);
   return d;
 }
 
 // Ray marching from
 // http://jamie-wong.com/2016/07/15/ray-marching-signed-distance-functions
 float depth(vec3 eyePos, vec3 viewDir, float maxDepth) {
+  const float epsilon = 1e-6;
   float depth = 0.0;
   for (int i = 0; i < 255; i++) {
     vec3 p = eyePos + depth * viewDir;
     float dist = sceneSDF(p);
-    if (dist < EPSILON) {
+    if (dist < epsilon) {
       // We're inside the scene surface!
       return depth;
     }
@@ -25,17 +28,18 @@ float depth(vec3 eyePos, vec3 viewDir, float maxDepth) {
 
     if (depth >= maxDepth) {
       // Gone too far; give up
-      return maxDepth;
+      break;
     }
   }
-  return maxDepth;
+  return -1.0;
 }
 
 vec3 normal(vec3 p) {
+  const float epsilon = 1e-3;
   return normalize(vec3(
-    sceneSDF(vec3(p.x + EPSILON, p.y, p.z)) - sceneSDF(vec3(p.x - EPSILON, p.y, p.z)),
-    sceneSDF(vec3(p.x, p.y + EPSILON, p.z)) - sceneSDF(vec3(p.x, p.y - EPSILON, p.z)),
-    sceneSDF(vec3(p.x, p.y, p.z  + EPSILON)) - sceneSDF(vec3(p.x, p.y, p.z - EPSILON))
+    sceneSDF(vec3(p.x + epsilon, p.y, p.z)) - sceneSDF(vec3(p.x - epsilon, p.y, p.z)),
+    sceneSDF(vec3(p.x, p.y + epsilon, p.z)) - sceneSDF(vec3(p.x, p.y - epsilon, p.z)),
+    sceneSDF(vec3(p.x, p.y, p.z  + epsilon)) - sceneSDF(vec3(p.x, p.y, p.z - epsilon))
   ));
 }
 
@@ -55,7 +59,7 @@ void main() {
 
   vec3 color = vec3(0.0); // clear color
 
-  if (d < maxDepth - EPSILON) {
+  if (d > -0.5) {
     // Hit the surface.
 
     color = vec3(0.0, 0.0, 0.1); // ambient light
@@ -63,8 +67,10 @@ void main() {
     vec3 pointOnSurface = eyePos + viewDir * d;
     vec3 normalOnSurface = normal(pointOnSurface);
 
-    vec3 lightPos = vec3(0.0, 0.0, 1.0);
-    lightPos.xy = iMouse * 2.0 - 1.0;
+    vec3 lightPos = vec3(-1.0, 1.0, 1.0);
+    if (iMouse.x > 0.0 && iMouse.y > 0.0) {
+      lightPos.xy = iMouse * 2.0 - 1.0;
+    }
     vec3 lightDir = normalize(-lightPos);
 
     const vec3 lightColor = vec3(0.5);
