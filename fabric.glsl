@@ -57,21 +57,16 @@ void main() {
   float repeat = 9.0;
   float speed = 0.;
 
-  float edgeNoisiness = 0.05;
-
   vec3 grainNoise = grain(uv);
 
+  float fuzziness = 0.003;
+  uv += fuzziness * grainNoise.rg;
+
   vec2 stripeUV = vec2(uv.x * repeat, t * speed);
-  float edgeNoise = grainNoise.r;
-  edgeNoise *= edgeNoise;
-  stripeUV.x += edgeNoisiness * edgeNoise;
   float verticalStipes = octaveNoise(stripeUV);
   verticalStipes = step(verticalStipes, 0.0);
 
   stripeUV = vec2(t * speed, uv.y * repeat);
-  edgeNoise = grainNoise.g;
-  edgeNoise *= edgeNoise;
-  stripeUV.y += edgeNoisiness * edgeNoise;
   float horizontalStripes = octaveNoise(stripeUV);
   horizontalStripes = step(horizontalStripes, 0.0);
 
