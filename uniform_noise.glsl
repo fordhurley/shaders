@@ -29,22 +29,32 @@ highp float rand3( const in vec2 uv ) {
 	return fract(sin(sn) * c);
 }
 
+// TODO: add https://www.shadertoy.com/view/4djSRW
+
 void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution;
 
-  float hash = hash(uv).x;
-  float randomFloat = getRandomFloat(uv);
-  float rand2 = rand2(uv);
-  float rand3 = rand3(uv);
+  const float speed = 0.001;
+  float t = u_time * speed;
 
-  // Hover your mouse over a quadrant to switch between the functions:
+  float hash = hash(uv + t).x;
+  float randomFloat = getRandomFloat(uv + t);
+  float rand2 = rand2(uv + t);
+  float rand3 = rand3(uv + t);
 
   float value = 0.0;
-  vec2 quadrant = floor(u_mouse * 2.0);
+  vec2 quadrant = floor(uv * 2.0);
   value += (quadrant == vec2(0.0, 1.0)) ? hash : 0.0; // top left
   value += (quadrant == vec2(1.0, 1.0)) ? randomFloat : 0.0; // top right
   value += (quadrant == vec2(0.0, 0.0)) ? rand2 : 0.0; // bottom left
   value += (quadrant == vec2(1.0, 0.0)) ? rand3 : 0.0; // bottom right
+
+  const float thickness = 0.001;
+  float lines = 0.0;
+  lines += step(0.5-thickness, uv.x) - step(0.5+thickness, uv.x);
+  lines += step(0.5-thickness, uv.y) - step(0.5+thickness, uv.y);
+
+  value *= 1.0 - lines;
 
   gl_FragColor = vec4(vec3(value), 1.0);
 }
