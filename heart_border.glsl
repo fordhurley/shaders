@@ -32,7 +32,11 @@ void main() {
   st.y -= 1.5;
   float radius = length(st);
   float theta = atan(st.y, st.x);
-  if (radius < heart(theta)) {
+  float heartRadius = heart(theta);
+  const float borderThickness = 0.15;
+  if (radius < heartRadius - borderThickness) {
+    color = vec3(1, 0.761, 0.871);
+  } else if (radius < heartRadius) {
     color = gradient(1.0 - uv - amplitude * sin(t));
   }
 
