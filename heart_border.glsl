@@ -11,6 +11,13 @@ vec3 gradient(vec2 uv) {
   return mix(startColor, endColor, k);
 }
 
+// http://mathworld.wolfram.com/HeartCurve.html
+float heart(float theta) {
+  float s = sin(theta);
+  float c = cos(theta);
+  return 2.0 - 2.0 * s + s * sqrt(abs(c)) / (s + 1.4);
+}
+
 void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution;
 
@@ -21,11 +28,11 @@ void main() {
 
   vec3 color = gradient(uv + amplitude * sin(t));
 
-  // TODO: heart shape
-  float radius = 2.0 * distance(uv, vec2(0.5));
-  if (radius < 0.7) {
-    color = vec3(1, 0.761, 0.871);
-  } else if (radius < 0.75) {
+  vec2 st = 5.0 * (uv - vec2(0.5));
+  st.y -= 1.5;
+  float radius = length(st);
+  float theta = atan(st.y, st.x);
+  if (radius < heart(theta)) {
     color = gradient(1.0 - uv - amplitude * sin(t));
   }
 
