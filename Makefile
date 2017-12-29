@@ -3,7 +3,7 @@ all: build/.touch
 package-lock.json: package.json
 	npm install
 
-build/.touch: $(wildcard src/*) webpack.config.js package-lock.json
+build/.touch: $(wildcard gallery/*) $(wildcard lib/*) $(wildcard shaders/*) $(wildcard textures/*) webpack.config.js package-lock.json
 	./node_modules/.bin/webpack --config webpack.config.js
 	touch $@ # so that make can tell when this is needed
 
