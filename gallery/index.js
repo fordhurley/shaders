@@ -63,7 +63,7 @@ function makeShaderEl(shader, solo) {
     // ../textures/foo.jpg -> textures/foo.jpg
     return filePath.replace(/^\.\.\//, '');
   };
-  shaderCanvas.setShader(shader.source);
+  setTimeout(shaderCanvas.setShader.bind(shaderCanvas, shader.source), 0);
   wrapper.appendChild(shaderCanvas.domElement);
   shaderCanvas.togglePause();
 
