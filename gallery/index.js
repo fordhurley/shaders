@@ -79,9 +79,6 @@ function makeShader(shader, title) {
 
 const main = document.querySelector("main");
 
-import halftone from "../halftone.glsl";
-main.appendChild(makeShader(halftone, "halftone"));
-
 import uniform_noise from "../uniform_noise.glsl";
 main.appendChild(makeShader(uniform_noise, "uniform noise comparison"));
 
@@ -100,9 +97,6 @@ main.appendChild(makeShader(refract, "refract"));
 import ray_march from "../ray_march.glsl";
 main.appendChild(makeShader(ray_march, "ray march"));
 
-import directional_lighting from "../directional_lighting.glsl";
-main.appendChild(makeShader(directional_lighting, "directional lighting"));
-
 import flower2 from "../flower2.glsl";
 main.appendChild(makeShader(flower2, "flower2"));
 
@@ -117,6 +111,9 @@ main.appendChild(makeShader(cells, "cells"));
 
 import fabric from "../fabric.glsl";
 main.appendChild(makeShader(fabric, "fabric"));
+
+import directional_lighting from "../directional_lighting.glsl";
+main.appendChild(makeShader(directional_lighting, "directional lighting"));
 
 import projectile from "../projectile.glsl";
 main.appendChild(makeShader(projectile, "projectile"));
