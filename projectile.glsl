@@ -25,14 +25,17 @@ float circle(vec2 center, float radius, vec2 st) {
 }
 
 void main() {
-  vec2 uv = gl_FragCoord.xy;
+  vec2 uv = gl_FragCoord.xy / u_resolution;
+  float aspect = u_resolution.x / u_resolution.y;
+  uv.x *= aspect;
 
   float loopTime = 2.5;
 
-  vec3 gravity = vec3(0.0, -2000.0, 0.0);
+  vec3 gravity = vec3(0.0, -1.0, 0.0);
   float mass = 2.0;
   vec3 pos0 = vec3(0.0);
-  vec3 vel0 = vec3(500.0, 2000.0, 0.0);
+  vec3 vel0 = vec3(0.5, 1.3, 0.0);
+  const float radius = 0.02;
 
   float t = mod(iGlobalTime, loopTime);
 
@@ -40,13 +43,13 @@ void main() {
 
   vec3 position;
   position = projectile(gravity, pos0, vel0, t);
-  color += vec3(1.0, 0.0, 0.0) * circle(position.xy, 20.0, uv);
+  color += vec3(1.0, 0.0, 0.0) * circle(position.xy, radius, uv);
 
   position = projectileWithDrag(0.5, gravity, mass, pos0, vel0, t);
-  color += vec3(0.0, 1.0, 0.0) * circle(position.xy, 20.0, uv);
+  color += vec3(0.0, 1.0, 0.0) * circle(position.xy, radius, uv);
 
   position = projectileWithDrag(2.0, gravity, mass, pos0, vel0, t);
-  color += vec3(0.0, 0.0, 1.0) * circle(position.xy, 20.0, uv);
+  color += vec3(0.0, 0.0, 1.0) * circle(position.xy, radius, uv);
 
   gl_FragColor = vec4(color, 1.0);
 }
