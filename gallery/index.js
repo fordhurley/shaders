@@ -1,9 +1,27 @@
+import scrollMonitor from "scrollmonitor";
 import ShaderCanvas from "shader-canvas";
 import slugify from "slugify";
 
 import "./style.scss";
 
 const MAX_SIZE = 600;
+
+function pauseWhenScrolledOffscreen(shaderCanvas) {
+  var monitor = scrollMonitor.create(shaderCanvas.domElement);
+  if (shaderCanvas.paused !== monitor.isInViewport) {
+    shaderCanvas.togglePause();
+  }
+  monitor.enterViewport(function() {
+    if (shaderCanvas.paused) {
+      shaderCanvas.togglePause();
+    }
+  });
+  monitor.exitViewport(function() {
+    if (!shaderCanvas.paused) {
+      shaderCanvas.togglePause();
+    }
+  });
+}
 
 function makeShader(shader, title) {
   const slug = slugify(title);
@@ -40,6 +58,7 @@ function makeShader(shader, title) {
   const shaderCanvas = new ShaderCanvas();
   shaderCanvas.setShader(shader);
   wrapper.appendChild(shaderCanvas.domElement);
+  shaderCanvas.togglePause();
 
   function resize() {
     shaderCanvas.domElement.style = {}; // fall back to document style temporarily
@@ -48,8 +67,12 @@ function makeShader(shader, title) {
     var size = Math.min(width, MAX_SIZE);
     shaderCanvas.setSize(size, size);
   }
-  window.addEventListener("load", resize);
   window.addEventListener("resize", resize);
+
+  window.addEventListener("load", function() {
+    resize();
+    pauseWhenScrolledOffscreen(shaderCanvas);
+  });
 
   return el;
 }
@@ -58,6 +81,9 @@ const main = document.querySelector("main");
 
 import halftone from "../halftone.glsl";
 main.appendChild(makeShader(halftone, "halftone"));
+
+import uniform_noise from "../uniform_noise.glsl";
+main.appendChild(makeShader(uniform_noise, "uniform noise comparison"));
 
 import cloud from "../cloud.glsl";
 main.appendChild(makeShader(cloud, "cloud"));
