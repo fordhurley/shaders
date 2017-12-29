@@ -19,7 +19,7 @@ function makeShaderEl(shader, solo) {
     titleEl = document.createElement("a");
     titleEl.href = `#${shader.slug}`;
     titleEl.addEventListener("click", function(e) {
-      init(shader.slug);
+      window.location.reload();
     });
   }
   titleEl.textContent = shader.title;
