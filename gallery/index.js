@@ -4,54 +4,59 @@ import ShaderCanvas from "shader-canvas";
 import "./style.scss";
 import shaders from "./shaders";
 
-function pauseWhenScrolledOffscreen(shaderCanvas) {
-  var monitor = scrollMonitor.create(shaderCanvas.domElement);
-  if (shaderCanvas.paused !== monitor.isInViewport) {
-    shaderCanvas.togglePause();
-  }
-  monitor.enterViewport(function() {
-    if (shaderCanvas.paused) {
-      shaderCanvas.togglePause();
-    }
-  });
-  monitor.exitViewport(function() {
-    if (!shaderCanvas.paused) {
-      shaderCanvas.togglePause();
-    }
-  });
-}
-
-function makeShaderEl(shader) {
-  const MAX_SIZE = 600;
-
+function makeShaderEl(shader, solo) {
   const el = document.createElement("div");
   el.classList.add("shader");
 
   const metaTop = document.createElement("div");
   metaTop.classList.add("meta");
-  metaTop.classList.add("top");
-  metaTop.innerHTML = `
-    <span>${shader.title}</span>
-    <a class="source hidden" href="javascript:">source</a>
-  `;
   el.appendChild(metaTop);
+
+  let titleEl;
+  if (solo) {
+    titleEl = document.createElement("span");
+  } else {
+    titleEl = document.createElement("a");
+    titleEl.href = `#${shader.slug}`;
+    titleEl.addEventListener("click", function(e) {
+      init(shader.slug);
+    });
+  }
+  titleEl.textContent = shader.title;
+  metaTop.appendChild(titleEl);
 
   const wrapper = document.createElement("div");
   wrapper.classList.add("canvas-wrapper");
   wrapper.id = "shader-${slug}"
   el.appendChild(wrapper);
 
-  const sourceEl = document.createElement("pre");
-  sourceEl.classList.add("shader-source");
-  sourceEl.classList.add("hidden");
-  sourceEl.textContent = shader.source;
-  wrapper.appendChild(sourceEl);
+  const metaBottom = document.createElement("div");
+  metaBottom.classList.add("meta");
+  el.appendChild(metaBottom);
 
-  const sourceButton = metaTop.querySelector(".source");
-  sourceButton.addEventListener("click", function(e) {
-    e.preventDefault();
-    sourceEl.classList.toggle("hidden");
-  });
+  if (solo) {
+    const sourceEl = document.createElement("pre");
+    sourceEl.classList.add("shader-source");
+    sourceEl.classList.add("hidden");
+    sourceEl.textContent = shader.source;
+    wrapper.appendChild(sourceEl);
+
+    const sourceButton = document.createElement("a");
+    sourceButton.classList.add("source");
+    sourceButton.href = "javascript:";
+    sourceButton.textContent = "source";
+    metaTop.append(sourceButton);
+
+    sourceButton.addEventListener("click", function(e) {
+      e.preventDefault();
+      sourceEl.classList.toggle("hidden");
+    });
+
+    const backButton = document.createElement("a");
+    backButton.href = "./";
+    backButton.textContent = "more";
+    metaBottom.appendChild(backButton);
+  }
 
   const shaderCanvas = new ShaderCanvas();
   shaderCanvas.buildTextureURL = function(filePath) {
@@ -64,37 +69,78 @@ function makeShaderEl(shader) {
 
   function resize() {
     shaderCanvas.domElement.style = {}; // fall back to document style temporarily
-    var style = window.getComputedStyle(shaderCanvas.domElement);
-    var width = parseFloat(style.width);
-    var size = Math.min(width, MAX_SIZE);
-    shaderCanvas.setSize(size, size);
+    const style = window.getComputedStyle(shaderCanvas.domElement);
+    const width = parseFloat(style.width);
+    shaderCanvas.setSize(width, width);
   }
   window.addEventListener("resize", resize);
 
-  window.addEventListener("load", function() {
-    resize();
-    pauseWhenScrolledOffscreen(shaderCanvas);
+  const monitor = scrollMonitor.create(shaderCanvas.domElement);
+  monitor.enterViewport(function() {
+    if (shaderCanvas.paused) {
+      shaderCanvas.togglePause();
+    }
   });
+  monitor.exitViewport(function() {
+    if (!shaderCanvas.paused) {
+      shaderCanvas.togglePause();
+    }
+  });
+
+  function initShader() {
+    resize();
+    if (shaderCanvas.paused !== monitor.isInViewport) {
+      shaderCanvas.togglePause();
+    }
+  }
+
+  if (document.readyState === "complete") {
+    setTimeout(initShader, 0);
+  } else {
+    window.addEventListener("load", initShader);
+  }
+
+  el.dispose = function() {
+    console.log("dispose", shader.slug);
+    window.removeEventListener("resize", resize);
+    shaderCanvas.dispose();
+    monitor.destroy();
+  };
 
   return el;
 }
 
+function init(shaderSlug) {
+  const main = document.querySelector("main");
 
-const main = document.querySelector("main");
+  while (main.firstChild) {
+    const child = main.firstChild;
+    if (child.dispose) {
+      child.dispose();
+    }
+    main.removeChild(child);
+  }
 
-let shader;
-if (window.location.hash) {
-  const slug = window.location.hash.slice(1);
-  shader = shaders.find(s => s.slug === slug);
-  if (!shader) {
-    console.warn("No shader found for:", window.location.hash);
+  if (!shaderSlug && window.location.hash) {
+    shaderSlug = window.location.hash.slice(1);
+  }
+
+  let shader;
+  if (shaderSlug) {
+    shader = shaders.find(s => s.slug === shaderSlug);
+    if (!shader) {
+      console.warn("No shader found for:", window.location.hash);
+    }
+  }
+
+  if (shader) {
+    main.classList.add("solo");
+    main.appendChild(makeShaderEl(shader, true));
+  } else {
+    shaders.forEach(function(shader) {
+      main.appendChild(makeShaderEl(shader, false));
+    });
   }
 }
 
-if (shader) {
-  main.appendChild(makeShaderEl(shader));
-} else {
-  shaders.forEach(function(shader) {
-    main.appendChild(makeShaderEl(shader));
-  });
-}
+init();

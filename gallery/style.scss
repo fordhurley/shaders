@@ -39,6 +39,11 @@ main {
   display: grid;
   grid-gap: 20px;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+
+  &.solo {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 div.shader {
@@ -62,16 +67,18 @@ div.shader {
       height: 100%;
     }
 
-    .shader-src {
+    .shader-source {
       position: absolute;
       z-index: 1;
       top: 1em;
       right: 1em;
       left: 1em;
-
-      pre {
-        border-radius: 0;
-      }
+      bottom: 1em;
+      padding: 1em;
+      background-color: rgba(255, 255, 255, 0.8);
+      overflow: auto;
+      font-family: "Menlo", "Monaco", "Consolas", "Courier New", monospace;
+      font-size: 0.8em;
     }
   }
 
@@ -80,11 +87,6 @@ div.shader {
     flex-direction: row;
     justify-content: space-between;
     align-items: baseline;
-
-    .credit {
-      color: dimgrey;
-      // font-size: 0.8em;
-    }
   }
 
   .hidden {
