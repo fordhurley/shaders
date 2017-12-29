@@ -4,6 +4,8 @@ $accent-color: #c00;
 $text-color: black;
 $dim-color: #999;
 
+$padding: 20px;
+
 html {
   box-sizing: border-box;
 }
@@ -19,7 +21,7 @@ body {
   width: 100%;
   max-width: $main-width;
   margin: auto;
-  padding: 0 20px;
+  padding: 0 $padding;
 }
 
 a {
@@ -28,16 +30,16 @@ a {
 }
 
 main {
-  margin: auto;
+  margin: $padding auto;
 
   @media only screen and (max-width: $main-width) {
     padding-left: 0;
     padding-right: 0;
   }
 
-  padding: 20px;
+  padding: 0;
   display: grid;
-  grid-gap: 20px;
+  grid-gap: $padding;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
 
   &.solo {
@@ -70,11 +72,11 @@ div.shader {
     .shader-source {
       position: absolute;
       z-index: 1;
-      top: 1em;
-      right: 1em;
-      left: 1em;
-      bottom: 1em;
-      padding: 1em;
+      top: $padding;
+      right: $padding;
+      left: $padding;
+      bottom: $padding;
+      padding: $padding;
       background-color: rgba(255, 255, 255, 0.8);
       overflow: auto;
       font-family: "Menlo", "Monaco", "Consolas", "Courier New", monospace;
@@ -92,19 +94,12 @@ div.shader {
   .hidden {
     display: none;
   }
-
-  @media only screen and (max-width: 600px) {
-    .meta {
-      padding: 0 0.4em;
-    }
-  }
 }
 
 
 footer {
   text-align: center;
-  border-top: 1px solid #eee;
-  padding: 2em 0;
+  margin: $padding 0;
   width: 100%;
 
   color: $dim-color;
