@@ -1,81 +1,52 @@
+import slugify from "slugify";
+
 var shaders = [];
 
+function registerShader(source, title) {
+  shaders.push({
+    source: source,
+    title: title,
+    slug: slugify(title),
+  });
+}
+
 import uniform_noise from "../shaders/uniform_noise.glsl";
-shaders.push({
-  source: uniform_noise,
-  title: "uniform noise comparison",
-});
+registerShader(uniform_noise, "uniform noise comparison");
 
 import cloud from "../shaders/cloud.glsl";
-shaders.push({
-  source: cloud,
-  title: "cloud",
-});
+registerShader(cloud, "cloud");
 
 import rain from "../shaders/rain.glsl";
-shaders.push({
-  source: rain,
-  title: "rain",
-});
+registerShader(rain, "rain");
 
 import ray_march_drip from "../shaders/ray_march_drip.glsl";
-shaders.push({
-  source: ray_march_drip,
-  title: "drip",
-});
+registerShader(ray_march_drip, "drip");
 
 import refract from "../shaders/refract.glsl";
-shaders.push({
-  source: refract,
-  title: "refract",
-});
+registerShader(refract, "refract");
 
 import ray_march from "../shaders/ray_march.glsl";
-shaders.push({
-  source: ray_march,
-  title: "ray march",
-});
+registerShader(ray_march, "ray march");
 
 import flower2 from "../shaders/flower2.glsl";
-shaders.push({
-  source: flower2,
-  title: "flower2",
-});
+registerShader(flower2, "flower2");
 
 import flower from "../shaders/flower.glsl";
-shaders.push({
-  source: flower,
-  title: "flower",
-});
+registerShader(flower, "flower");
 
 import dots from "../shaders/dots.glsl";
-shaders.push({
-  source: dots,
-  title: "dots",
-});
+registerShader(dots, "dots");
 
 import cells from "../shaders/cells.glsl";
-shaders.push({
-  source: cells,
-  title: "cells",
-});
+registerShader(cells, "cells");
 
 import fabric from "../shaders/fabric.glsl";
-shaders.push({
-  source: fabric,
-  title: "fabric",
-});
+registerShader(fabric, "fabric");
 
 import directional_lighting from "../shaders/directional_lighting.glsl";
-shaders.push({
-  source: directional_lighting,
-  title: "directional lighting",
-});
+registerShader(directional_lighting, "directional lighting");
 
 import projectile from "../shaders/projectile.glsl";
-shaders.push({
-  source: projectile,
-  title: "projectile",
-});
+registerShader(projectile, "projectile");
 
 export default shaders;

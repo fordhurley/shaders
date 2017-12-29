@@ -1,6 +1,5 @@
 import scrollMonitor from "scrollmonitor";
 import ShaderCanvas from "shader-canvas";
-import slugify from "slugify";
 
 import "./style.scss";
 import shaders from "./shaders";
@@ -22,10 +21,8 @@ function pauseWhenScrolledOffscreen(shaderCanvas) {
   });
 }
 
-function makeShader(source, title) {
+function makeShaderEl(shader) {
   const MAX_SIZE = 600;
-
-  const slug = slugify(title);
 
   const el = document.createElement("div");
   el.classList.add("shader");
@@ -34,7 +31,7 @@ function makeShader(source, title) {
   metaTop.classList.add("meta");
   metaTop.classList.add("top");
   metaTop.innerHTML = `
-    <span>${title}</span>
+    <span>${shader.title}</span>
     <a class="source hidden" href="javascript:">source</a>
   `;
   el.appendChild(metaTop);
@@ -47,7 +44,7 @@ function makeShader(source, title) {
   const sourceEl = document.createElement("pre");
   sourceEl.classList.add("shader-source");
   sourceEl.classList.add("hidden");
-  sourceEl.textContent = source;
+  sourceEl.textContent = shader.source;
   wrapper.appendChild(sourceEl);
 
   const sourceButton = metaTop.querySelector(".source");
@@ -61,7 +58,7 @@ function makeShader(source, title) {
     // ../textures/foo.jpg -> textures/foo.jpg
     return filePath.replace(/^\.\.\//, '');
   };
-  shaderCanvas.setShader(source);
+  shaderCanvas.setShader(shader.source);
   wrapper.appendChild(shaderCanvas.domElement);
   shaderCanvas.togglePause();
 
@@ -82,7 +79,22 @@ function makeShader(source, title) {
   return el;
 }
 
+
 const main = document.querySelector("main");
-shaders.forEach(function(shader) {
-  main.appendChild(makeShader(shader.source, shader.title));
-})
+
+let shader;
+if (window.location.hash) {
+  const slug = window.location.hash.slice(1);
+  shader = shaders.find(s => s.slug === slug);
+  if (!shader) {
+    console.warn("No shader found for:", window.location.hash);
+  }
+}
+
+if (shader) {
+  main.appendChild(makeShaderEl(shader));
+} else {
+  shaders.forEach(function(shader) {
+    main.appendChild(makeShaderEl(shader));
+  });
+}
