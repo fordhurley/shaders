@@ -129,7 +129,7 @@ function init(shaderSlug) {
   if (shaderSlug) {
     shader = shaders.find(s => s.slug === shaderSlug);
     if (!shader) {
-      console.warn("No shader found for:", window.location.hash);
+      console.warn("No shader found for:", shaderSlug);
     }
   }
 
