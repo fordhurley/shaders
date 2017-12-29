@@ -1,5 +1,5 @@
-#pragma glslify: map = require('./lib/map')
-#pragma glslify: valueNoise = require(./lib/valueNoise)
+#pragma glslify: map = require('../lib/map')
+#pragma glslify: valueNoise = require(../lib/valueNoise)
 
 void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution;

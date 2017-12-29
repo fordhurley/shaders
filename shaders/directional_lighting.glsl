@@ -1,4 +1,4 @@
-uniform sampler2D normalMap; // ./textures/brickwall_normal-map.jpg
+uniform sampler2D normalMap; // ../textures/brickwall_normal-map.jpg
 
 const float lightIntensity = 0.35;
 const float ambientIntensity = 0.45;

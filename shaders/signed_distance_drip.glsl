@@ -1,7 +1,7 @@
-#pragma glslify: colorizeSDF = require(./lib/colorizeSDF)
+#pragma glslify: colorizeSDF = require(../lib/colorizeSDF)
 
-uniform sampler2D tex; // ./textures/nyc_night.jpg
-uniform sampler2D texBlurred; // ./textures/nyc_night_blur.jpg
+uniform sampler2D tex; //  ../textures/nyc_night.jpg
+uniform sampler2D texBlurred; //  ../textures/nyc_night_blur.jpg
 
 #define DEBUG // comment to show the final image
 

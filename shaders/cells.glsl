@@ -1,8 +1,8 @@
 #pragma glslify: colormap = require('glsl-colormap/portland')
 
-#pragma glslify: map = require(./lib/map)
-#pragma glslify: hash = require(./lib/hash)
-#pragma glslify: clamp01 = require(./lib/clamp01)
+#pragma glslify: map = require(../lib/map)
+#pragma glslify: hash = require(../lib/hash)
+#pragma glslify: clamp01 = require(../lib/clamp01)
 
 void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution;

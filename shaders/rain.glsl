@@ -1,5 +1,5 @@
-#pragma glslify: valueNoise = require("./lib/valueNoise")
-#pragma glslify: map = require("./lib/map")
+#pragma glslify: valueNoise = require("../lib/valueNoise")
+#pragma glslify: map = require("../lib/map")
 
 #define PI 3.14159
 

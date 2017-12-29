@@ -1,5 +1,5 @@
-uniform sampler2D tex; // ./textures/nyc_night.jpg
-uniform sampler2D texBlurred; // ./textures/nyc_night_blur.jpg
+uniform sampler2D tex; //  ../textures/nyc_night.jpg
+uniform sampler2D texBlurred; //  ../textures/nyc_night_blur.jpg
 
 #define EPSILON 1e-4
 

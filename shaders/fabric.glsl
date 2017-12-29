@@ -1,4 +1,4 @@
-uniform sampler2D noiseTex; // textures/noise.png
+uniform sampler2D noiseTex; //  ../textures/noise.png
 
 vec3 grain(vec2 uv) {
   return texture2D(noiseTex, fract(uv)).rgb * 2.0 - 1.0;

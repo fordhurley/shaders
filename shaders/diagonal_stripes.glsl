@@ -1,4 +1,4 @@
-#pragma glslify: map = require('./lib/map')
+#pragma glslify: map = require('../lib/map')
 
 
 void main() {

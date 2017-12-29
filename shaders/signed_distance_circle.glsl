@@ -1,4 +1,4 @@
-#pragma glslify: colorizeSDF = require(./lib/colorizeSDF)
+#pragma glslify: colorizeSDF = require(../lib/colorizeSDF)
 
 float circleSDF(vec2 st, float radius) {
   return length(st) - radius;

@@ -1,6 +1,6 @@
 #define PI 3.14159
 
-#pragma glslify: map = require(./lib/map)
+#pragma glslify: map = require(../lib/map)
 
 // "Fold" up a space, like folding up paper for a snowflake.
 float fold(float x, float times) {

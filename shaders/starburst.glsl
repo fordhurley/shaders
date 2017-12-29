@@ -1,5 +1,5 @@
-#pragma glslify: valueNoise = require("./lib/valueNoise")
-#pragma glslify: map = require('./lib/map')
+#pragma glslify: valueNoise = require("../lib/valueNoise")
+#pragma glslify: map = require('../lib/map')
 
 // Remapping the unit interval into the unit interval by expanding the sides and
 // compressing the center, and keeping 1/2 mapped to 1/2.

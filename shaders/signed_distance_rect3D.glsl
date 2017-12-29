@@ -1,4 +1,4 @@
-#pragma glslify: colorizeSDF = require(./lib/colorizeSDF)
+#pragma glslify: colorizeSDF = require(../lib/colorizeSDF)
 
 float rectSDF(vec3 p, vec2 size) {
   vec2 d = abs(p.xy) - size/2.0;

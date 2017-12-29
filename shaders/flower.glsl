@@ -1,6 +1,6 @@
 #define PI 3.14159
 
-#pragma glslify: map = require(./lib/map)
+#pragma glslify: map = require(../lib/map)
 
 void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution.xy;

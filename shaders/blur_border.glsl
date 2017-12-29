@@ -1,4 +1,4 @@
-#pragma glslify: smoothUnion = require(./lib/iq/smoothUnion)
+#pragma glslify: smoothUnion = require(../lib/iq/smoothUnion)
 
 void main() {
   vec2 uv = gl_FragCoord.xy / iResolution.xy;

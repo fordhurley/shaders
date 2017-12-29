@@ -1,5 +1,5 @@
-#pragma glslify: map = require(./lib/map)
-#pragma glslify: gain = require(./lib/iq/gain)
+#pragma glslify: map = require(../lib/map)
+#pragma glslify: gain = require(../lib/iq/gain)
 #pragma glslify: noise = require(glsl-noise/classic/2d)
 
 

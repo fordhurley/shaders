@@ -56,6 +56,10 @@ function makeShader(shader, title) {
   });
 
   const shaderCanvas = new ShaderCanvas();
+  shaderCanvas.buildTextureURL = function(filePath) {
+    // ../textures/foo.jpg -> textures/foo.jpg
+    return filePath.replace(/^\.\.\//, '');
+  };
   shaderCanvas.setShader(shader);
   wrapper.appendChild(shaderCanvas.domElement);
   shaderCanvas.togglePause();
@@ -79,41 +83,41 @@ function makeShader(shader, title) {
 
 const main = document.querySelector("main");
 
-import uniform_noise from "../uniform_noise.glsl";
+import uniform_noise from "../shaders/uniform_noise.glsl";
 main.appendChild(makeShader(uniform_noise, "uniform noise comparison"));
 
-import cloud from "../cloud.glsl";
+import cloud from "../shaders/cloud.glsl";
 main.appendChild(makeShader(cloud, "cloud"));
 
-import rain from "../rain.glsl";
+import rain from "../shaders/rain.glsl";
 main.appendChild(makeShader(rain, "rain"));
 
-import ray_march_drip from "../ray_march_drip.glsl";
+import ray_march_drip from "../shaders/ray_march_drip.glsl";
 main.appendChild(makeShader(ray_march_drip, "drip"));
 
-import refract from "../refract.glsl";
+import refract from "../shaders/refract.glsl";
 main.appendChild(makeShader(refract, "refract"));
 
-import ray_march from "../ray_march.glsl";
+import ray_march from "../shaders/ray_march.glsl";
 main.appendChild(makeShader(ray_march, "ray march"));
 
-import flower2 from "../flower2.glsl";
+import flower2 from "../shaders/flower2.glsl";
 main.appendChild(makeShader(flower2, "flower2"));
 
-import flower from "../flower.glsl";
+import flower from "../shaders/flower.glsl";
 main.appendChild(makeShader(flower, "flower"));
 
-import dots from "../dots.glsl";
+import dots from "../shaders/dots.glsl";
 main.appendChild(makeShader(dots, "dots"));
 
-import cells from "../cells.glsl";
+import cells from "../shaders/cells.glsl";
 main.appendChild(makeShader(cells, "cells"));
 
-import fabric from "../fabric.glsl";
+import fabric from "../shaders/fabric.glsl";
 main.appendChild(makeShader(fabric, "fabric"));
 
-import directional_lighting from "../directional_lighting.glsl";
+import directional_lighting from "../shaders/directional_lighting.glsl";
 main.appendChild(makeShader(directional_lighting, "directional lighting"));
 
-import projectile from "../projectile.glsl";
+import projectile from "../shaders/projectile.glsl";
 main.appendChild(makeShader(projectile, "projectile"));

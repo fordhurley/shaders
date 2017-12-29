@@ -1,4 +1,4 @@
-#pragma glslify: colorizeSDF = require(./lib/colorizeSDF)
+#pragma glslify: colorizeSDF = require(../lib/colorizeSDF)
 
 float rect(vec2 st, vec2 size) {
   vec2 d = abs(st) - size/2.0;
@@ -13,29 +13,6 @@ float rect(vec2 st, vec2 size) {
   return min(inside, 0.0) + outside;
 }
 
-float circle(vec2 st, float radius) {
-  return length(st) - radius;
-}
-
-// Oriented horizontally (round caps are on left/right edges).
-float stadium(vec2 st, vec2 size) {
-  // The total width is radius + rectWidth + radius, where the radius is half
-  // the height.
-  float rectWidth = size.x - size.y;
-  // If the size is taller than it is wide, we end up with a circle.
-  rectWidth = max(rectWidth, 0.0);
-
-  float dRect = rect(st, vec2(rectWidth, size.y));
-  float dCircleLeft = circle(st + vec2(rectWidth/2.0, 0.0), size.y/2.0);
-  float dCircleRight= circle(st - vec2(rectWidth/2.0, 0.0), size.y/2.0);
-
-  // Union the three shapes:
-  float d = dRect;
-  d = min(d, dCircleLeft);
-  d = min(d, dCircleRight);
-  return d;
-}
-
 // Comment out to show the shape:
 #define SHOW_FIELD
 
@@ -48,7 +25,7 @@ void main() {
 
   vec3 color = vec3(0.0);
 
-  float d = stadium(st, vec2(1.5, 0.75));
+  float d = rect(st, vec2(1.0, 0.5));
   color += 1.0 - step(0.0, d);
 
   #ifdef SHOW_FIELD

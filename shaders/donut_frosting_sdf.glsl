@@ -7,8 +7,8 @@
 // frosting, which I could then used to calculate normals. So far, it isn't
 // working.
 
-#pragma glslify: valueNoise = require(./lib/valueNoise)
-#pragma glslify: colorizeSDF = require(./lib/colorizeSDF)
+#pragma glslify: valueNoise = require(../lib/valueNoise)
+#pragma glslify: colorizeSDF = require(../lib/colorizeSDF)
 
 #define EPSILON 1e-6
 

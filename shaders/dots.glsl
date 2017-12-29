@@ -1,4 +1,4 @@
-#pragma glslify: map = require('./lib/map')
+#pragma glslify: map = require('../lib/map')
 
 #define PI 3.14149
 #define ALL_ONES vec2(1.0)

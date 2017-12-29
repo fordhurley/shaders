@@ -3,7 +3,7 @@
 // circumference), and v is around the "tube" with 0 and 1 at the bottom. The
 // frosting is centered around v=0.5, and the melty edge runs parallel to u.
 
-#pragma glslify: valueNoise = require(./lib/valueNoise)
+#pragma glslify: valueNoise = require(../lib/valueNoise)
 
 float frostingMask(vec2 uv, float meltiness, float topEdge, float bottomEdge, float topRepeat, float bottomRepeat) {
   topEdge += meltiness * valueNoise(vec2(uv.x * topRepeat));
