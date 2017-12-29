@@ -5,23 +5,23 @@ import "./style.scss";
 import shaders from "./shaders";
 
 function makeShaderEl(shader, solo) {
-  const el = document.createElement("div");
+  const tagName = solo ? "div" : "a";
+  const el = document.createElement(tagName);
   el.classList.add("shader");
+
+  if (!solo) {
+    el.href = `#${shader.slug}`;
+    el.addEventListener("click", function(e) {
+      window.location.reload();
+    });
+  }
 
   const metaTop = document.createElement("div");
   metaTop.classList.add("meta");
   el.appendChild(metaTop);
 
-  let titleEl;
-  if (solo) {
-    titleEl = document.createElement("span");
-  } else {
-    titleEl = document.createElement("a");
-    titleEl.href = `#${shader.slug}`;
-    titleEl.addEventListener("click", function(e) {
-      window.location.reload();
-    });
-  }
+  let titleEl = document.createElement("span");
+  titleEl.classList.add("title");
   titleEl.textContent = shader.title;
   metaTop.appendChild(titleEl);
 
