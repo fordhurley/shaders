@@ -44,7 +44,7 @@ main {
   padding: 0;
   display: grid;
   grid-gap: $padding;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
 
   &.solo {
     display: flex;
