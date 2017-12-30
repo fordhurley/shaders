@@ -12,6 +12,7 @@ function makeShaderEl(shader, solo) {
   if (!solo) {
     el.href = `#${shader.slug}`;
     el.addEventListener("click", function(e) {
+      window.location.hash = `#${shader.slug}`;
       window.location.reload();
     });
   }
