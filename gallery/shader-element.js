@@ -65,31 +65,28 @@ export default function makeShaderElement(shader, solo) {
   wrapper.appendChild(shaderCanvas.domElement);
   shaderCanvas.togglePause();
 
+  const monitor = ScrollMonitor.create(shaderCanvas.domElement);
+
+  function togglePauseIfNeeded() {
+    if (shaderCanvas.paused === monitor.isFullyInViewport) {
+      shaderCanvas.togglePause();
+    }
+  }
+
   function resize() {
     shaderCanvas.domElement.style = {}; // fall back to document style temporarily
     const style = window.getComputedStyle(shaderCanvas.domElement);
     const width = parseFloat(style.width);
     shaderCanvas.setSize(width, width);
+    monitor.recalculateLocation();
+    togglePauseIfNeeded();
   }
   window.addEventListener("resize", resize);
 
-  const monitor = ScrollMonitor.create(shaderCanvas.domElement);
-  monitor.enterViewport(function() {
-    if (shaderCanvas.paused) {
-      shaderCanvas.togglePause();
-    }
-  });
-  monitor.exitViewport(function() {
-    if (!shaderCanvas.paused) {
-      shaderCanvas.togglePause();
-    }
-  });
-
   function initShader() {
     resize();
-    if (shaderCanvas.paused !== monitor.isInViewport) {
-      shaderCanvas.togglePause();
-    }
+    monitor.fullyEnterViewport(togglePauseIfNeeded);
+    monitor.partiallyExitViewport(togglePauseIfNeeded);
   }
 
   if (document.readyState === "complete") {
