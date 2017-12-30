@@ -19,8 +19,8 @@ registerShader(flower, "flower");
 import dots from "../shaders/dots.glsl";
 registerShader(dots, "dots");
 
-import cloud from "../shaders/cloud.glsl";
-registerShader(cloud, "cloud");
+import clouds from "../shaders/clouds.glsl";
+registerShader(clouds, "clouds");
 
 import rain from "../shaders/rain.glsl";
 registerShader(rain, "rain");
