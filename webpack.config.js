@@ -2,6 +2,7 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 
 module.exports = {
   entry: "./gallery/index.js",
@@ -36,5 +37,8 @@ module.exports = {
     new CopyWebpackPlugin([
       {from: "textures", to: "textures"},
     ]),
+    new UglifyJsPlugin({
+      sourceMap: true
+    }),
   ],
 };

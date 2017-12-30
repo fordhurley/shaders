@@ -20,6 +20,7 @@
     "scrollmonitor": "^1.2.4",
     "shader-canvas": "^0.3.0",
     "slugify": "^1.2.8",
+    "uglifyjs-webpack-plugin": "^1.1.5",
     "webpack": "^3.10.0",
     "webpack-dev-server": "^2.9.7"
   }
