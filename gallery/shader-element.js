@@ -36,7 +36,7 @@ export default function makeShaderElement(shader, solo) {
     const sourceEl = document.createElement("pre");
     sourceEl.classList.add("shader-source");
     sourceEl.classList.add("hidden");
-    sourceEl.textContent = shader.source;
+    sourceEl.textContent = shader.raw_source;
     wrapper.appendChild(sourceEl);
 
     const sourceButton = document.createElement("a");
