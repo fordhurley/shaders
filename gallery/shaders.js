@@ -11,6 +11,10 @@ function registerShader(source, raw_source, title) {
   });
 }
 
+import fireworks from "../shaders/fireworks.glsl";
+import fireworks_raw from "!raw-loader!../shaders/fireworks.glsl";
+registerShader(fireworks, fireworks_raw, "fireworks");
+
 import flower2 from "../shaders/flower2.glsl";
 import flower2_raw from "!raw-loader!../shaders/flower2.glsl";
 registerShader(flower2, flower2_raw, "flower2");
