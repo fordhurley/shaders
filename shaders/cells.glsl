@@ -17,10 +17,9 @@ void main() {
   vec2 cellUV = fract(uv * gridSize);
 
   // A random value for each cell:
-  vec2 cellSeed = hash(cellNum);
-  cellSeed = map(cellSeed, -1.0, 1.0, 0.1, 1.0);
+  float cellSeed = hash(cellNum);
 
-  vec3 color = colormap(cellSeed.x).rgb;
+  vec3 color = colormap(cellSeed).rgb;
 
   const float shadowIntensity = 0.85;
   float shadow = clamp01(map(cellUV.x, 0.5, 0.0, shadowIntensity, 1.0));
