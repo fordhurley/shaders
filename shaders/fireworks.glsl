@@ -1,4 +1,14 @@
-#define PI 3.14159
+#pragma glslify: hsv2rgb = require(glsl-hsv2rgb)
+
+#pragma glslify: hash = require(../lib/hash)
+#pragma glslify: map = require(../lib/map)
+
+vec2 polarCoords(vec2 st) {
+  float radius = length(st);
+  float theta = atan(st.y, st.x);
+  theta += PI;
+  return vec2(radius, theta);
+}
 
 // "Fold" up a space, like folding up paper for a snowflake.
 float fold(float x, float times) {
@@ -14,58 +24,54 @@ float radialLines(float theta, float width, float num) {
   return 1.0 - smoothstep(edge-fuzz, edge, fold(theta, num));
 }
 
-vec2 polarCoords(vec2 st) {
-  float radius = length(st);
-  float theta = atan(st.y, st.x);
-  theta += PI;
-  return vec2(radius, theta);
+vec4 randomBurst(vec2 st, float t, float burstIndex) {
+  vec4 seed = vec4(hash(vec2(burstIndex)));
+  seed.y = hash(seed.xy + 12.329);
+  seed.z = hash(seed.yz * PI);
+  seed.w = hash(seed.xw * 417.109 - PI*0.1);
+
+  vec2 center = vec2(
+    mix(-0.6, 0.6, seed.x),
+    mix(-0.2, 0.3, seed.y)
+  );
+  float scale = mix(0.8, 2.0, seed.z);
+  float thetaOffset = hash(seed.xx);
+  vec3 color = hsv2rgb(vec3(hash(seed.xy), hash(seed.yz) * 0.4, 1.0));
+  float points = floor(mix(11.0, 16.0, hash(seed.zw)));
+  float length = mix(0.4, 0.6, hash(seed.wx));
+  float speed = mix(1.0, 1.2, hash(seed.yx));
+  float delay = hash(seed.zy) * 0.1;
+
+  vec2 polar = polarCoords(st - center);
+  float radius = polar.r;
+  radius /= scale;
+  float theta = polar.y / (2.0 * PI); // 0 to 1
+  theta += thetaOffset;
+
+  float rOuter = t * speed - delay;
+  float rInner = rOuter - length;
+  float width = sqrt(rOuter - radius) - sqrt(radius);
+  float fuzz = 0.1;
+  width *= smoothstep(rInner-fuzz, rInner+fuzz, radius);
+  width *= 1.0 - smoothstep(rOuter-fuzz, rOuter+fuzz, radius);
+  width = clamp(width, 0.0, 1.0);
+  return vec4(color, radialLines(theta, width, points));
 }
 
 void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution.xy;
 
-  float speed = 0.25;
-  float t = fract(u_time * speed);
-
+  // Background gradient:
   vec3 color = vec3(0.06, 0.03, 0.12);
   color = mix(color, vec3(0.05, 0.0, 0.1), uv.y);
 
-  uv = uv * 2.0 - 1.0;
+  float loopTime = 1.6;
+  float t = fract(u_time / loopTime);
+  float burstIndex = floor(u_time / loopTime);
 
-  vec2 polar = polarCoords(uv + vec2(0.2, 0.2));
-  float radius = polar.r * 0.75;
-  float theta = polar.y / (2.0 * PI);
+  vec2 st = uv * 2.0 - 1.0;
 
-  float rOuter = t * 3.5;
-  float rInner = rOuter - 0.5;
-  float width = sqrt(rOuter - radius) - sqrt(radius);
-  width *= smoothstep(rInner-0.1, rInner+0.1, radius) - smoothstep(rOuter-0.1, rOuter+0.1, radius);
-  width = clamp(width, 0.0, 1.0);
-  vec4 burst = vec4(0.8, 0.1, 0.2, radialLines(theta, width, 12.0));
-  color = mix(color, burst.rgb, burst.a);
-
-  polar = polarCoords(uv + vec2(-0.2, -0.1));
-  radius = polar.r * 0.5;
-  theta = polar.y / (2.0 * PI);
-
-  rOuter = t * 3.0 - 1.2;
-  rInner = rOuter - 0.5;
-  width = sqrt(rOuter - radius) - sqrt(radius);
-  width *= smoothstep(rInner-0.1, rInner+0.1, radius) - smoothstep(rOuter-0.1, rOuter+0.1, radius);
-  width = clamp(width, 0.0, 1.0);
-  burst = vec4(0.8, 0.8, 0.6, radialLines(theta, width, 16.0));
-  color = mix(color, burst.rgb, burst.a);
-
-  polar = polarCoords(uv + vec2(0.0, -0.25));
-  radius = polar.r * 0.6;
-  theta = polar.y / (2.0 * PI);
-
-  rOuter = t * 4.0 - 3.0;
-  rInner = rOuter - 0.5;
-  width = sqrt(rOuter - radius) - sqrt(radius);
-  width *= smoothstep(rInner-0.1, rInner+0.1, radius) - smoothstep(rOuter-0.1, rOuter+0.1, radius);
-  width = clamp(width, 0.0, 1.0);
-  burst = vec4(0.8, 0.1, 0.6, radialLines(theta + 1.0/24.0, width, 12.0));
+  vec4 burst = randomBurst(st, t, burstIndex);
   color = mix(color, burst.rgb, burst.a);
 
   gl_FragColor = vec4(color, 1.0);

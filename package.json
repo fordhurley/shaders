@@ -2,6 +2,7 @@
   "name": "shaders",
   "dependencies": {
     "glsl-colormap": "^1.0.1",
+    "glsl-hsv2rgb": "^1.0.0",
     "glsl-noise": "0.0.0",
     "glslify-loader": "^1.0.2"
   },
