@@ -34,13 +34,13 @@ vec4 randomBurst(vec2 st, float t, float burstIndex) {
     mix(-0.6, 0.6, seed.x),
     mix(-0.2, 0.3, seed.y)
   );
-  float scale = mix(0.8, 2.0, seed.z);
+  float scale = mix(0.8, 2.3, seed.z);
   float thetaOffset = hash(seed.xx);
-  vec3 color = hsv2rgb(vec3(hash(seed.xy), hash(seed.yz) * 0.4, 1.0));
-  float points = floor(mix(11.0, 16.0, hash(seed.zw)));
+  vec3 color = hsv2rgb(vec3(hash(seed.xy), hash(seed.yz) * 0.3 + 0.1, 1.0));
+  float points = floor(mix(10.0, 16.5, hash(seed.zw)));
   float length = mix(0.4, 0.6, hash(seed.wx));
-  float speed = mix(1.0, 1.2, hash(seed.yx));
-  float delay = hash(seed.zy) * 0.1;
+  float speed = mix(1.0, 1.3, hash(seed.yx));
+  float delay = hash(seed.zy) * 0.15;
 
   vec2 polar = polarCoords(st - center);
   float radius = polar.r;
@@ -62,8 +62,8 @@ void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution.xy;
 
   // Background gradient:
-  vec3 color = vec3(0.06, 0.03, 0.12);
-  color = mix(color, vec3(0.05, 0.0, 0.1), uv.y);
+  vec3 color = vec3(0.1, 0.05, 0.2);
+  color = mix(color, vec3(0.06, 0.01, 0.1), uv.y);
 
   float loopTime = 1.6;
   float t = fract(u_time / loopTime);
