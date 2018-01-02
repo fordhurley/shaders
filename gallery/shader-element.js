@@ -25,7 +25,7 @@ export default function makeShaderElement(shader, solo) {
 
   const wrapper = document.createElement("div");
   wrapper.classList.add("canvas-wrapper");
-  wrapper.id = "shader-${slug}"
+  wrapper.id = `shader-${shader.slug}`
   el.appendChild(wrapper);
 
   const metaBottom = document.createElement("div");
@@ -107,7 +107,6 @@ export default function makeShaderElement(shader, solo) {
   }
 
   el.dispose = function() {
-    console.log("dispose", shader.slug);
     window.removeEventListener("resize", resize);
     shaderCanvas.dispose();
     monitor.destroy();

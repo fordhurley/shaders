@@ -1,3 +1,4 @@
 node_modules
 *.mp4
 build
+gallery/shaders.js
