@@ -1,6 +1,11 @@
 import ScrollMonitor from "scrollmonitor";
 import ShaderCanvas from "shader-canvas";
 
+function fixTextureURL(filePath) {
+  // ../textures/foo.jpg -> textures/foo.jpg
+  return filePath.replace(/^\.\.\//, '');
+};
+
 export default function makeShaderElement(shader, solo) {
   const tagName = solo ? "div" : "a";
   const el = document.createElement(tagName);
@@ -57,10 +62,7 @@ export default function makeShaderElement(shader, solo) {
   }
 
   const shaderCanvas = new ShaderCanvas();
-  shaderCanvas.buildTextureURL = function(filePath) {
-    // ../textures/foo.jpg -> textures/foo.jpg
-    return filePath.replace(/^\.\.\//, '');
-  };
+  shaderCanvas.buildTextureURL = fixTextureURL
   setTimeout(shaderCanvas.setShader.bind(shaderCanvas, shader.source), 0);
   wrapper.appendChild(shaderCanvas.domElement);
   shaderCanvas.togglePause();
