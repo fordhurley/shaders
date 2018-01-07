@@ -1,4 +1,5 @@
 #pragma glslify: map = require(../lib/map)
+#pragma glslify: cubicPulse = require(../lib/iq/cubicPulse)
 #pragma glslify: gain = require(../lib/iq/gain)
 #pragma glslify: noise = require(glsl-noise/classic/2d)
 
@@ -69,24 +70,31 @@ vec3 gradient(vec2 uv) {
 void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution;
 
-  float t = u_time;
+  const float loopTime = 8.0;
+  float t = mod(u_time, loopTime) / loopTime;
 
   vec3 color = gradient(uv);
 
   vec2 repeat = vec2(4.0);
-  vec2 offset = vec2(7.0);
+  repeat.x *= u_resolution.x / u_resolution.y;
+  vec2 offset = vec2(0.0);
 
-  float scrollSpeed = -0.5;
-  offset.x += t * scrollSpeed;
+  vec2 steamVelocity = vec2(4.0, 2.5);
+  offset -= t * steamVelocity;
 
-  vec2 st = uv * repeat + offset;
+  vec2 steamUV = uv * repeat + offset;
 
-  float warpSpeed = 3.0;
-  vec4 cloudColor = cloud(st, t * warpSpeed);
+  float warpSpeed = 25.0;
+  vec4 steamColor = cloud(steamUV, t * warpSpeed);
 
-  cloudColor.a *= map(sin(st.x / 2.0), -1.0, 1.0, 0.0, 0.5);
+  const float steaminess = 0.5;
+  float steamWidth = 2.0;
+  float steamCenter = map(t, 0.0, 1.0, -steamWidth/2.0, 1.0 + steamWidth/2.0); // making sure that no steam is visible at the loop "seam"
+  float steamFade = cubicPulse(steamCenter, steamWidth, uv.x);
+  steamFade *= steaminess;
+  steamColor.a *= steamFade;
 
-  color = mix(color, cloudColor.rgb, cloudColor.a);
+  color = mix(color, steamColor.rgb, steamColor.a);
 
   gl_FragColor = vec4(color, 1.0);
 }
