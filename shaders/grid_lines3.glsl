@@ -17,9 +17,8 @@ void main() {
   vec2 st = uv * 25.0;
 
   const float amplitude = 0.5;
-  float distortion = 1.0 - radius;
+  float distortion = 1.0 - smoothstep(0.0, 1.0, radius);
   distortion *= amplitude;
-  distortion = max(distortion, 0.0);
 
   const float frequency = 0.2;
 
