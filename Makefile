@@ -10,7 +10,7 @@ build/.touch: $(wildcard gallery/* lib/* shaders/* textures/*) gallery/shaders.j
 	./node_modules/.bin/webpack --config webpack.config.js
 	touch $@ # so that make can tell when this is needed
 
-serve:
+serve: gallery/shaders.js
 	./node_modules/.bin/webpack-dev-server --config webpack.config.js --open
 
 clean:

@@ -6,6 +6,7 @@ console.log(`// Do not edit.\n`);
 console.log("let shaders = [];\n");
 
 const shaderNamesAndTitles = [
+  ["grid_lines2", "grid lines"],
   ["fireworks", "fireworks"],
   ["flower2", "flower2"],
   ["flower", "flower"],
