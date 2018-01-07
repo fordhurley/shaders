@@ -37,8 +37,11 @@ module.exports = {
     new CopyWebpackPlugin([
       {from: "textures", to: "textures"},
     ]),
-    new UglifyJsPlugin({
-      sourceMap: true
-    }),
   ],
 };
+
+if (!process.env.DEBUG) {
+  module.exports.plugins.push(new UglifyJsPlugin({
+    sourceMap: true
+  }));
+}

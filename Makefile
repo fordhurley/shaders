@@ -11,7 +11,7 @@ build/.touch: $(wildcard gallery/* lib/* shaders/* textures/*) gallery/shaders.j
 	touch $@ # so that make can tell when this is needed
 
 serve: gallery/shaders.js
-	./node_modules/.bin/webpack-dev-server --config webpack.config.js --open
+	DEBUG=true ./node_modules/.bin/webpack-dev-server --config webpack.config.js --open
 
 clean:
 	rm -rvf build
