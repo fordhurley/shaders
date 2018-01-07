@@ -87,8 +87,7 @@ export default function makeShaderElement(shader, solo) {
 
   function resize() {
     shaderCanvas.domElement.style = {}; // fall back to document style temporarily
-    const style = window.getComputedStyle(shaderCanvas.domElement);
-    const width = parseFloat(style.width);
+    const width = shaderCanvas.domElement.clientWidth;
     shaderCanvas.setSize(width, width);
     ScrollMonitor.recalculateLocations();
   }
