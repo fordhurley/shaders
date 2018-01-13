@@ -6,6 +6,7 @@ console.log(`// Do not edit.\n`);
 console.log("let shaders = [];\n");
 
 const shaderNamesAndTitles = [
+  ["space_fill", "space fill"],
   ["grid_lines4", "grid lines 3"],
   ["grid_lines3", "grid lines 2"],
   ["grid_lines2", "grid lines"],
