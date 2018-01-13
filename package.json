@@ -1,8 +1,10 @@
 {
   "name": "shaders",
   "dependencies": {
+    "glsl-camera-ray": "^1.0.0",
     "glsl-colormap": "^1.0.1",
     "glsl-hsv2rgb": "^1.0.0",
+    "glsl-look-at": "^1.0.0",
     "glsl-noise": "0.0.0",
     "scrollmonitor": "^1.2.4",
     "shader-canvas": "^0.4.0"
