@@ -29,8 +29,8 @@ void main() {
   vec2 st = (rayOrigin + rayDirection * distanceToPlane).xy;
 
   float t = u_time;
-  st += noise(st * 0.1 + t * 0.2) * 0.1;
-  st += noise(st * 0.4 + t * 0.5) * 0.025;
+  st += noise(st * 0.1 + t * 0.2) * 0.15;
+  st += noise(st * 0.4 + t * 0.5) * 0.03;
 
   vec2 cellID = floor(st);
   vec2 cellUV = fract(st);
@@ -41,8 +41,8 @@ void main() {
   float lines = smoothStepUpDown(0.5, lineWidth, lineEdgeWidth, cellUV.x);
   lines = max(lines, smoothStepUpDown(0.5, lineWidth, lineEdgeWidth, cellUV.y));
 
-  lines *= smoothStepUpDown(0.0, 9.0 + lineWidth, lineEdgeWidth, st.x);
-  lines *= smoothStepUpDown(0.0, 9.0 + lineWidth, lineEdgeWidth, st.y);
+  lines *= smoothStepUpDown(0.0, 9.0 + lineWidth/2.0, lineEdgeWidth, st.x);
+  lines *= smoothStepUpDown(0.0, 9.0 + lineWidth/2.0, lineEdgeWidth, st.y);
   lines *= map(distanceToPlane, 4.0, 10.0, 1.0, 0.4);
 
   const vec3 bgColor = vec3(0.0);
