@@ -15,8 +15,8 @@ void main() {
   uv.x *= aspect;
   uv = map(uv, 0.0, 1.0, -1.0, 1.0);
 
-  vec3 rayOrigin = vec3(sin(u_time), cos(u_time), 3.75);
-  vec3 rayTarget = vec3(0.0, 0.0, 0.0);
+  vec3 rayOrigin = vec3(0.0, -2.5, 4.0);
+  vec3 rayTarget = vec3(0.0, -1.0, 0.0);
   float lensLength = 0.5;
 
   float roll = 0.0;
@@ -27,11 +27,6 @@ void main() {
   float distanceToPlane = -dot(rayOrigin, planeNormal) / dot(planeNormal, rayDirection);
 
   vec2 st = (rayOrigin + rayDirection * distanceToPlane).xy;
-  st.y *= -1.0;
-
-  const float loopTime = 10.0;
-  float t = mod(u_time, loopTime) / loopTime;
-  float loopID = floor(u_time / loopTime);
 
   vec2 cellID = floor(st);
   vec2 cellUV = fract(st);
@@ -41,8 +36,6 @@ void main() {
 
   float lines = smoothStepUpDown(0.5, lineWidth, lineEdgeWidth, cellUV.x);
   lines = max(lines, smoothStepUpDown(0.5, lineWidth, lineEdgeWidth, cellUV.y));
-  // Negative distance means we missed the horizon:
-  lines *= step(0.0, distanceToPlane);
 
   lines *= smoothStepUpDown(0.0, 9.0 + lineWidth, lineEdgeWidth, st.x);
   lines *= smoothStepUpDown(0.0, 9.0 + lineWidth, lineEdgeWidth, st.y);
