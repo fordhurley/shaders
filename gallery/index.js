@@ -1,38 +1,29 @@
 import "./style.scss";
-import shaders from "./shaders";
-import makeShaderElement from "./shader-element";
+import models from "./models";
+import Shader from "./shader";
 
-function init(shaderSlug) {
+const shaders = [];
+
+function init() {
   const main = document.querySelector("main");
 
-  while (main.firstChild) {
-    const child = main.firstChild;
-    if (child.dispose) {
-      child.dispose();
+  if (window.location.hash) {
+    const slug = window.location.hash.slice(1);
+    model = models.find(m => m.slug === shaderSlug);
+    if (!model) {
+      throw new Error("No model found for: " + shaderSlug);
     }
-    main.removeChild(child);
-  }
-
-  if (!shaderSlug && window.location.hash) {
-    shaderSlug = window.location.hash.slice(1);
-  }
-
-  let shader;
-  if (shaderSlug) {
-    shader = shaders.find(s => s.slug === shaderSlug);
-    if (!shader) {
-      console.warn("No shader found for:", shaderSlug);
-    }
-  }
-
-  if (shader) {
     main.classList.add("solo");
-    main.appendChild(makeShaderElement(shader, true));
-  } else {
-    shaders.forEach(function(shader) {
-      main.appendChild(makeShaderElement(shader, false));
-    });
+    const shader = new Shader(model, {solo: true});
+    shaders.push(shader);
+    main.appendChild(shader.domElement);
+    return;
   }
-}
 
+  models.forEach(function(model) {
+    const shader = new Shader(model);
+    shaders.push(shader);
+    main.appendChild(shader.domElement);
+  });
+}
 init();
