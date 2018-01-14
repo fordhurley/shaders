@@ -1,5 +1,4 @@
 #pragma glslify: lookAt = require(glsl-look-at)
-#pragma glslify: camera = require(glsl-camera-ray)
 
 #pragma glslify: map = require(../lib/map)
 #pragma glslify: hash = require(../lib/hash)
@@ -20,7 +19,7 @@ void main() {
 
   float roll = u_time * 0.04;
   mat3 cameraMatrix = lookAt(rayOrigin, rayTarget, roll);
-  vec3 rayDirection = camera(cameraMatrix, uv, lensLength);
+  vec3 rayDirection = normalize(cameraMatrix * vec3(uv, lensLength));
 
   vec3 planeNormal = vec3(0.0, 0.0, 1.0);
   float distanceToPlane = abs(dot(rayOrigin, planeNormal)) / length(planeNormal);

@@ -1,5 +1,4 @@
 #pragma glslify: lookAt = require(glsl-look-at)
-#pragma glslify: camera = require(glsl-camera-ray)
 #pragma glslify: noise = require(glsl-noise/simplex/2d)
 
 #pragma glslify: smoothStepUpDown = require(../lib/smoothStepUpDown)
@@ -22,7 +21,7 @@ void main() {
 
   const float roll = 0.0;
   mat3 cameraMatrix = lookAt(rayOrigin, rayTarget, roll);
-  vec3 rayDirection = camera(cameraMatrix, uv, lensLength);
+  vec3 rayDirection = normalize(cameraMatrix * vec3(uv, lensLength));
 
   const vec3 planeNormal = vec3(0.0, 0.0, 1.0);
   float distanceToPlane = -dot(rayOrigin, planeNormal) / dot(planeNormal, rayDirection);
