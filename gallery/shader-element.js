@@ -83,8 +83,6 @@ export default function makeShaderElement(shader, solo) {
     }
   }
 
-  window.shaderCanvas = shaderCanvas;
-
   function resize() {
     shaderCanvas.domElement.style = {}; // fall back to document style temporarily
     const width = shaderCanvas.domElement.clientWidth;
