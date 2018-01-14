@@ -15,18 +15,18 @@ void main() {
   uv.x *= aspect;
   uv = map(uv, 0.0, 1.0, -1.0, 1.0);
 
-  vec3 rayOrigin = vec3(0.0, 3.0, 1.0);
-  vec3 rayTarget = vec3(0.0, 0.0, -2.0);
+  vec3 rayOrigin = vec3(sin(u_time), cos(u_time), 3.75);
+  vec3 rayTarget = vec3(0.0, 0.0, 0.0);
   float lensLength = 0.5;
 
-  float roll = 0.0; //u_time * 0.04;
+  float roll = 0.0;
   mat3 cameraMatrix = lookAt(rayOrigin, rayTarget, roll);
   vec3 rayDirection = camera(cameraMatrix, uv, lensLength);
 
-  vec3 planeNormal = vec3(0.0, 1.0, 0.0);
+  vec3 planeNormal = vec3(0.0, 0.0, 1.0);
   float distanceToPlane = -dot(rayOrigin, planeNormal) / dot(planeNormal, rayDirection);
 
-  vec2 st = (rayOrigin + rayDirection * distanceToPlane).xz;
+  vec2 st = (rayOrigin + rayDirection * distanceToPlane).xy;
   st.y *= -1.0;
 
   const float loopTime = 10.0;
@@ -36,8 +36,8 @@ void main() {
   vec2 cellID = floor(st);
   vec2 cellUV = fract(st);
 
-  float lineWidth = 0.1;
-  float lineEdgeWidth = 0.01;
+  float lineWidth = 0.06;
+  float lineEdgeWidth = 0.03;
 
   float lines = smoothStepUpDown(0.5, lineWidth, lineEdgeWidth, cellUV.x);
   lines = max(lines, smoothStepUpDown(0.5, lineWidth, lineEdgeWidth, cellUV.y));
@@ -45,10 +45,13 @@ void main() {
   lines *= step(0.0, distanceToPlane);
 
   lines *= smoothStepUpDown(0.0, 9.0 + lineWidth, lineEdgeWidth, st.x);
-  lines *= smoothStepUpDown(4.0, 9.0 + lineWidth, lineEdgeWidth, st.y);
+  lines *= smoothStepUpDown(0.0, 9.0 + lineWidth, lineEdgeWidth, st.y);
+
+  lines *= map(distanceToPlane, 4.0, 8.0, 1.0, 0.2);
+  lines = clamp(lines, 0.0, 1.0);
 
   vec3 color = vec3(0.0);
-  color = mix(color, vec3(1), lines);
+  color = mix(color, vec3(1.0), lines);
 
   gl_FragColor = vec4(color, 1.0);
 }
