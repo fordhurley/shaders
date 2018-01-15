@@ -12,10 +12,7 @@ function watch(shaders) {
   // Activate the first few:
   let numActive = 0;
   shaders.forEach((shader) => {
-    if (numActive >= MAX_ACTIVE) {
-      return;
-    }
-    if (!shader.monitor.isInViewport) {
+    if (numActive >= MAX_ACTIVE || !shader.monitor.isInViewport) {
       return;
     }
     shader.activate();
@@ -47,30 +44,41 @@ function watch(shaders) {
   requestAnimationFrame(update);
 }
 
-function init() {
-  const shaders = [];
-
-  const main = document.querySelector("main");
-
-  if (window.location.hash) {
-    const slug = window.location.hash.slice(1);
-    const model = models.find(m => m.slug === slug);
-    if (!model) {
-      throw new Error("No model found for: " + slug);
-    }
-    main.classList.add("solo");
-    const shader = new Shader(model, {solo: true});
-    shaders.push(shader);
-    main.appendChild(shader.domElement);
-  } else {
-    models.forEach(function(model) {
-      const shader = new Shader(model);
-      shaders.push(shader);
-      main.appendChild(shader.domElement);
-    });
+function initSingleShader(slug) {
+  const model = models.find(m => m.slug === slug);
+  if (!model) {
+    throw new Error("No model found for: " + slug);
   }
 
+  const main = document.querySelector("main");
+  main.classList.add("solo");
+  const shader = new Shader(model, {solo: true});
+  shader.resize();
+  shader.activate();
+  main.appendChild(shader.domElement);
+}
+
+function initAllShaders() {
+  const shaders = models.map((m) => {
+    return new Shader(m);
+  });
+
+  const main = document.querySelector("main");
+  shaders.forEach((s) => {
+    main.appendChild(s.domElement);
+  });
+
   watch(shaders);
+}
+
+function init() {
+  if (window.location.hash) {
+    const slug = window.location.hash.slice(1);
+    initSingleShader(slug);
+    return;
+  }
+
+  initAllShaders();
 }
 
 if (document.readyState === "complete") {

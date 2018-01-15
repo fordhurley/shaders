@@ -99,7 +99,6 @@ export default class Shader {
     this.domElement.classList.add("inactive");
 
     if (this.shaderCanvas) {
-      console.log("calling dispose");
       this.shaderCanvas.dispose();
       this.wrapper.removeChild(this.canvas);
       this.canvas = document.createElement("canvas");
