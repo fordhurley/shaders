@@ -88,6 +88,7 @@ export default class Shader {
     this.shaderCanvas.togglePause();
 
     this.resize();
+    this.togglePauseIfNeeded();
   }
 
   deactivate() {
