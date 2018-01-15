@@ -7,7 +7,7 @@
     "glsl-look-at": "^1.0.0",
     "glsl-noise": "0.0.0",
     "scrollmonitor": "^1.2.4",
-    "shader-canvas": "^0.4.0"
+    "shader-canvas": "file:../shader-canvas"
   },
   "devDependencies": {
     "copy-webpack-plugin": "^4.3.1",

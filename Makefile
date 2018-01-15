@@ -7,7 +7,7 @@ build/.touch: $(wildcard gallery/* lib/* shaders/* textures/*) webpack.config.js
 	./node_modules/.bin/webpack --config webpack.config.js
 	touch $@ # so that make can tell when this is needed
 
-serve:
+serve: package-lock.json
 	DEBUG=true ./node_modules/.bin/webpack-dev-server --config webpack.config.js --open
 
 clean:

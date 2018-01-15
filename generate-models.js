@@ -37,7 +37,7 @@ module.exports = function(source) {
 
     const shaderPath = path.resolve(`shaders/${name}.glsl`);
 
-    this.addDependency(shaderPath);
+    // this.addDependency(shaderPath);
 
     fs.readFile(shaderPath, "utf-8", function(err, raw_source) {
       if (err) {

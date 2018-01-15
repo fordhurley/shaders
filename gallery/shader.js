@@ -77,14 +77,17 @@ export default class Shader {
     this.resize = this.resize.bind(this);
     window.addEventListener("resize", this.resize);
     this.resize();
+
+    this.isActive = false;
   }
 
   activate() {
+    this.isActive = true;
     this.domElement.classList.remove("inactive");
 
     this.shaderCanvas = new ShaderCanvas({domElement: this.canvas});
     this.shaderCanvas.buildTextureURL = fixTextureURL
-    setTimeout(this.shaderCanvas.setShader.bind(this.shaderCanvas, this.model.source), 0);
+    this.shaderCanvas.setShader(this.model.source);
     this.shaderCanvas.togglePause();
 
     this.resize();
@@ -92,10 +95,13 @@ export default class Shader {
   }
 
   deactivate() {
+    this.isActive = false;
     this.domElement.classList.add("inactive");
 
     if (this.shaderCanvas) {
+      console.log("calling dispose");
       this.shaderCanvas.dispose();
+      this.wrapper.removeChild(this.canvas);
       this.canvas = document.createElement("canvas");
       this.wrapper.appendChild(this.canvas);
       this.shaderCanvas = null;
@@ -126,8 +132,8 @@ export default class Shader {
     if (this.shaderCanvas) {
       this.shaderCanvas.setSize(width, width);
     } else {
-      this.canvas.style.width = width + "px";
-      this.canvas.style.height = width + "px";
+      this.canvas.width = this.canvas.height = width * window.devicePixelRatio;
+      this.canvas.style.width = this.canvas.style.height = width + "px";
     }
     ScrollMonitor.recalculateLocations();
   }

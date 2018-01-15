@@ -2,8 +2,6 @@ import "./style.scss";
 import models from "./models.json";
 import Shader from "./shader";
 
-console.log(models);
-
 function watch(shaders) {
   const MAX_ACTIVE = 6;
 
@@ -24,19 +22,29 @@ function watch(shaders) {
     numActive++;
   });
 
-  // Now that we've activated the ones within the viewport, there might still be
-  // a few open slots, which we can use for the ones nearest to the viewport.
+  function update() {
+    const shader = shaders.find((shader) => {
+      return !shader.isActive && !shader.hasThumbnail;
+    });
+    if (!shader) {
+      return;
+    }
+    requestAnimationFrame(update);
 
-  // Next, if there are still inactive shaders, we can start recording frames
-  // for the active ones.
+    shader.activate();
+    shader.shaderCanvas.render();
+    const src = shader.canvas.toDataURL();
+    shader.deactivate();
+    shader.resize();
 
-  // When we've finished a recording, we can deactivate the shader and swap the
-  // frames in for the canvas. We can then cycle these frames in place, to get
-  // an animated preview.
+    shader.hasThumbnail = true;
 
-  // After deactivating a shader, we can look for the next inactive nearby
-  // shader and repeat this process. Eventually, every shader on the page will
-  // be either active or showing preview images.
+    var img = new Image();
+    img.classList.add("thumbnail");
+    img.src = src;
+    shader.wrapper.appendChild(img);
+  }
+  requestAnimationFrame(update);
 }
 
 function init() {
