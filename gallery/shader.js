@@ -13,13 +13,14 @@ export default class Shader {
 
     this.domElement = document.createElement(this.solo ? "div" : "a");
     this.domElement.classList.add("shader");
+    this.domElement.classList.add("inactive");
 
     if (!this.solo) {
       this.domElement.href = `#${this.model.slug}`;
       this.domElement.addEventListener("click", function(e) {
         window.location.hash = `#${this.model.slug}`;
         window.location.reload();
-      });
+      }.bind(this));
     }
 
     const metaTop = document.createElement("div");
@@ -69,16 +70,12 @@ export default class Shader {
 
     this.resize = this.resize.bind(this);
     window.addEventListener("resize", this.resize);
-
-    this.activate = this.activate.bind(this);
-    if (document.readyState === "complete") {
-      setTimeout(this.activate, 0);
-    } else {
-      window.addEventListener("load", this.activate);
-    }
+    this.resize();
   }
 
   activate() {
+    this.domElement.classList.remove("inactive");
+
     this.shaderCanvas = new ShaderCanvas({domElement: this.canvas});
     this.shaderCanvas.buildTextureURL = fixTextureURL
     setTimeout(this.shaderCanvas.setShader.bind(this.shaderCanvas, this.model.source), 0);
@@ -92,8 +89,9 @@ export default class Shader {
     this.resize();
   }
 
-  // Temporarily deactivate.
   deactivate() {
+    this.domElement.classList.add("inactive");
+
     if (this.shaderCanvas) {
       this.shaderCanvas.dispose();
       this.canvas = document.createElement("canvas");
@@ -104,12 +102,6 @@ export default class Shader {
       this.monitor.destroy();
       this.monitor = null;
     }
-  }
-
-  // When permanently done with this.
-  dispose() {
-    this.deactivate();
-    window.removeEventListener("resize", this.resize);
   }
 
   togglePauseIfNeeded() {
@@ -136,8 +128,8 @@ export default class Shader {
     if (this.shaderCanvas) {
       this.shaderCanvas.setSize(width, width);
     } else {
-      this.canvas.style.width = width * window.devicePixelRatio + "px";
-      this.canvas.style.height = height * window.devicePixelRatio + "px";
+      this.canvas.style.width = width + "px";
+      this.canvas.style.height = width + "px";
     }
     ScrollMonitor.recalculateLocations();
   }
