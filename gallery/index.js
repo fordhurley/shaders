@@ -10,11 +10,16 @@ function watch(shaders) {
   });
 
   // Activate the first few:
-  shaders.forEach((shader, i) => {
-    if (i >= MAX_ACTIVE) {
+  let numActive = 0;
+  shaders.forEach((shader) => {
+    if (numActive >= MAX_ACTIVE) {
+      return;
+    }
+    if (!shader.monitor.isInViewport) {
       return;
     }
     shader.activate();
+    numActive++;
   });
 
 }

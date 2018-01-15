@@ -68,6 +68,12 @@ export default class Shader {
     this.canvas = document.createElement("canvas");
     this.wrapper.appendChild(this.canvas);
 
+    this.monitor = ScrollMonitor.create(this.domElement);
+    this.monitor.enterViewport(this.togglePauseIfNeeded.bind(this));
+    this.monitor.fullyEnterViewport(this.togglePauseIfNeeded.bind(this));
+    this.monitor.partiallyExitViewport(this.togglePauseIfNeeded.bind(this));
+    this.monitor.exitViewport(this.togglePauseIfNeeded.bind(this));
+
     this.resize = this.resize.bind(this);
     window.addEventListener("resize", this.resize);
     this.resize();
@@ -81,11 +87,6 @@ export default class Shader {
     setTimeout(this.shaderCanvas.setShader.bind(this.shaderCanvas, this.model.source), 0);
     this.shaderCanvas.togglePause();
 
-    this.monitor = ScrollMonitor.create(this.canvas);
-    this.monitor.enterViewport(this.togglePauseIfNeeded.bind(this));
-    this.monitor.fullyEnterViewport(this.togglePauseIfNeeded.bind(this));
-    this.monitor.partiallyExitViewport(this.togglePauseIfNeeded.bind(this));
-    this.monitor.exitViewport(this.togglePauseIfNeeded.bind(this));
     this.resize();
   }
 
@@ -98,14 +99,10 @@ export default class Shader {
       this.wrapper.appendChild(this.canvas);
       this.shaderCanvas = null;
     }
-    if (this.monitor) {
-      this.monitor.destroy();
-      this.monitor = null;
-    }
   }
 
   togglePauseIfNeeded() {
-    if (!this.monitor || !this.shaderCanvas) {
+    if (!this.shaderCanvas) {
       return;
     }
 
