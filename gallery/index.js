@@ -22,6 +22,19 @@ function watch(shaders) {
     numActive++;
   });
 
+  // Now that we've activated the ones within the viewport, there might still be
+  // a few open slots, which we can use for the ones nearest to the viewport.
+
+  // Next, if there are still inactive shaders, we can start recording frames
+  // for the active ones.
+
+  // When we've finished a recording, we can deactivate the shader and swap the
+  // frames in for the canvas. We can then cycle these frames in place, to get
+  // an animated preview.
+
+  // After deactivating a shader, we can look for the next inactive nearby
+  // shader and repeat this process. Eventually, every shader on the page will
+  // be either active or showing preview images.
 }
 
 function init() {
