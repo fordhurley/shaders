@@ -24,8 +24,8 @@ module.exports = {
         use: ["file-loader"],
       },
       {
-        test: /\.glsl$/,
-        use: ["raw-loader", "glslify-loader"],
+        test: /models\.json$/,
+        use: [path.resolve("generate-models.js")],
       },
     ],
   },

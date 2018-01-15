@@ -1,6 +1,8 @@
 import "./style.scss";
-import models from "./models";
+import models from "./models.json";
 import Shader from "./shader";
+
+console.log(models);
 
 function watch(shaders) {
   const MAX_ACTIVE = 6;
