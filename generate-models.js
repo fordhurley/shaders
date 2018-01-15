@@ -13,13 +13,11 @@ module.exports = function(source) {
   let models = [];
 
   function oneLoaded(model) {
-    let numLoaded = 0;
+    let allLoaded = true;
     models.forEach((model) => {
-      if (model.source) {
-        numLoaded++;
-      }
+      allLoaded = allLoaded && model.source !== undefined;
     });
-    if (numLoaded !== models.length) {
+    if (!allLoaded) {
       return;
     }
     const output = "export default " + JSON.stringify(models);
