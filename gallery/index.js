@@ -5,25 +5,9 @@ import "./style.scss";
 import models from "./models.json";
 import Shader from "./shader";
 
-function watch(shaders) {
-  const renderer = new WebGLRenderer();
-  renderer.setPixelRatio(window.devicePixelRatio);
-
-  function resize() {
-    shaders[0].canvas.style = {}; // fall back to document style temporarily
-    const width = shaders[0].canvas.clientWidth;
-    shaders.forEach((shader) => {
-      shader.setSize(width, width);
-    });
-    renderer.setSize(width, width);
-    ScrollMonitor.recalculateLocations();
-  }
-  window.addEventListener("resize", resize);
-  resize();
-
-  shaders.forEach((shader) => {
-    shader.activate(renderer);
-  });
+function shaderWidth(shader) {
+  shader.canvas.style = {}; // fall back to document style temporarily
+  return shader.canvas.clientWidth;
 }
 
 function initSingleShader(slug) {
@@ -39,9 +23,9 @@ function initSingleShader(slug) {
   main.appendChild(shader.domElement);
 
   function resize() {
-    shader.canvas.style = {}; // fall back to document style temporarily
-    const width = shader.canvas.clientWidth;
+    const width = shaderWidth(shader);
     shader.setSize(width, width);
+    ScrollMonitor.recalculateLocations();
   }
   window.addEventListener("resize", resize);
   resize();
@@ -57,7 +41,23 @@ function initAllShaders() {
     main.appendChild(s.domElement);
   });
 
-  watch(shaders);
+  const renderer = new WebGLRenderer();
+  renderer.setPixelRatio(window.devicePixelRatio);
+
+  function resize() {
+    const width = shaderWidth(shaders[0])
+    shaders.forEach((shader) => {
+      shader.setSize(width, width);
+    });
+    renderer.setSize(width, width);
+    ScrollMonitor.recalculateLocations();
+  }
+  window.addEventListener("resize", resize);
+  resize();
+
+  shaders.forEach((shader) => {
+    shader.activate(renderer);
+  });
 }
 
 function init() {
