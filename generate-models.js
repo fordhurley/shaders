@@ -23,21 +23,20 @@ function readFile(filePath) {
 module.exports = function(source) {
   var callback = this.async();
 
-  const modelNames = yaml.load(source);
+  const rawModels = yaml.load(source);
 
-  Promise.all(modelNames.map(([name, title]) => {
-    const shaderPath = path.resolve(`shaders/${name}.glsl`);
+  Promise.all(rawModels.map((rawModel) => {
+    const title = rawModel.title || rawModel.filename;
+    const shaderPath = path.resolve('shaders', `${rawModel.filename}.glsl`);
+    const slug = slugify(title);
+
     this.addDependency(shaderPath);
+
     return readFile(shaderPath).then(function(raw_source) {
       const source = glslify.compile(raw_source, {
         basedir: path.dirname(shaderPath)
       });
-      return {
-        title: title,
-        slug: slugify(title),
-        raw_source: raw_source,
-        source: source,
-      };
+      return {title, slug, raw_source, source};
     });
   })).then(function(models) {
     const output = "export default " + JSON.stringify(models);

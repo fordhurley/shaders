@@ -12,7 +12,7 @@ module.exports = {
   },
   devServer: {
     contentBase: "./build",
-    disableHostCheck: true,
+    host: "fords-macbook-pro.local",
   },
   module: {
     rules: [

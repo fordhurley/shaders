@@ -1,18 +1,26 @@
 # - ["space_fill", "space fill"]
-- ["grid_lines5", "grid lines 4"]
-- ["grid_lines4", "grid lines 3"]
-- ["grid_lines3", "grid lines 2"]
-- ["grid_lines2", "grid lines"]
-- ["fireworks", "fireworks"]
-- ["flower2", "flower 2"]
-- ["flower", "flower"]
-- ["dots", "dots"]
-- ["clouds", "clouds"]
-- ["rain", "rain"]
-- ["ray_march_drip", "drip"]
-- ["refract", "refract"]
-- ["ray_march", "ray march"]
-- ["cells", "cells"]
-- ["fabric", "fabric"]
-- ["directional_lighting", "directional lighting"]
-- ["projectile", "projectiles"]
+- filename: grid_lines5
+  title: grid lines 4
+- filename: grid_lines4
+  title: grid lines 3
+- filename: grid_lines3
+  title: grid lines 2
+- filename: grid_lines2
+  title: grid lines
+- filename: fireworks
+- filename: flower2
+  title: flower 2
+- filename: flower
+- filename: dots
+- filename: clouds
+- filename: rain
+- filename: ray_march_drip
+  title: drip
+- filename: refract
+- filename: ray_march
+  title: blob
+- filename: cells
+- filename: fabric
+- filename: directional_lighting
+  title: directional lighting
+- filename: projectile
