@@ -13,11 +13,7 @@ function makeMonitor(shader) {
   const monitor = ScrollMonitor.create(shader.domElement);
 
   function togglePauseIfNeeded() {
-    // Oddly, I've discovered that it's possible for isFullyInViewport to be
-    // true, but isInViewport to be false. Checking both is more reliable.
-    const shouldBePlaying = monitor.isInViewport && monitor.isFullyInViewport;
-    // Easier to check the logic if it's named sensibly:
-    const shouldBePaused = !shouldBePlaying;
+    const shouldBePaused = !monitor.isInViewport;
     if (shader.shaderCanvas.paused !== shouldBePaused) {
       shader.shaderCanvas.togglePause();
     }
@@ -65,12 +61,18 @@ function initAllShaders() {
     makeMonitor(shader);
   });
 
+  let lastWidth = null;
   function resize() {
     const width = shaders[0].naturalWidth();
+    if (width === lastWidth) {
+      return;
+    }
+    lastWidth = width;
+    renderer.setSize(width, width);
     shaders.forEach((shader) => {
       shader.setSize(width, width);
+      shader.shaderCanvas.render(); // because changing the size clears the canvas
     });
-    renderer.setSize(width, width);
     ScrollMonitor.recalculateLocations();
   }
   window.addEventListener("resize", resize);

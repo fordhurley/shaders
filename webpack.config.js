@@ -12,6 +12,7 @@ module.exports = {
   },
   devServer: {
     contentBase: "./build",
+    disableHostCheck: true,
   },
   module: {
     rules: [
