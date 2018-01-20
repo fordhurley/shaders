@@ -7,44 +7,39 @@ const slugify = require("slugify");
 // shaders) and outputs a javascript module. The resulting module exports an
 // array of model objects.
 
-module.exports = function(source) {
-  var callback = this.async();
-
-  let models = [];
-
-  function oneLoaded(model) {
-    let allLoaded = true;
-    models.forEach((model) => {
-      allLoaded = allLoaded && model.source !== undefined;
-    });
-    if (!allLoaded) {
-      return;
-    }
-    const output = "export default " + JSON.stringify(models);
-    callback(null, output);
-  }
-
-  const modelNames = JSON.parse(source);
-
-  modelNames.forEach(([name, title]) => {
-    var model = {
-      title: title,
-      slug: slugify(title),
-    };
-    models.push(model);
-
-    const shaderPath = path.resolve(`shaders/${name}.glsl`);
-
-    this.addDependency(shaderPath);
-
-    fs.readFile(shaderPath, "utf-8", function(err, raw_source) {
+function readFile(filePath) {
+  return new Promise(function(resolve, reject) {
+    fs.readFile(filePath, "utf-8", function(err, contents) {
       if (err) {
-        callback(err);
-        return;
+        reject(err);
+      } else {
+        resolve(contents);
       }
-      model.raw_source = raw_source;
-      model.source = glslify.compile(raw_source, {basedir: path.dirname(shaderPath)});
-      oneLoaded();
     });
   });
 }
+
+module.exports = function(source) {
+  var callback = this.async();
+
+  const modelNames = JSON.parse(source);
+
+  Promise.all(modelNames.map(([name, title]) => {
+    const shaderPath = path.resolve(`shaders/${name}.glsl`);
+    this.addDependency(shaderPath);
+    return readFile(shaderPath).then(function(raw_source) {
+      const source = glslify.compile(raw_source, {
+        basedir: path.dirname(shaderPath)
+      });
+      return {
+        title: title,
+        slug: slugify(title),
+        raw_source: raw_source,
+        source: source,
+      };
+    });
+  })).then(function(models) {
+    const output = "export default " + JSON.stringify(models);
+    callback(null, output);
+  }).catch(callback);
+};
