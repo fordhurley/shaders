@@ -58,10 +58,15 @@ export default class Shader {
         sourceEl.classList.toggle("hidden");
       });
 
-      const backButton = document.createElement("a");
-      backButton.href = "./";
-      backButton.textContent = "more";
-      metaBottom.appendChild(backButton);
+      const moreButton = document.createElement("a");
+      moreButton.href = "./";
+      moreButton.textContent = "more";
+      metaBottom.appendChild(moreButton);
+
+      // Trigger a reload when pressing the back button from here:
+      window.addEventListener("hashchange", function(e) {
+        window.location = window.location;
+      });
     }
 
     this.shaderCanvas = new ShaderCanvas({renderer});
