@@ -24,7 +24,7 @@ module.exports = {
         use: ["file-loader"],
       },
       {
-        test: /models\.json$/,
+        test: /models\.yaml$/,
         use: [path.resolve("generate-models.js")],
       },
     ],

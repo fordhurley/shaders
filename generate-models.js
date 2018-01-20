@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const glslify = require("glslify");
 const slugify = require("slugify");
+const yaml = require("js-yaml");
 
 // This is a custom webpack loader, which takes in a raw JSON string (listing of
 // shaders) and outputs a javascript module. The resulting module exports an
@@ -22,7 +23,7 @@ function readFile(filePath) {
 module.exports = function(source) {
   var callback = this.async();
 
-  const modelNames = JSON.parse(source);
+  const modelNames = yaml.load(source);
 
   Promise.all(modelNames.map(([name, title]) => {
     const shaderPath = path.resolve(`shaders/${name}.glsl`);

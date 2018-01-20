@@ -2,7 +2,7 @@ import {WebGLRenderer} from "three";
 import ScrollMonitor from "scrollmonitor";
 
 import "./style.scss";
-import models from "./models.json";
+import models from "./models.yaml";
 import Shader from "./shader";
 
 function getContainer() {
