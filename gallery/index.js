@@ -5,11 +5,6 @@ import "./style.scss";
 import models from "./models.json";
 import Shader from "./shader";
 
-function shaderWidth(shader) {
-  shader.canvas.style = {}; // fall back to document style temporarily
-  return shader.canvas.clientWidth;
-}
-
 function getContainer() {
   return document.querySelector("main");
 }
@@ -45,11 +40,10 @@ function initSingleShader(slug) {
   const container = getContainer();
   container.classList.add("solo");
   const shader = new Shader(model, {solo: true});
-  shader.activate();
   container.appendChild(shader.domElement);
 
   function resize() {
-    const width = shaderWidth(shader);
+    const width = shader.naturalWidth();
     shader.setSize(width, width);
   }
   window.addEventListener("resize", resize);
@@ -57,20 +51,22 @@ function initSingleShader(slug) {
 }
 
 function initAllShaders() {
-  const shaders = models.map((m) => {
-    return new Shader(m);
-  });
-
-  const container = getContainer();
-  shaders.forEach((s) => {
-    container.appendChild(s.domElement);
-  });
-
+  // Make a single renderer to share between all of them:
   const renderer = new WebGLRenderer();
   renderer.setPixelRatio(window.devicePixelRatio);
 
+  const shaders = models.map((m) => {
+    return new Shader(m, {renderer});
+  });
+
+  const container = getContainer();
+  shaders.forEach((shader) => {
+    container.appendChild(shader.domElement);
+    makeMonitor(shader);
+  });
+
   function resize() {
-    const width = shaderWidth(shaders[0])
+    const width = shaders[0].naturalWidth();
     shaders.forEach((shader) => {
       shader.setSize(width, width);
     });
@@ -78,11 +74,6 @@ function initAllShaders() {
     ScrollMonitor.recalculateLocations();
   }
   window.addEventListener("resize", resize);
-
-  shaders.forEach((shader) => {
-    shader.activate(renderer);
-    makeMonitor(shader);
-  });
 
   setTimeout(resize, 100);
 }

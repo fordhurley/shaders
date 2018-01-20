@@ -6,7 +6,7 @@ function fixTextureURL(filePath) {
 };
 
 export default class Shader {
-  constructor(model, {solo} = {}) {
+  constructor(model, {solo, renderer} = {}) {
     this.model = model;
     this.solo = solo;
 
@@ -64,45 +64,18 @@ export default class Shader {
       metaBottom.appendChild(backButton);
     }
 
-    this.canvas = document.createElement("canvas");
-    this.wrapper.appendChild(this.canvas);
-
-    this.isActive = false;
-  }
-
-  activate(renderer) {
-    this.isActive = true;
-    this.domElement.classList.remove("inactive");
-
-    this.shaderCanvas = new ShaderCanvas({
-      domElement: this.canvas,
-      renderer: renderer,
-    });
+    this.shaderCanvas = new ShaderCanvas({renderer});
     this.shaderCanvas.buildTextureURL = fixTextureURL;
     this.shaderCanvas.setShader(this.model.source);
-  }
-
-  deactivate() {
-    this.isActive = false;
-    this.domElement.classList.add("inactive");
-
-    if (this.shaderCanvas) {
-      this.shaderCanvas.dispose();
-      this.wrapper.removeChild(this.canvas);
-      this.canvas = document.createElement("canvas");
-      this.wrapper.appendChild(this.canvas);
-      this.shaderCanvas = null;
-    }
+    this.wrapper.appendChild(this.shaderCanvas.domElement);
   }
 
   setSize(width, height) {
-    if (this.shaderCanvas) {
-      this.shaderCanvas.setSize(width, height);
-    } else {
-      this.canvas.width = width * window.devicePixelRatio;
-      this.canvas.height = height * window.devicePixelRatio;
-      this.canvas.style.width = width + "px";
-      this.canvas.style.height = height + "px";
-    }
+    this.shaderCanvas.setSize(width, height);
+  }
+
+  naturalWidth() {
+    this.shaderCanvas.domElement.style = {}; // fall back to document style temporarily
+    return this.shaderCanvas.domElement.clientWidth;
   }
 }
