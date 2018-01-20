@@ -74,23 +74,21 @@ export default class Shader {
     this.monitor.partiallyExitViewport(this.togglePauseIfNeeded.bind(this));
     this.monitor.exitViewport(this.togglePauseIfNeeded.bind(this));
 
-    this.resize = this.resize.bind(this);
-    window.addEventListener("resize", this.resize);
-    this.resize();
-
     this.isActive = false;
   }
 
-  activate() {
+  activate(renderer) {
     this.isActive = true;
     this.domElement.classList.remove("inactive");
 
-    this.shaderCanvas = new ShaderCanvas({domElement: this.canvas});
-    this.shaderCanvas.buildTextureURL = fixTextureURL
+    this.shaderCanvas = new ShaderCanvas({
+      domElement: this.canvas,
+      renderer: renderer,
+    });
+    this.shaderCanvas.buildTextureURL = fixTextureURL;
     this.shaderCanvas.setShader(this.model.source);
     this.shaderCanvas.togglePause();
 
-    this.resize();
     this.togglePauseIfNeeded();
   }
 
@@ -125,15 +123,14 @@ export default class Shader {
     }
   }
 
-  resize() {
-    this.canvas.style = {}; // fall back to document style temporarily
-    const width = this.canvas.clientWidth;
+  setSize(width, height) {
     if (this.shaderCanvas) {
-      this.shaderCanvas.setSize(width, width);
+      this.shaderCanvas.setSize(width, height);
     } else {
-      this.canvas.width = this.canvas.height = width * window.devicePixelRatio;
-      this.canvas.style.width = this.canvas.style.height = width + "px";
+      this.canvas.width = width * window.devicePixelRatio;
+      this.canvas.height = height * window.devicePixelRatio;
+      this.canvas.style.width = width + "px";
+      this.canvas.style.height = height + "px";
     }
-    ScrollMonitor.recalculateLocations();
   }
 }

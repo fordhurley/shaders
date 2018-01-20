@@ -1,47 +1,29 @@
+import {WebGLRenderer} from "three";
+import ScrollMonitor from "scrollmonitor";
+
 import "./style.scss";
 import models from "./models.json";
 import Shader from "./shader";
 
 function watch(shaders) {
-  const MAX_ACTIVE = 6;
+  const renderer = new WebGLRenderer();
+  renderer.setPixelRatio(window.devicePixelRatio);
 
-  shaders.forEach((shader) => {
-    shader.resize();
-  });
-
-  // Activate the first few:
-  let numActive = 0;
-  shaders.forEach((shader) => {
-    if (numActive >= MAX_ACTIVE || !shader.monitor.isInViewport) {
-      return;
-    }
-    shader.activate();
-    numActive++;
-  });
-
-  function update() {
-    const shader = shaders.find((shader) => {
-      return !shader.isActive && !shader.hasThumbnail;
+  function resize() {
+    shaders[0].canvas.style = {}; // fall back to document style temporarily
+    const width = shaders[0].canvas.clientWidth;
+    shaders.forEach((shader) => {
+      shader.setSize(width, width);
     });
-    if (!shader) {
-      return;
-    }
-    requestAnimationFrame(update);
-
-    shader.activate();
-    shader.shaderCanvas.render();
-    const src = shader.canvas.toDataURL();
-    shader.deactivate();
-    shader.resize();
-
-    shader.hasThumbnail = true;
-
-    var img = new Image();
-    img.classList.add("thumbnail");
-    img.src = src;
-    shader.wrapper.appendChild(img);
+    renderer.setSize(width, width);
+    ScrollMonitor.recalculateLocations();
   }
-  requestAnimationFrame(update);
+  window.addEventListener("resize", resize);
+  resize();
+
+  shaders.forEach((shader) => {
+    shader.activate(renderer);
+  });
 }
 
 function initSingleShader(slug) {
@@ -53,9 +35,16 @@ function initSingleShader(slug) {
   const main = document.querySelector("main");
   main.classList.add("solo");
   const shader = new Shader(model, {solo: true});
-  shader.resize();
   shader.activate();
   main.appendChild(shader.domElement);
+
+  function resize() {
+    shader.canvas.style = {}; // fall back to document style temporarily
+    const width = shader.canvas.clientWidth;
+    shader.setSize(width, width);
+  }
+  window.addEventListener("resize", resize);
+  resize();
 }
 
 function initAllShaders() {
