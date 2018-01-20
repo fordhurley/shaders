@@ -10,25 +10,50 @@ function shaderWidth(shader) {
   return shader.canvas.clientWidth;
 }
 
+function getContainer() {
+  return document.querySelector("main");
+}
+
+function makeMonitor(shader) {
+  const monitor = ScrollMonitor.create(shader.domElement);
+
+  function togglePauseIfNeeded() {
+    // Oddly, I've discovered that it's possible for isFullyInViewport to be
+    // true, but isInViewport to be false. Checking both is more reliable.
+    const shouldBePlaying = monitor.isInViewport && monitor.isFullyInViewport;
+    // Easier to check the logic if it's named sensibly:
+    const shouldBePaused = !shouldBePlaying;
+    if (shader.shaderCanvas.paused !== shouldBePaused) {
+      shader.shaderCanvas.togglePause();
+    }
+  }
+  togglePauseIfNeeded();
+
+  monitor.enterViewport(togglePauseIfNeeded);
+  monitor.fullyEnterViewport(togglePauseIfNeeded);
+  monitor.partiallyExitViewport(togglePauseIfNeeded);
+  monitor.exitViewport(togglePauseIfNeeded);
+  return monitor;
+}
+
 function initSingleShader(slug) {
   const model = models.find(m => m.slug === slug);
   if (!model) {
     throw new Error("No model found for: " + slug);
   }
 
-  const main = document.querySelector("main");
-  main.classList.add("solo");
+  const container = getContainer();
+  container.classList.add("solo");
   const shader = new Shader(model, {solo: true});
   shader.activate();
-  main.appendChild(shader.domElement);
+  container.appendChild(shader.domElement);
 
   function resize() {
     const width = shaderWidth(shader);
     shader.setSize(width, width);
-    ScrollMonitor.recalculateLocations();
   }
   window.addEventListener("resize", resize);
-  resize();
+  setTimeout(resize, 0);
 }
 
 function initAllShaders() {
@@ -36,9 +61,9 @@ function initAllShaders() {
     return new Shader(m);
   });
 
-  const main = document.querySelector("main");
+  const container = getContainer();
   shaders.forEach((s) => {
-    main.appendChild(s.domElement);
+    container.appendChild(s.domElement);
   });
 
   const renderer = new WebGLRenderer();
@@ -53,11 +78,13 @@ function initAllShaders() {
     ScrollMonitor.recalculateLocations();
   }
   window.addEventListener("resize", resize);
-  resize();
 
   shaders.forEach((shader) => {
     shader.activate(renderer);
+    makeMonitor(shader);
   });
+
+  setTimeout(resize, 100);
 }
 
 function init() {

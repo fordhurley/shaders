@@ -1,4 +1,3 @@
-import ScrollMonitor from "scrollmonitor";
 import ShaderCanvas from "shader-canvas";
 
 function fixTextureURL(filePath) {
@@ -68,12 +67,6 @@ export default class Shader {
     this.canvas = document.createElement("canvas");
     this.wrapper.appendChild(this.canvas);
 
-    this.monitor = ScrollMonitor.create(this.domElement);
-    this.monitor.enterViewport(this.togglePauseIfNeeded.bind(this));
-    this.monitor.fullyEnterViewport(this.togglePauseIfNeeded.bind(this));
-    this.monitor.partiallyExitViewport(this.togglePauseIfNeeded.bind(this));
-    this.monitor.exitViewport(this.togglePauseIfNeeded.bind(this));
-
     this.isActive = false;
   }
 
@@ -87,9 +80,6 @@ export default class Shader {
     });
     this.shaderCanvas.buildTextureURL = fixTextureURL;
     this.shaderCanvas.setShader(this.model.source);
-    this.shaderCanvas.togglePause();
-
-    this.togglePauseIfNeeded();
   }
 
   deactivate() {
@@ -102,24 +92,6 @@ export default class Shader {
       this.canvas = document.createElement("canvas");
       this.wrapper.appendChild(this.canvas);
       this.shaderCanvas = null;
-    }
-  }
-
-  togglePauseIfNeeded() {
-    if (!this.shaderCanvas) {
-      return;
-    }
-
-    let shouldBePlaying = this.monitor.isInViewport;
-    if (!this.solo) {
-      // Oddly, I've discovered that it's possible for isFullyInViewport to be
-      // true, but isInViewport to be false. Checking both is more reliable.
-      shouldBePlaying = this.monitor.isInViewport && this.monitor.isFullyInViewport;
-    }
-    // Easier to check the logic if it's named sensibly:
-    const shouldBePaused = !shouldBePlaying;
-    if (this.shaderCanvas.paused !== shouldBePaused) {
-      this.shaderCanvas.togglePause();
     }
   }
 
