@@ -3,7 +3,12 @@ import ShaderCanvas from "shader-canvas";
 function fixTextureURL(filePath) {
   // ../textures/foo.jpg -> textures/foo.jpg
   return filePath.replace(/^\.\.\//, '');
-};
+}
+
+function shaderIsAnimated(shaderSource) {
+  return /(u_time|iGlobalTime|u_mouse|iMouse)/.test(shaderSource);
+
+}
 
 export default class Shader {
   constructor(model, {solo, renderer} = {}) {
@@ -73,6 +78,20 @@ export default class Shader {
     this.shaderCanvas.buildTextureURL = fixTextureURL;
     this.shaderCanvas.setShader(this.model.source);
     this.wrapper.appendChild(this.shaderCanvas.domElement);
+
+    this.isAnimated = shaderIsAnimated(this.model.source);
+  }
+
+  run() {
+    if (this.isAnimated && this.shaderCanvas.paused) {
+      this.shaderCanvas.togglePause();
+    }
+  }
+
+  pause() {
+    if (!this.shaderCanvas.paused) {
+      this.shaderCanvas.togglePause();
+    }
   }
 
   setSize(width, height) {

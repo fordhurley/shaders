@@ -12,18 +12,20 @@ function getContainer() {
 function makeMonitor(shader) {
   const monitor = ScrollMonitor.create(shader.domElement);
 
-  function togglePauseIfNeeded() {
-    const shouldBePaused = !monitor.isInViewport;
-    if (shader.shaderCanvas.paused !== shouldBePaused) {
-      shader.shaderCanvas.togglePause();
+  function runWhenVisible() {
+    if (monitor.isInViewport) {
+      shader.run();
+    } else {
+      shader.pause();
     }
   }
-  togglePauseIfNeeded();
+  runWhenVisible();
 
-  monitor.enterViewport(togglePauseIfNeeded);
-  monitor.fullyEnterViewport(togglePauseIfNeeded);
-  monitor.partiallyExitViewport(togglePauseIfNeeded);
-  monitor.exitViewport(togglePauseIfNeeded);
+  monitor.enterViewport(runWhenVisible);
+  monitor.fullyEnterViewport(runWhenVisible);
+  monitor.partiallyExitViewport(runWhenVisible);
+  monitor.exitViewport(runWhenVisible);
+
   return monitor;
 }
 
