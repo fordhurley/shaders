@@ -24,15 +24,18 @@ float rain(vec2 uv, float t, float raininess, float slant) {
   return alpha;
 }
 
+uniform vec2 u_resolution;
+uniform float u_time;
+
 void main() {
-  vec2 uv = gl_FragCoord.xy / iResolution.xy;
-  float aspect = iResolution.x / iResolution.y;
+  vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+  float aspect = u_resolution.x / u_resolution.y;
   uv.x *= aspect;
 
   vec3 color = vec3(0.2, 0.3, map(uv.y, 0.0, 1.0, 0.5, 0.4));
   vec3 rainColor = vec3(0.87, 0.87, 0.91);
 
-  float t = iGlobalTime;
+  float t = u_time;
   float loopTime = 8.0;
 
   float raininess = map(sin(t * 2.0 * PI / loopTime), -1.0, 1.0, 0.15, 0.4);

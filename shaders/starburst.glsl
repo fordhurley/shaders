@@ -13,9 +13,12 @@ float gain(float x, float k) {
   return (x<0.5)?a:1.0-a;
 }
 
+uniform vec2 u_resolution;
+uniform float u_time;
+
 void main() {
-  vec2 uv = gl_FragCoord.xy / iResolution.xy;
-  float aspect = iResolution.x / iResolution.y;
+  vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+  float aspect = u_resolution.x / u_resolution.y;
 
   uv = map(uv, 0.0, 1.0, -1.0, 1.0);
   uv.y += 1.2;
@@ -28,8 +31,8 @@ void main() {
   theta *= 45.0;
 
 
-  float v = map(valueNoise(vec2(r, theta - iGlobalTime)), -1.0, 1.0, 0.0, 1.0);
-  v += map(valueNoise(vec2(r * 1.0, theta * 2.0 - iGlobalTime) + 12.392), -1.0, 1.0, 0.0, 0.5);
+  float v = map(valueNoise(vec2(r, theta - u_time)), -1.0, 1.0, 0.0, 1.0);
+  v += map(valueNoise(vec2(r * 1.0, theta * 2.0 - u_time) + 12.392), -1.0, 1.0, 0.0, 0.5);
   v /= 1.5;
 
   v = gain(v, 2.4);

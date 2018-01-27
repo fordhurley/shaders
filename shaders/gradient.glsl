@@ -1,3 +1,6 @@
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+
 void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution;
 

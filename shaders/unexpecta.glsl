@@ -95,15 +95,19 @@ float radialDiamonds(vec2 st, float t, int numDiamonds) {
   return clamp(v, 0.0, 1.0);
 }
 
+
+uniform vec2 u_resolution;
+uniform float u_time;
+
 void main() {
-  vec2 uv = gl_FragCoord.xy / iResolution.xy;
+  vec2 uv = gl_FragCoord.xy / u_resolution.xy;
   vec2 st = uv * 2.0 - 1.0;
 
   const float loopTime = 1.9;
-  float t = mod(iGlobalTime, loopTime);
+  float t = mod(u_time, loopTime);
   t /= loopTime;
 
-  int loopIndex = int(mod(iGlobalTime / loopTime, 2.0));
+  int loopIndex = int(mod(u_time / loopTime, 2.0));
 
   vec3 color = vec3(0.25, 0.0, 0.0);
   if (loopIndex == 0) {

@@ -23,12 +23,15 @@ float octaveNoise(vec2 st) {
   return v;
 }
 
+uniform vec2 u_resolution;
+uniform float u_time;
+
 void main() {
-  vec2 uv = gl_FragCoord.xy / iResolution.xy;
-  float aspect = iResolution.x / iResolution.y;
+  vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+  float aspect = u_resolution.x / u_resolution.y;
   uv.x *= aspect;
 
-  float t = iGlobalTime;
+  float t = u_time;
   uv.x += 0.05 * t;
   uv.y += 0.25 * sin(t * 0.1);
 

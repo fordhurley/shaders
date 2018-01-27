@@ -2,7 +2,6 @@
 #pragma glslify: gain = require(../lib/iq/gain)
 #pragma glslify: noise = require(glsl-noise/classic/3d)
 
-
 float clamp01(float x) {
   return clamp(x, 0.0, 1.0);
 }
@@ -64,6 +63,10 @@ vec3 skyGradient(vec2 uv) {
   k = clamp01(k);
   return mix(bg, fg, k);
 }
+
+uniform float u_time;
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
 
 void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution;

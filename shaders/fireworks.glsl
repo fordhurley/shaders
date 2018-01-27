@@ -58,6 +58,9 @@ vec4 randomBurst(vec2 st, float t, float burstIndex) {
   return vec4(color, radialLines(theta, width, points));
 }
 
+uniform vec2 u_resolution;
+uniform float u_time;
+
 void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution.xy;
 

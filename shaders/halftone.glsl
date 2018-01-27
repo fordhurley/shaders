@@ -35,6 +35,8 @@ float dots(vec2 uv, vec2 gridSize) {
   return 1.0 - step(dotRadius, cellRadius);
 }
 
+uniform vec2 u_resolution;
+
 void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution;
   uv = map(uv, 0.0, 1.0, -1.0, 1.0);

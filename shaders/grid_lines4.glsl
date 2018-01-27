@@ -3,6 +3,8 @@
 
 #define PI 3.14159
 
+uniform vec2 u_resolution;
+
 void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution;
   float aspect = u_resolution.x / u_resolution.y;

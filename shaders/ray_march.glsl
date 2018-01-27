@@ -1,5 +1,9 @@
 #pragma glslify: noise = require('glsl-noise/simplex/4d')
 
+uniform vec2 u_resolution;
+uniform float u_time;
+uniform vec2 u_mouse;
+
 float sphereSDF(vec3 p, float radius) {
   return length(p) - radius;
 }
@@ -44,8 +48,8 @@ vec3 normal(vec3 p) {
 }
 
 void main() {
-  vec2 uv = gl_FragCoord.xy / iResolution.xy;
-  float aspect = iResolution.x / iResolution.y;
+  vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+  float aspect = u_resolution.x / u_resolution.y;
   uv.x *= aspect; // maintain aspect ratio
   uv.x += (1.0 - aspect)/2.0; // center horizontally
 
@@ -68,8 +72,8 @@ void main() {
     vec3 normalOnSurface = normal(pointOnSurface);
 
     vec3 lightPos = vec3(-1.0, 1.0, 1.0);
-    if (iMouse.x > 0.0 && iMouse.y > 0.0) {
-      lightPos.xy = iMouse * 2.0 - 1.0;
+    if (u_mouse.x > 0.0 && u_mouse.y > 0.0) {
+      lightPos.xy = u_mouse * 2.0 - 1.0;
     }
     vec3 lightDir = normalize(-lightPos);
 

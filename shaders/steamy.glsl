@@ -67,6 +67,9 @@ vec3 gradient(vec2 uv) {
   return mix(startColor, endColor, k);
 }
 
+uniform vec2 u_resolution;
+uniform float u_time;
+
 void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution;
 

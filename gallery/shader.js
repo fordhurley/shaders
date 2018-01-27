@@ -76,7 +76,8 @@ export default class Shader {
 
     this.shaderCanvas = new ShaderCanvas({renderer});
     this.shaderCanvas.buildTextureURL = fixTextureURL;
-    this.shaderCanvas.setShader(this.model.source);
+    const includeDefaultUniforms = false;
+    this.shaderCanvas.setShader(this.model.source, includeDefaultUniforms);
     this.wrapper.appendChild(this.shaderCanvas.domElement);
 
     this.isAnimated = shaderIsAnimated(this.model.source);

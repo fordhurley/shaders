@@ -19,6 +19,9 @@ float pattern(const vec2 st, float t) {
   return v;
 }
 
+uniform vec2 u_resolution;
+uniform float u_time;
+
 void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution.xy;
   float aspect = u_resolution.x / u_resolution.y;

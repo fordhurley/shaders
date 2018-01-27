@@ -2,9 +2,11 @@
 const float vignetteRadius = 1.2;
 const float vignetteSharpness = 1.0;
 
+uniform vec2 u_resolution;
+
 void main() {
-  vec2 uv = gl_FragCoord.xy / iResolution.xy;
-  float aspect = iResolution.x / iResolution.y;
+  vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+  float aspect = u_resolution.x / u_resolution.y;
   uv.x *= aspect;
 
   float radius = distance(uv, vec2(0.5));

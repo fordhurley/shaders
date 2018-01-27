@@ -16,9 +16,11 @@ float rect(vec2 st, vec2 size) {
 // Comment out to show the shape:
 #define SHOW_FIELD
 
+uniform vec2 u_resolution;
+
 void main() {
-  vec2 uv = gl_FragCoord.xy / iResolution.xy;
-  float aspect = iResolution.x / iResolution.y;
+  vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+  float aspect = u_resolution.x / u_resolution.y;
   uv.x *= aspect;
 
   vec2 st = uv * 2.0 - 1.0; // [-1, 1] in xy

@@ -11,6 +11,8 @@ float frostingMask(vec2 uv, float meltiness, float topEdge, float bottomEdge, fl
   return step(bottomEdge, uv.y) - step(topEdge, uv.y);
 }
 
+uniform vec2 u_resolution;
+
 void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution;
   uv.x *= u_resolution.x / u_resolution.y;

@@ -24,6 +24,9 @@ float circle(vec2 center, float radius, vec2 st) {
   return 0.0;
 }
 
+uniform vec2 u_resolution;
+uniform float u_time;
+
 void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution;
   float aspect = u_resolution.x / u_resolution.y;
@@ -37,7 +40,7 @@ void main() {
   vec3 vel0 = vec3(0.5, 1.3, 0.0);
   const float radius = 0.02;
 
-  float t = mod(iGlobalTime, loopTime);
+  float t = mod(u_time, loopTime);
 
   vec3 color = vec3(0.0);
 

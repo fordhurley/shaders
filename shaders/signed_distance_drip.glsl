@@ -84,17 +84,21 @@ float fog(vec2 uv) {
   return 0.5 + 0.5 * fogNoise; // ~[0, 1]
 }
 
+uniform vec2 u_resolution;
+uniform float u_time;
+uniform vec2 u_mouse;
+
 void main() {
-  vec2 uv = gl_FragCoord.xy / iResolution.xy;
-  float aspect = iResolution.x / iResolution.y;
+  vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+  float aspect = u_resolution.x / u_resolution.y;
   uv.x *= aspect;
   uv.x += (1.0 - aspect)/2.0;
 
   vec2 st = uv * 2.0 - 1.0; // [-1, 1] in xy
 
   const float loopTime = 9.0;
-  float t = fract(iGlobalTime / loopTime);
-  float loopIndex = floor(iGlobalTime / loopTime);
+  float t = fract(u_time / loopTime);
+  float loopIndex = floor(u_time / loopTime);
 
   // For capturing stills:
   // t = 0.85;
@@ -132,9 +136,9 @@ void main() {
 
   #ifdef DEBUG
     // Move the mouse horizontally to visualize the field and the shape together.
-    vec3 color = mix(shape, field, iMouse.x);
+    vec3 color = mix(shape, field, u_mouse.x);
     // Move the mouse vertically to visualize the normals.
-    color = mix(color, normal, iMouse.y);
+    color = mix(color, normal, u_mouse.y);
   #else
     vec3 view = vec3(0.0, 0.0, -1.0);
     vec3 refraction = refract(view, normal, 0.5);

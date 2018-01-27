@@ -1,9 +1,11 @@
 #pragma glslify: smoothUnion = require(../lib/iq/smoothUnion)
 
-void main() {
-  vec2 uv = gl_FragCoord.xy / iResolution.xy;
+uniform vec2 u_resolution;
 
-  vec2 thickness = vec2(100.0 / iResolution);
+void main() {
+  vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+
+  vec2 thickness = vec2(100.0 / u_resolution);
   float cornerSmoothness = 0.75;
 
   vec2 distanceToEdge = min(abs(uv), abs(1.0 - uv));

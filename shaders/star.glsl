@@ -28,8 +28,10 @@ vec2 map(vec2 value, vec2 inMin, vec2 inMax, vec2 outMin, vec2 outMax) {
   );
 }
 
+uniform vec2 u_resolution;
+
 void main() {
-	vec2 uv = gl_FragCoord.xy/iResolution.xy;
+	vec2 uv = gl_FragCoord.xy/u_resolution.xy;
   uv = map(uv, 0.0, 1.0, -1.0, 1.0);
 
   const float sqrt2over2 = 0.7071068;

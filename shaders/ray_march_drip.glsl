@@ -137,9 +137,12 @@ vec3 normal(vec3 p, float t, float seed) {
   return normalize(n);
 }
 
+uniform vec2 u_resolution;
+uniform float u_time;
+
 void main() {
-  vec2 uv = gl_FragCoord.xy / iResolution.xy;
-  float aspect = iResolution.x / iResolution.y;
+  vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+  float aspect = u_resolution.x / u_resolution.y;
   uv.x *= aspect;
   uv.x += (1.0 - aspect)/2.0;
 
@@ -150,8 +153,8 @@ void main() {
   float maxDepth = 2.0;
 
   const float loopTime = 4.0;
-  float t = fract(iGlobalTime / loopTime);
-  float loopIndex = floor(iGlobalTime / loopTime);
+  float t = fract(u_time / loopTime);
+  float loopIndex = floor(u_time / loopTime);
 
   float d = depth(eyePos, viewDir, maxDepth, t, loopIndex);
 

@@ -18,6 +18,9 @@ float heart(float theta) {
   return 2.0 - 2.0 * s + s * sqrt(abs(c)) / (s + 1.4);
 }
 
+uniform vec2 u_resolution;
+uniform float u_time;
+
 void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution;
 

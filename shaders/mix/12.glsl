@@ -4,7 +4,7 @@
 //  |                 |
 // (1, 1, 1) - (1, 0, 0)
 
-#define sqrt2 1.414213562
+uniform vec2 u_resolution;
 
 void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution.xy;
