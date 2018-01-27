@@ -6,7 +6,7 @@
 void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution.xy;
 
-  float t = u_time * 0.4;
+  float t = 1.9;
 
   float k;
   vec3 color;
