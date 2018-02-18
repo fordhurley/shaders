@@ -5,6 +5,25 @@
 uniform vec2 u_resolution;
 uniform float u_time;
 
+float fbm(vec2 p) {
+  float value = 0.0;
+  float amplitude = 0.5;
+  vec2 shift = vec2(100.0);
+  // Rotate to reduce axial bias
+  mat2 rotation = mat2(
+    cos(0.5), sin(0.5),
+    -sin(0.5), cos(0.5)
+  );
+  for (int i = 0; i < 2; i++) {
+    value += amplitude * map(noise(p), -1.0, 1.0, 0.0, 1.0);
+    p = rotation * p;
+    p *= 2.0;
+    p += shift;
+    amplitude *= 0.5;
+  }
+  return value;
+}
+
 void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution;
   float aspect = u_resolution.x / u_resolution.y;
@@ -24,7 +43,7 @@ void main() {
   st.y -= u_time * speed;
 
   vec3 color;
-  color.r = clamp(noise(st), 0.0, 1.0);
+  color.r = fbm(st);
   color.g = color.r * map(uv.y, -0.2, 0.2, 3.0, 0.0);
 
   vec2 shapeUV = uv;
