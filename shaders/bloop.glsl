@@ -17,6 +17,13 @@ void main() {
   st -= u_time * speed;
   st *= repeat;
 
+  const float wiggleRepeat = 2.0;
+  const float wiggleSpeed = 0.1;
+  const float wiggleAmount = 0.1;
+  float wiggle = noise((uv + u_time * wiggleSpeed) * wiggleRepeat);
+  wiggle *= uv.y * uv.y; // less wiggly at the bottom
+  st.x += wiggle * wiggleAmount;
+
   float v = map(noise(st), -1.0, 1.0, 0.0, 1.0);
   v -= uv.y;
 
