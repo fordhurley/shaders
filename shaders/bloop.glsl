@@ -1,6 +1,5 @@
-#pragma glslify: noise = require(glsl-noise/simplex/3d)
-#pragma glslify: cubicPulse = require(../lib/iq/cubicPulse)
-#pragma glslify: gain = require(../lib/iq/gain)
+#pragma glslify: noise = require(glsl-noise/simplex/2d)
+#pragma glslify: map = require(../lib/map)
 
 uniform vec2 u_resolution;
 uniform float u_time;
@@ -10,25 +9,23 @@ void main() {
   float aspect = u_resolution.x / u_resolution.y;
   uv.x *= aspect;
   uv.x += 0.5 - aspect/2.0;
-  if (aspect < 1.0) {
-    uv -= 0.5 - aspect/2.0;
-    uv /= aspect;
-  }
 
-  const float repeat = 20.0;
-  const vec3 speed = vec3(0.0, 0.0, 0.3);
+  const float repeat = 10.0;
+  const vec2 speed = vec2(0.0, 0.05);
 
-  vec3 st = vec3(uv, 0.0) * repeat;
+  vec2 st = uv;
   st -= u_time * speed;
+  st *= repeat;
 
-  float v = noise(st);
+  float v = map(noise(st), -1.0, 1.0, 0.0, 1.0);
+  v -= uv.y;
 
-  vec3 color;
-  color.b = v + 0.4;
-  color.b = gain(color.b, 2.0);
-  float highlight = cubicPulse(0.5, 0.75, color.b) * 0.5;
-  color.r += highlight;
-  color.b -= highlight;
+  vec3 bg = mix(vec3(0.0, 0.1, 0.8), vec3(0.0, 0.2, 0.7), uv.y);
+  vec3 fg = vec3(0.9, 0.95, 0.95);
+
+  const float edgeWidth = 0.01;
+  float alpha = smoothstep(-edgeWidth/2.0, edgeWidth/2.0, v);
+  vec3 color = mix(bg, fg, alpha);
 
   gl_FragColor = vec4(color, 1.0);
 }
