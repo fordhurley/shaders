@@ -18,8 +18,8 @@ void main() {
   st *= repeat;
 
   const float wiggleRepeat = 2.0;
-  const float wiggleSpeed = 0.1;
-  const float wiggleAmount = 0.1;
+  const float wiggleSpeed = 0.01;
+  const float wiggleAmount = 0.25;
   float wiggle = noise((uv + u_time * wiggleSpeed) * wiggleRepeat);
   wiggle *= uv.y * uv.y; // less wiggly at the bottom
   st.x += wiggle * wiggleAmount;
@@ -27,7 +27,7 @@ void main() {
   float v = map(noise(st), -1.0, 1.0, 0.0, 1.0);
   v -= uv.y;
 
-  vec3 bg = mix(vec3(0.0, 0.1, 0.8), vec3(0.0, 0.2, 0.7), uv.y);
+  vec3 bg = mix(vec3(0.0, 0.0, 0.6), vec3(0.0, 0.2, 0.7), uv.y);
   vec3 fg = vec3(0.9, 0.95, 0.95);
 
   const float edgeWidth = 0.01;
