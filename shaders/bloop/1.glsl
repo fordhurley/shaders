@@ -1,5 +1,5 @@
 #pragma glslify: noise = require(glsl-noise/simplex/2d)
-#pragma glslify: map = require(../lib/map)
+#pragma glslify: map = require(../../lib/map)
 
 uniform vec2 u_resolution;
 uniform float u_time;
