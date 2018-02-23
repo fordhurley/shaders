@@ -64,10 +64,14 @@ void main() {
   vec3 bg = gradient(st,
     vec3(0.8, 0.85, 0.9),
     vec3(0.9, 0.95, 0.95),
-    vec2(-1.0, 0.0),
-    vec2(1.0, 1.0)
+    vec2(-1.0, -1.0),
+    vec2(1.0, 0.8)
   );
-  vec3 fg = vec3(0.0, 0.25, 0.75);
+  vec3 fg = mix(
+    vec3(0.0, 0.2, 0.6),
+    vec3(0.0, 0.3, 0.9),
+    dot(st, st)
+  );
   vec3 color = mix(bg, fg, alpha);
 
   gl_FragColor = vec4(color, 1.0);
