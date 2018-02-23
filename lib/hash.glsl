@@ -11,4 +11,8 @@ highp float hash(const in vec2 uv) {
 	return fract(sin(sn) * c);
 }
 
+highp float hash(const in float x, const in float y) {
+  return hash(vec2(x, y));
+}
+
 #pragma glslify: export(hash)
