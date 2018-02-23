@@ -20,7 +20,7 @@ float randomDotSDF(vec2 st, float t, float index) {
   vec4 seed = hash1to4(index);
 
   float angle = 2.0 * PI * seed.x;
-  float size = mix(0.1, 0.2, seed.y);
+  float size = mix(0.15, 0.2, seed.y);
   float speed = mix(1.5, 2.0, seed.z);
   float popiness = mix(10.0, 30.0, seed.w);
 
@@ -46,12 +46,15 @@ void main() {
 
   vec2 st = map(uv, 0.0, 1.0, -1.0, 1.0);
 
+  const float magicOffset = 29.0; // to find a nicer beginning
   const float loopTime = 5.0;
   const int numParticles = 20;
 
   float d = 1e12;
   for (int i = 0; i < numParticles; i++) {
-    float shiftedTime = u_time - loopTime * float(i) / float(numParticles);
+    float shiftedTime = u_time;
+    shiftedTime -= loopTime * float(i) / float(numParticles);
+    shiftedTime += magicOffset;
     float t = fract(shiftedTime / loopTime);
     float loopIndex = floor(shiftedTime / loopTime);
     float seed = loopIndex + float(i) * 142.8;
