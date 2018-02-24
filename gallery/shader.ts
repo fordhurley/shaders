@@ -13,7 +13,7 @@ export default class Shader {
   public model: any;
   public solo: boolean;
   public domElement: HTMLElement;
-  public shaderCanvas: ShaderCanvas;
+  public shaderCanvas: any;
   public isAnimated: boolean;
 
   constructor(model: any, solo: boolean = false, renderer = null) {

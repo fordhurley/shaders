@@ -30,8 +30,24 @@ function makeMonitor(shader) {
   return monitor;
 }
 
+interface Model {
+  title: string;
+  slug: string;
+  raw_source: string;
+  source: string;
+}
+
+function findModel(models: Model[], slug: string) : Model | null {
+  for (let i = 0; i < models.length; i++) {
+    if (models[i].slug === slug) {
+      return models[i];
+    }
+  }
+  return null
+}
+
 function initSingleShader(slug) {
-  const model = models.find(m => m.slug === slug);
+  const model = findModel(models, slug);
   if (!model) {
     throw new Error("No model found for: " + slug);
   }
