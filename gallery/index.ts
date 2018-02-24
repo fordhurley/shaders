@@ -1,8 +1,9 @@
 import {WebGLRenderer} from "three";
+
 import ScrollMonitor from "scrollmonitor";
 
 import "./style.scss";
-// import models from "./models.yaml";
+import models from "./models.yaml";
 import Shader from "./shader";
 
 function getContainer() {
@@ -28,10 +29,6 @@ function makeMonitor(shader) {
 
   return monitor;
 }
-
-const models = [
-  "foo",
-];
 
 function initSingleShader(slug) {
   const model = models.find(m => m.slug === slug);
