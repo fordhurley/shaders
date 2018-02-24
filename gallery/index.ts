@@ -2,11 +2,11 @@ import {WebGLRenderer} from "three";
 import ScrollMonitor from "scrollmonitor";
 
 import "./style.scss";
-import models from "./models.yaml";
+// import models from "./models.yaml";
 import Shader from "./shader";
 
 function getContainer() {
-  return document.querySelector("main");
+  return document.querySelector("main")!;
 }
 
 function makeMonitor(shader) {
@@ -29,6 +29,10 @@ function makeMonitor(shader) {
   return monitor;
 }
 
+const models = [
+  "foo",
+];
+
 function initSingleShader(slug) {
   const model = models.find(m => m.slug === slug);
   if (!model) {
@@ -37,7 +41,7 @@ function initSingleShader(slug) {
 
   const container = getContainer();
   container.classList.add("solo");
-  const shader = new Shader(model, {solo: true});
+  const shader = new Shader(model, true);
   container.appendChild(shader.domElement);
 
   function resize() {
@@ -54,7 +58,7 @@ function initAllShaders() {
   renderer.setPixelRatio(window.devicePixelRatio);
 
   const shaders = models.map((m) => {
-    return new Shader(m, {renderer});
+    return new Shader(m, false, renderer);
   });
 
   const container = getContainer();
