@@ -80,7 +80,7 @@ function initAllShaders() {
     makeMonitor(shader);
   });
 
-  let lastWidth = null;
+  let lastWidth = 0;
   function resize() {
     const width = shaders[0].naturalWidth();
     if (width === lastWidth) {

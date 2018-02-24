@@ -13,7 +13,7 @@ export default class Shader {
   public model: any;
   public solo: boolean;
   public domElement: HTMLElement;
-  public shaderCanvas: any;
+  public shaderCanvas: ShaderCanvas;
   public isAnimated: boolean;
 
   constructor(model: any, solo: boolean = false, renderer = null) {
@@ -108,7 +108,9 @@ export default class Shader {
   }
 
   naturalWidth() {
-    this.shaderCanvas.domElement.style = {}; // fall back to document style temporarily
+    // Fall back to sized by the document CSS temporarily:
+    this.shaderCanvas.domElement.style.width = "";
+    this.shaderCanvas.domElement.style.height = "";
     return this.shaderCanvas.domElement.clientWidth;
   }
 }
