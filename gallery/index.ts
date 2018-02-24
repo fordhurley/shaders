@@ -1,12 +1,12 @@
-import {WebGLRenderer} from "three";
 import ScrollMonitor from "scrollmonitor";
+import {Renderer} from "shader-canvas";
 
 import "./style.scss";
 import models from "./models.yaml";
 import Shader from "./shader";
 
 function getContainer() {
-  return document.querySelector("main");
+  return document.querySelector("main")!;
 }
 
 function makeMonitor(shader) {
@@ -29,15 +29,31 @@ function makeMonitor(shader) {
   return monitor;
 }
 
-function initSingleShader(slug) {
-  const model = models.find(m => m.slug === slug);
+interface Model {
+  title: string;
+  slug: string;
+  raw_source: string;
+  source: string;
+}
+
+function findModel(models: Model[], slug: string) : Model | null {
+  for (let i = 0; i < models.length; i++) {
+    if (models[i].slug === slug) {
+      return models[i];
+    }
+  }
+  return null
+}
+
+function initSingleShader(slug: string) {
+  const model = findModel(models, slug);
   if (!model) {
     throw new Error("No model found for: " + slug);
   }
 
   const container = getContainer();
   container.classList.add("solo");
-  const shader = new Shader(model, {solo: true});
+  const shader = new Shader(model, true);
   container.appendChild(shader.domElement);
 
   function resize() {
@@ -50,11 +66,11 @@ function initSingleShader(slug) {
 
 function initAllShaders() {
   // Make a single renderer to share between all of them:
-  const renderer = new WebGLRenderer();
+  const renderer = new Renderer();
   renderer.setPixelRatio(window.devicePixelRatio);
 
   const shaders = models.map((m) => {
-    return new Shader(m, {renderer});
+    return new Shader(m, false, renderer);
   });
 
   const container = getContainer();
@@ -63,7 +79,7 @@ function initAllShaders() {
     makeMonitor(shader);
   });
 
-  let lastWidth = null;
+  let lastWidth = 0;
   function resize() {
     const width = shaders[0].naturalWidth();
     if (width === lastWidth) {
@@ -73,7 +89,7 @@ function initAllShaders() {
     renderer.setSize(width, width);
     shaders.forEach((shader) => {
       shader.setSize(width, width);
-      shader.shaderCanvas.render(); // because changing the size clears the canvas
+      shader.render(); // because changing the size clears the canvas
     });
     ScrollMonitor.recalculateLocations();
   }

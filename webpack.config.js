@@ -5,7 +5,7 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 
 module.exports = {
-  entry: "./gallery/index.js",
+  entry: "./gallery/index.ts",
   output: {
     filename: "bundle.js",
     path: path.resolve(__dirname, "build"),
@@ -13,6 +13,10 @@ module.exports = {
   devServer: {
     contentBase: "./build",
     host: "fords-macbook-pro.local",
+  },
+  devtool: "source-map",
+  resolve: {
+    extensions: [".ts", ".js"],
   },
   module: {
     rules: [
@@ -27,6 +31,15 @@ module.exports = {
       {
         test: /models\.yaml$/,
         use: [path.resolve("generate-models.js")],
+      },
+      {
+        test: /\.(t|j)s$/,
+        use: {loader: "awesome-typescript-loader"},
+      },
+      {
+        enforce: "pre",
+        test: /\.js$/,
+        loader: "source-map-loader"
       },
     ],
   },

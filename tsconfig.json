@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "outDir": "./build/",
+    "sourceMap": true,
+    "strictNullChecks": true,
+    "module": "es6",
+    "moduleResolution": "node",
+    "target": "es5",
+    "allowJs": true
+  },
+  "include": [
+    "./gallery/"
+  ]
+}

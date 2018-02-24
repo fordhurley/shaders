@@ -1,62 +1,70 @@
-import ShaderCanvas from "shader-canvas";
+import ShaderCanvas, {Renderer} from "shader-canvas";
 
-function fixTextureURL(filePath) {
+function fixTextureURL(filePath: string): string {
   // ../textures/foo.jpg -> textures/foo.jpg
   return filePath.replace(/^\.\.\//, '');
 }
 
-function shaderIsAnimated(shaderSource) {
+function shaderIsAnimated(shaderSource: string): boolean {
   return /(u_time|iGlobalTime|u_mouse|iMouse)/.test(shaderSource);
-
 }
 
 export default class Shader {
-  constructor(model, {solo, renderer} = {}) {
+  domElement: HTMLElement;
+  private model: any;
+  private isSolo: boolean;
+  private isAnimated: boolean;
+  private shaderCanvas: ShaderCanvas;
+
+  constructor(model: any, isSolo: boolean = false, renderer?: Renderer) {
     this.model = model;
-    this.solo = solo;
+    this.isSolo = isSolo;
 
-    this.domElement = document.createElement(this.solo ? "div" : "a");
-    this.domElement.classList.add("shader");
-    this.domElement.classList.add("inactive");
-
-    if (!this.solo) {
-      this.domElement.href = `#${this.model.slug}`;
-      this.domElement.addEventListener("click", function(e) {
+    if (!this.isSolo) {
+      let el = document.createElement("a");
+      el.href = `#${this.model.slug}`;
+      el.addEventListener("click", (e) => {
         window.location.hash = `#${this.model.slug}`;
         window.location.reload();
-      }.bind(this));
+      });
+      this.domElement = el;
+    } else {
+      this.domElement = document.createElement("div");
     }
+
+    this.domElement.classList.add("shader");
+    this.domElement.classList.add("inactive");
 
     const metaTop = document.createElement("div");
     metaTop.classList.add("meta");
     this.domElement.appendChild(metaTop);
 
-    let titleEl = document.createElement("span");
+    const titleEl = document.createElement("span");
     titleEl.classList.add("title");
     titleEl.textContent = this.model.title;
     metaTop.appendChild(titleEl);
 
-    this.wrapper = document.createElement("div");
-    this.wrapper.classList.add("canvas-wrapper");
-    this.wrapper.id = `shader-${this.model.slug}`
-    this.domElement.appendChild(this.wrapper);
+    const wrapper = document.createElement("div");
+    wrapper.classList.add("canvas-wrapper");
+    wrapper.id = `shader-${this.model.slug}`
+    this.domElement.appendChild(wrapper);
 
     const metaBottom = document.createElement("div");
     metaBottom.classList.add("meta");
     this.domElement.appendChild(metaBottom);
 
-    if (this.solo) {
+    if (this.isSolo) {
       const sourceEl = document.createElement("pre");
       sourceEl.classList.add("shader-source");
       sourceEl.classList.add("hidden");
       sourceEl.textContent = this.model.raw_source;
-      this.wrapper.appendChild(sourceEl);
+      wrapper.appendChild(sourceEl);
 
       const sourceButton = document.createElement("a");
       sourceButton.classList.add("source");
       sourceButton.href = "javascript:";
       sourceButton.textContent = "source";
-      metaTop.append(sourceButton);
+      metaTop.appendChild(sourceButton);
 
       sourceButton.addEventListener("click", function(e) {
         e.preventDefault();
@@ -70,7 +78,7 @@ export default class Shader {
 
       // Trigger a reload when pressing the back button from here:
       window.addEventListener("hashchange", function(e) {
-        window.location = window.location;
+        window.location.reload();
       });
     }
 
@@ -78,7 +86,7 @@ export default class Shader {
     this.shaderCanvas.buildTextureURL = fixTextureURL;
     const includeDefaultUniforms = false;
     this.shaderCanvas.setShader(this.model.source, includeDefaultUniforms);
-    this.wrapper.appendChild(this.shaderCanvas.domElement);
+    wrapper.appendChild(this.shaderCanvas.domElement);
 
     this.isAnimated = shaderIsAnimated(this.model.source);
   }
@@ -95,12 +103,18 @@ export default class Shader {
     }
   }
 
-  setSize(width, height) {
+  render() {
+    this.shaderCanvas.render();
+  }
+
+  setSize(width: number, height: number) {
     this.shaderCanvas.setSize(width, height);
   }
 
-  naturalWidth() {
-    this.shaderCanvas.domElement.style = {}; // fall back to document style temporarily
+  naturalWidth(): number {
+    // Fall back to sized by the document CSS temporarily:
+    this.shaderCanvas.domElement.style.width = "";
+    this.shaderCanvas.domElement.style.height = "";
     return this.shaderCanvas.domElement.clientWidth;
   }
 }
