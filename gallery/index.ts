@@ -1,6 +1,5 @@
-import {WebGLRenderer} from "three";
-
 import ScrollMonitor from "scrollmonitor";
+import {Renderer} from "shader-canvas";
 
 import "./style.scss";
 import models from "./models.yaml";
@@ -46,7 +45,7 @@ function findModel(models: Model[], slug: string) : Model | null {
   return null
 }
 
-function initSingleShader(slug) {
+function initSingleShader(slug: string) {
   const model = findModel(models, slug);
   if (!model) {
     throw new Error("No model found for: " + slug);
@@ -67,7 +66,7 @@ function initSingleShader(slug) {
 
 function initAllShaders() {
   // Make a single renderer to share between all of them:
-  const renderer = new WebGLRenderer();
+  const renderer = new Renderer();
   renderer.setPixelRatio(window.devicePixelRatio);
 
   const shaders = models.map((m) => {
@@ -90,7 +89,7 @@ function initAllShaders() {
     renderer.setSize(width, width);
     shaders.forEach((shader) => {
       shader.setSize(width, width);
-      shader.shaderCanvas.render(); // because changing the size clears the canvas
+      shader.render(); // because changing the size clears the canvas
     });
     ScrollMonitor.recalculateLocations();
   }

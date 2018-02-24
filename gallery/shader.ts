@@ -1,26 +1,26 @@
-import ShaderCanvas from "shader-canvas";
+import ShaderCanvas, {Renderer} from "shader-canvas";
 
-function fixTextureURL(filePath) {
+function fixTextureURL(filePath: string): string {
   // ../textures/foo.jpg -> textures/foo.jpg
   return filePath.replace(/^\.\.\//, '');
 }
 
-function shaderIsAnimated(shaderSource) {
+function shaderIsAnimated(shaderSource: string): boolean {
   return /(u_time|iGlobalTime|u_mouse|iMouse)/.test(shaderSource);
 }
 
 export default class Shader {
-  public model: any;
-  public solo: boolean;
-  public domElement: HTMLElement;
-  public shaderCanvas: ShaderCanvas;
-  public isAnimated: boolean;
+  domElement: HTMLElement;
+  private model: any;
+  private isSolo: boolean;
+  private isAnimated: boolean;
+  private shaderCanvas: ShaderCanvas;
 
-  constructor(model: any, solo: boolean = false, renderer = null) {
+  constructor(model: any, isSolo: boolean = false, renderer?: Renderer) {
     this.model = model;
-    this.solo = solo;
+    this.isSolo = isSolo;
 
-    if (!this.solo) {
+    if (!this.isSolo) {
       let el = document.createElement("a");
       el.href = `#${this.model.slug}`;
       el.addEventListener("click", (e) => {
@@ -53,7 +53,7 @@ export default class Shader {
     metaBottom.classList.add("meta");
     this.domElement.appendChild(metaBottom);
 
-    if (this.solo) {
+    if (this.isSolo) {
       const sourceEl = document.createElement("pre");
       sourceEl.classList.add("shader-source");
       sourceEl.classList.add("hidden");
@@ -103,11 +103,15 @@ export default class Shader {
     }
   }
 
-  setSize(width, height) {
+  render() {
+    this.shaderCanvas.render();
+  }
+
+  setSize(width: number, height: number) {
     this.shaderCanvas.setSize(width, height);
   }
 
-  naturalWidth() {
+  naturalWidth(): number {
     // Fall back to sized by the document CSS temporarily:
     this.shaderCanvas.domElement.style.width = "";
     this.shaderCanvas.domElement.style.height = "";
