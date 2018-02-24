@@ -12,18 +12,15 @@
 uniform vec2 u_resolution;
 uniform float u_time;
 
-void main() {
-  vec2 uv = gl_FragCoord.xy / u_resolution;
-  float aspect = u_resolution.x / u_resolution.y;
-  uv.x *= aspect;
-  uv = map(uv, 0.0, 1.0, -1.0, 1.0);
+float lines(vec2 uv, float t) {
+  const float lensLength = 0.55;
 
   const vec3 rayOrigin = vec3(0.0, -3.6, 3.4);
   const vec3 rayTarget = vec3(0.0, -1.9, 0.0);
-  const float lensLength = 0.55;
 
   const float roll = 0.0;
   mat3 cameraMatrix = lookAt(rayOrigin, rayTarget, roll);
+
   vec3 rayDirection = normalize(cameraMatrix * vec3(uv, lensLength));
 
   const vec3 planeNormal = vec3(0.0, 0.0, 1.0);
@@ -31,7 +28,6 @@ void main() {
 
   vec2 st = (rayOrigin + rayDirection * distanceToPlane).xy;
 
-  float t = u_time;
   st += noise(st * 0.1 + t * 0.2) * 0.15;
   st += noise(st * 0.4 + t * 0.5) * 0.03;
 
@@ -41,16 +37,34 @@ void main() {
   const float lineWidth = 0.06;
   const float lineEdgeWidth = 0.03;
 
-  float lines = smoothStepUpDown(0.5, lineWidth, lineEdgeWidth, cellUV.x);
-  lines = max(lines, smoothStepUpDown(0.5, lineWidth, lineEdgeWidth, cellUV.y));
+  float alpha = smoothStepUpDown(0.5, lineWidth, lineEdgeWidth, cellUV.x);
+  alpha = max(alpha, smoothStepUpDown(0.5, lineWidth, lineEdgeWidth, cellUV.y));
 
-  lines *= smoothStepUpDown(0.0, 9.0 + lineWidth/2.0, lineEdgeWidth, st.x);
-  lines *= smoothStepUpDown(0.0, 9.0 + lineWidth/2.0, lineEdgeWidth, st.y);
-  lines *= map(distanceToPlane, 4.0, 10.0, 1.0, 0.4);
+  alpha *= smoothStepUpDown(0.0, 9.0 + lineWidth/2.0, lineEdgeWidth, st.x);
+  alpha *= smoothStepUpDown(0.0, 9.0 + lineWidth/2.0, lineEdgeWidth, st.y);
+  alpha *= map(distanceToPlane, 4.0, 10.0, 1.0, 0.4);
+
+  return alpha;
+}
+
+void main() {
+  vec2 uv = gl_FragCoord.xy / u_resolution;
+  float aspect = u_resolution.x / u_resolution.y;
+  uv.x *= aspect;
+  uv = map(uv, 0.0, 1.0, -1.0, 1.0);
+
+  vec2 e = 0.5 / u_resolution;
+  float alpha = 0.0;
+  // alpha += lines(uv, u_time);
+  alpha += lines(uv + vec2( e.x,  e.y), u_time); // ne
+  alpha += lines(uv + vec2(-e.x,  e.y), u_time); // nw
+  alpha += lines(uv + vec2(-e.x, -e.x), u_time); // sw
+  alpha += lines(uv + vec2( e.x, -e.y), u_time); // se
+  alpha /= 4.0;
 
   const vec3 bgColor = vec3(0.0);
   const vec3 lineColor = vec3(1.0);
-  vec3 color = mix(bgColor, lineColor, lines);
+  vec3 color = mix(bgColor, lineColor, alpha);
 
   gl_FragColor = vec4(color, 1.0);
 }
