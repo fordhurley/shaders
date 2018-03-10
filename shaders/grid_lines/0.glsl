@@ -1,4 +1,4 @@
-#pragma glslify: cubicPulse = require(../lib/iq/cubicPulse)
+#pragma glslify: cubicPulse = require(../../lib/iq/cubicPulse)
 
 uniform vec2 u_resolution;
 

@@ -1,9 +1,9 @@
 #pragma glslify: lookAt = require(glsl-look-at)
 #pragma glslify: noise = require(glsl-noise/simplex/2d)
 
-#pragma glslify: smoothStepUpDown = require(../lib/smoothStepUpDown)
-#pragma glslify: map = require(../lib/map)
-#pragma glslify: hash = require(../lib/hash)
+#pragma glslify: smoothStepUpDown = require(../../lib/smoothStepUpDown)
+#pragma glslify: map = require(../../lib/map)
+#pragma glslify: hash = require(../../lib/hash)
 
 #ifndef PI
   #define PI 3.14159
