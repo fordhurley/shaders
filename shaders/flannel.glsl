@@ -1,26 +1,12 @@
-#pragma glslify: valueNoise = require(../lib/valueNoise)
-
 uniform sampler2D noiseTex; //  ../textures/noise.png
 
 vec3 grain(vec2 uv) {
   return texture2D(noiseTex, fract(uv)).rgb * 2.0 - 1.0;
 }
 
-float fabric(vec2 uv) {
+float twill(vec2 uv) {
   // Diagonal stripes with a gradient running across it.
   return mod(uv.x - uv.y, 2.0) - 1.0;
-}
-
-float octaveNoise(vec2 st) {
-  float freq = 1.0;
-  float ampl = 1.0;
-  float v = 0.0;
-  for (int i = 0; i < 2; i++) {
-    v += ampl * valueNoise(st * freq);
-    freq *= 2.0;
-    ampl /= 2.0;
-  }
-  return v;
 }
 
 uniform vec2 u_resolution;
@@ -44,11 +30,11 @@ void main() {
   uv += fuzziness * grainNoise.rg;
 
   vec2 stripeUV = vec2(uv.x * repeat, t * speed);
-  float verticalStipes = octaveNoise(stripeUV);
+  float verticalStipes = sin(stripeUV.x);
   verticalStipes = step(verticalStipes, 0.0);
 
   stripeUV = vec2(t * speed, uv.y * repeat);
-  float horizontalStripes = octaveNoise(stripeUV);
+  float horizontalStripes = sin(stripeUV.y);
   horizontalStripes = step(horizontalStripes, 0.0);
 
   float stripes = verticalStipes + 0.5 * horizontalStripes;
@@ -60,8 +46,8 @@ void main() {
   vec3 color = mix(bg, fg, stripes);
   color += 0.04 * grainNoise.b;
 
-  float fabricRepeat = 240.0;
-  color += 0.04 * fabric(uv * fabricRepeat);
+  float twillRepeat = 240.0;
+  color += 0.04 * twill(uv * twillRepeat);
 
   gl_FragColor = vec4(color, 1.0);
 }
