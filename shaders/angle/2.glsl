@@ -1,3 +1,5 @@
+#pragma glslify: map = require('../../lib/map');
+
 uniform vec2 u_resolution;
 uniform float u_time;
 uniform vec2 u_mouse;
@@ -20,19 +22,20 @@ void main() {
    uv *= repeat;
    uv.y += 0.5;
 
+   float t = u_time;
+
    vec2 cellNum = floor(uv * sqrt2);
 
    const float speed = 0.25;
    float direction = sign(mod(cellNum.y, 2.0) - 0.5);
-
-   uv.x += u_time * speed * direction;
+   uv.x += t * speed * direction;
 
    const float loopTime = 8.0;
-   float t = mod(u_time, loopTime) / loopTime;
-   t = abs(2.0 * t - 1.0);
-   t = smoothstep(0.0, 1.0, t);
+   float lineT = mod(t, loopTime) / loopTime;
+   lineT = abs(2.0 * lineT - 1.0);
+   lineT = smoothstep(0.0, 1.0, lineT);
 
-   float lineWidth = clamp(0.05, 0.95, t);
+   float lineWidth = map(lineT, 0.0, 1.0, 0.05, 0.95);
    vec3 color = vec3(1.0) * chevron(uv, lineWidth);
 
    gl_FragColor = vec4(color, 1.0);
