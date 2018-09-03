@@ -11,7 +11,7 @@ float chevron(vec2 uv, float lineWidth) {
    // Mirror every other cell horiziontally:
    st.x = abs(mod(floor(uv.x), 2.0) - st.x);
    float line = st.x + st.y;
-   line = fract(line + lineWidth * 0.5);
+   line = fract(line);
    return step(lineWidth, line);
 }
 
