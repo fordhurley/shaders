@@ -1,32 +1,27 @@
 uniform vec2 u_resolution;
-uniform float u_time;
+uniform vec2 u_mouse;
 
-#define sqrt2over2 0.707107
+#define sqrt2 1.4142
 
-const float scale = 100.0;
+// TODO: lineSpacing
 
-float circle(vec2 st) {
-  float r = length(st);
-  const float radius = 0.2;
-  return 1.0 - step(radius, r);
+float chevron(vec2 uv, float lineWidth) {
+  vec2 st = fract(uv);
+  // Mirror every other cell horizontally:
+  st.x = abs(mod(floor(uv.x), 2.0) - st.x);
+  float line = st.x + st.y;
+  line = fract(line + lineWidth * 0.5);
+  return step(lineWidth, line);
 }
 
 void main() {
-  vec2 uv = gl_FragCoord.xy;
-  uv /= scale;
+  vec2 uv = gl_FragCoord.xy / u_resolution;
 
-  vec2 cellNum = floor(uv);
+  float repeat = 20.0 * clamp(0.25, 0.75, u_mouse.y);
+  uv *= repeat;
 
-  const float speed = 0.5;
-  float direction = sign(mod(cellNum.y, 2.0) - 0.5);
-
-  uv.x += u_time * speed * direction;
-  vec2 cellUV = fract(uv);
-
-  vec3 color = vec3(cellUV.x, 0.0, cellUV.y);
-  color *= 0.0;
-
-  color = mix(color, vec3(1.0), circle(cellUV - 0.5));
+  float lineWidth = clamp(0.01, 0.99, u_mouse.x);
+  vec3 color = vec3(1.0) * chevron(uv, lineWidth);
 
   gl_FragColor = vec4(color, 1.0);
 }
