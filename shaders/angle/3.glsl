@@ -27,7 +27,7 @@ void main() {
   zoom = abs(2.0 * zoom - 1.0);
   zoom *= zoom;
   zoom = 1.0 - zoom;
-  st *= zoom * 25.0;
+  st *= zoom * 15.0;
 
   float line = dot(st, vec2(sqrt2over2));
   line = fract(line);
