@@ -1,7 +1,9 @@
 #pragma glslify: map = require('../lib/map');
+#pragma glslify: hsv2rgb = require('glsl-hsv2rgb');
 
 uniform sampler2D noiseTex; //  ../textures/noise.png
 uniform vec2 u_resolution;
+uniform float u_time;
 
 #define pi 3.14159
 #define sqrt2 1.41421
@@ -48,7 +50,7 @@ void main() {
   line = 1.0 - line;
   color = vec3(line);
 
-  float circleRadius = 0.14;
+  float circleRadius = 0.1;
   edgeWidth /= u_resolution.x;
   float radius = length(uv);
   float circle = smoothstep(
@@ -60,9 +62,20 @@ void main() {
 
   float noiseRepeat = 10.0;
   vec2 noiseUV = gl_FragCoord.xy / u_resolution;
+  noiseUV += 0.3; // offset for prettier section
   noiseUV = floor(noiseUV * noiseRepeat) / noiseRepeat;
   vec3 noise = texture2D(noiseTex, fract(noiseUV)).rgb;
   color *= noise;
+
+  // Use noise again, but masked by the circle;
+  noiseRepeat = 10.0 / circleRadius;
+  float speed = 0.015;
+  noiseUV = gl_FragCoord.xy / u_resolution;
+  noiseUV = floor(noiseUV * noiseRepeat) / noiseRepeat;
+  noiseUV += u_time * speed;
+  noise = texture2D(noiseTex, fract(noiseUV)).rgb;
+  noise = hsv2rgb(noise + vec3(0.0, 0.0, 0.3));
+  color += 0.95 * noise * (1.0 - circle);
 
   gl_FragColor = vec4(color, 1.0);
 }
