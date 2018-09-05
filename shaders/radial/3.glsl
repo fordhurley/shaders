@@ -1,6 +1,8 @@
 #pragma glslify: map = require('../../lib/map');
+#pragma glslify: hash = require('../../lib/hash');
+#pragma glslify: hsv2rgb = require('glsl-hsv2rgb');
 
-uniform sampler2D noiseTex; //  ../../textures/noise.png
+uniform vec2 u_resolution;
 
 #define pi 3.14159
 #define sqrt2 1.41421
@@ -37,7 +39,9 @@ void main() {
   sliceNumber /= numLines;
   sliceNumber = fract(sliceNumber);
 
-  vec3 color = texture2D(noiseTex, vec2(sliceNumber, u_mouse.x)).rgb;
+  float sliceHue = hash(vec2(sliceNumber, 0.48));
+
+  vec3 color = hsv2rgb(vec3(sliceHue, 0.65, 0.8));
 
   float lineWidth = 1.0;
   float edgeWidth = sqrt2;
