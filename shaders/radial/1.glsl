@@ -44,7 +44,7 @@ void main() {
   );
   gl_FragColor = vec4(line);
 
-  float circleRadius = 0.1;
+  float circleRadius = 0.3;
   edgeWidth /= u_resolution.x;
   float radius = length(uv);
   float circle = smoothstep(

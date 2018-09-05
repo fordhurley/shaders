@@ -1,6 +1,6 @@
 #pragma glslify: map = require('../../lib/map');
 #pragma glslify: hash = require('../../lib/hash');
-#pragma glslify: hsv2rgb = require('glsl-hsv2rgb');
+#pragma glslify: colormap = require('glsl-colormap/portland')
 
 uniform vec2 u_resolution;
 
@@ -39,9 +39,7 @@ void main() {
   sliceNumber /= numLines;
   sliceNumber = fract(sliceNumber);
 
-  float sliceHue = hash(vec2(sliceNumber, 0.48));
-
-  vec3 color = hsv2rgb(vec3(sliceHue, 0.65, 0.8));
+  vec3 color = colormap(hash(vec2(sliceNumber, 0.4))).rgb;
 
   float lineWidth = 0.75;
   float edgeWidth = sqrt2;
