@@ -62,7 +62,8 @@ void main() {
   vec2 noiseUV = gl_FragCoord.xy / u_resolution;
   noiseUV += 0.3; // offset for prettier section
   noiseUV = floor(noiseUV * noiseRepeat) / noiseRepeat;
-  vec3 noise = texture2D(noiseTex, fract(noiseUV)).rgb;
+  noiseUV = fract(noiseUV); // wrap
+  vec3 noise = texture2D(noiseTex, noiseUV).rgb;
   color *= noise;
 
   gl_FragColor = vec4(color, 1.0);
