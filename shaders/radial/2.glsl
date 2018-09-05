@@ -26,10 +26,7 @@ void main() {
   vec2 lineRay = vec2(cos(centerTheta), sin(centerTheta));
   // Orthogonal projection of uv onto the radial line:
   vec2 pointOnLine = dot(uv, lineRay) * lineRay;
-  gl_FragColor = vec4(abs(pointOnLine), 0.0, 1.0);
-
-  float distanceToLine = distance(uv, pointOnLine);
-  gl_FragColor = vec4(distanceToLine);
+  gl_FragColor = vec4(abs(pointOnLine), 1.0, 1.0);
 
   vec2 pixUV = gl_FragCoord.xy;
   vec2 pixLine = map(pointOnLine, vec2(-1.0), vec2(1.0), vec2(0.0), u_resolution);
@@ -47,6 +44,7 @@ void main() {
   );
   line = 1.0 - line;
   color = vec3(line);
+  gl_FragColor = vec4(color, 1.0);
 
   float circleRadius = 0.1;
   edgeWidth /= u_resolution.x;
