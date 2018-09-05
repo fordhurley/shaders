@@ -43,7 +43,7 @@ void main() {
 
   vec3 color = hsv2rgb(vec3(sliceHue, 0.65, 0.8));
 
-  float lineWidth = 1.0;
+  float lineWidth = 0.75;
   float edgeWidth = sqrt2;
   float lineMask = smoothstep(
     lineWidth - edgeWidth/2.0,
@@ -51,6 +51,7 @@ void main() {
     pixToLine
   );
   lineMask = 1.0 - lineMask;
+  lineMask *= smoothstep(-0.05, 0.2, length(uv));
 
   vec3 lineColor = vec3(1.0);
   color = mix(color, lineColor, lineMask);
