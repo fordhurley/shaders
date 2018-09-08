@@ -44,8 +44,8 @@ void main() {
   gl_FragColor = vec4(uv, 1.0, 1.0);
   uv = map(uv, 0.0, 1.0, -1.0, 1.0);
 
-  float loopTime = 12.0;
-  vec2 lineSize = vec2(4.0 / u_resolution.x, 2.0);
+  float loopTime = 20.0;
+  vec2 lineSize = vec2(0.03, 2.0);
   const int numLines = 40;
 
   vec3 color = vec3(0.0);

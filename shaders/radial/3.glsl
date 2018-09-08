@@ -1,7 +1,6 @@
 #pragma glslify: map = require('../../lib/map');
-#pragma glslify: hash = require('../../lib/hash');
-#pragma glslify: colormap = require('glsl-colormap/portland')
 
+uniform sampler2D noiseTex; //  ../../textures/noise.png
 uniform vec2 u_resolution;
 
 #define pi 3.14159
@@ -34,25 +33,36 @@ void main() {
   float pixToLine = distance(pixUV, pixLine);
   gl_FragColor = vec4(pixToLine * 20.0 / u_resolution.x);
 
-  float sliceAngle = theta + 0.5 * (2.0*pi) / numLines;
-  float sliceNumber = floor(sliceAngle / (2.0*pi) * numLines);
-  sliceNumber /= numLines;
-  sliceNumber = fract(sliceNumber);
+  vec3 color = vec3(0.0);
 
-  vec3 color = colormap(hash(vec2(sliceNumber, 0.4))).rgb;
-
-  float lineWidth = 0.75;
+  float lineWidth = 1.0;
   float edgeWidth = sqrt2;
-  float lineMask = smoothstep(
+  float line = smoothstep(
     lineWidth - edgeWidth/2.0,
     lineWidth + edgeWidth/2.0,
     pixToLine
   );
-  lineMask = 1.0 - lineMask;
-  lineMask *= smoothstep(-0.05, 0.2, length(uv));
+  line = 1.0 - line;
+  color = vec3(line);
+  gl_FragColor = vec4(color, 1.0);
 
-  vec3 lineColor = vec3(1.0);
-  color = mix(color, lineColor, lineMask);
+  float circleRadius = 0.1;
+  edgeWidth /= u_resolution.x;
+  float radius = length(uv);
+  float circle = smoothstep(
+    circleRadius - edgeWidth/2.0,
+    circleRadius + edgeWidth/2.0,
+    radius
+  );
+  color *= circle;
+
+  float noiseRepeat = 10.0;
+  vec2 noiseUV = gl_FragCoord.xy / u_resolution;
+  noiseUV += 0.3; // offset for prettier section
+  noiseUV = floor(noiseUV * noiseRepeat) / noiseRepeat;
+  noiseUV = fract(noiseUV); // wrap
+  vec3 noise = texture2D(noiseTex, noiseUV).rgb;
+  color *= noise;
 
   gl_FragColor = vec4(color, 1.0);
 }
