@@ -8,12 +8,11 @@ uniform vec2 u_resolution;
 #define pi 3.14159
 #define sqrt2 1.41421
 
-float circleGrid(vec2 uv) {
+float circleGrid(vec2 uv, vec2 spacing) {
   float lineWidth = 0.02;
   float edgeWidth = 0.02;
 
-  vec2 cellNum = floor(uv);
-  vec2 cellUV = fract(uv);
+  vec2 cellUV = mod(uv, spacing);
 
   float r = 2.0 * distance(cellUV, vec2(0.5));
   float ring = smoothstep(
@@ -33,20 +32,21 @@ float circleGrid(vec2 uv) {
 void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution;
 
-  const float repeat = 4.0;
   vec2 offset;
+  const float repeat = 6.0;
+  vec2 spacing = vec2(sqrt2);
 
   vec3 color;
 
   offset = vec2(0.0);
-  float grid = circleGrid(uv * repeat + offset);
-  color = mix(color, vec3(1.0), grid);
+  float grid = circleGrid(uv * repeat + offset, spacing);
+  color = mix(color, vec3(0.0, 0.0, 1.0), grid);
 
-  offset = vec2(0.5);
-  grid = circleGrid(uv * repeat + offset);
-  color = mix(color, vec3(1.0), grid);
+  offset = vec2(sqrt2/2.0);
+  grid = circleGrid(uv * repeat + offset, spacing);
+  color = mix(color, vec3(1.0, 0.0, 0.0), grid);
 
-  color = 1.0 - color;
+  // color = 1.0 - color;
 
   gl_FragColor = vec4(color, 1.0);
 }
