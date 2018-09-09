@@ -1,7 +1,5 @@
-#pragma glslify: hsv2rgb = require(glsl-hsv2rgb)
-
-#pragma glslify: map = require(../lib/map)
-#pragma glslify: hash = require(../lib/hash)
+#pragma glslify: map = require(../../lib/map)
+#pragma glslify: hash = require(../../lib/hash)
 
 uniform vec2 u_resolution;
 
@@ -34,19 +32,19 @@ void main() {
 
   vec2 offset;
   const float repeat = 6.0;
-  vec2 spacing = vec2(sqrt2);
+  vec2 spacing = vec2(1.0);
 
   vec3 color;
 
   offset = vec2(0.0);
   float grid = circleGrid(uv * repeat + offset, spacing);
-  color = mix(color, vec3(0.0, 0.0, 1.0), grid);
+  color = mix(color, vec3(1.0), grid);
 
-  offset = vec2(sqrt2/2.0);
+  offset = vec2(0.5);
   grid = circleGrid(uv * repeat + offset, spacing);
-  color = mix(color, vec3(1.0, 0.0, 0.0), grid);
+  color = mix(color, vec3(1.0), grid);
 
-  // color = 1.0 - color;
+  color = 1.0 - color;
 
   gl_FragColor = vec4(color, 1.0);
 }
