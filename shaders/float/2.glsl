@@ -8,7 +8,7 @@ uniform float u_time;
 #define pi 3.14159
 #define sqrt2 1.41421
 
-float rect(vec2 st, vec2 size) {
+float rect(in vec2 st, in vec2 size) {
   vec2 d = abs(st) - size/2.0;
   // d is negative on the inside, so take the more positive, which is the
   // distance to the closest edge:
@@ -21,10 +21,12 @@ float rect(vec2 st, vec2 size) {
   return min(inside, 0.0) + outside;
 }
 
-float lineMask(vec2 uv, float theta, vec2 size) {
+float lineMask(in vec2 uv, in float theta, in vec2 size) {
+  float ct = cos(theta);
+  float st = sin(theta);
   mat2 rotation = mat2(
-    cos(theta), sin(theta),
-    -sin(theta), cos(theta)
+     ct, st,
+    -st, ct
   );
   uv = rotation * uv;
   float d = rect(uv, size);
@@ -45,20 +47,22 @@ void main() {
   uv = map(uv, 0.0, 1.0, -1.0, 1.0);
 
   float loopTime = 20.0;
-  vec2 lineSize = vec2(0.03, 2.0);
-  const int numLines = 40;
+  vec2 lineSize = vec2(0.05, 1.25);
+  const int numLines = 20;
 
   vec3 color = vec3(0.0);
 
+  float time = u_time + 5.0;
+
   for (int i = 0; i < numLines; i++) {
-    float shiftedTime = u_time;
-    shiftedTime -= loopTime * float(i) / float(numLines);
+    float shiftedTime = time - loopTime * float(i) / float(numLines);
     float t = fract(shiftedTime / loopTime);
     float loopIndex = floor(shiftedTime / loopTime);
 
     float seed = float(i) / float(numLines) + loopIndex * pi;
     seed = fract(seed);
     float angle = hash(vec2(seed));
+    float theta = angle * 2.0 * pi;
 
     vec3 lineColor = colormap(t).rgb;
 
@@ -66,8 +70,9 @@ void main() {
     center.x = hash(vec2(fract(angle * seed + seed)));
     center.x = map(center.x, 0.0, 1.0, -1.0, 1.0);
     // Move from fully below to fully above:
-    center.y = map(t * t, 0.0, 1.0, -lineSize.y, lineSize.y);
-    float mask = lineMask(uv - center, angle * 2.0 * pi, lineSize);
+    float height = lineSize.y * abs(cos(theta));
+    center.y = map(t * t, 0.0, 1.0, -1.0 - height/2.0, 1.0 + height/2.0);
+    float mask = lineMask(uv - center, theta, lineSize);
     color = mix(color, lineColor, mask);
   }
 
