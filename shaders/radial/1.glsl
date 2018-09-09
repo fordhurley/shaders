@@ -37,12 +37,14 @@ void main() {
 
   float lineWidth = 1.0;
   float edgeWidth = sqrt2;
-  float line = smoothstep(
+  float line = 1.0 - smoothstep(
     lineWidth - edgeWidth/2.0,
     lineWidth + edgeWidth/2.0,
     pixToLine
   );
-  gl_FragColor = vec4(line);
+
+  vec3 color = vec3(1.0);
+  color = mix(color, vec3(0.0), line);
 
   float circleRadius = 0.3;
   edgeWidth /= u_resolution.x;
@@ -52,5 +54,7 @@ void main() {
     circleRadius + edgeWidth/2.0,
     radius
   );
-  gl_FragColor *= circle;
+  color *= circle;
+
+  gl_FragColor = vec4(color, 1.0);
 }
