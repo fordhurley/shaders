@@ -4,18 +4,19 @@ precision mediump float;
 
 uniform vec2 u_resolution;
 
+#pragma glslify: map = require(../lib/map)
+
 void main() {
   // Our pretend "uniforms" (uniform within each quad)
   vec2 size = u_resolution;
   float lineWidth = 5.0;
   float lineOffset = 35.0; // e.g. node radius
-  float arrowHeight = 20.0;
+  float arrowHeight = 80.0;
+  float arrowWidth = arrowHeight * 1.5;
 
   // Our pretend varyings:
   vec2 uv = gl_FragCoord.xy; // unnormalized
   vec2 st = uv / size; // normalized [0, 1]
-
-  float arrowWidth = arrowHeight * 2.0;
 
   vec2 arrowTip = vec2(
     size.x / 2.0,
@@ -30,7 +31,12 @@ void main() {
 
   float arrowMask = step(arrowBase.y, uv.y); // base of the arrow
   arrowMask -= step(arrowTip.y, uv.y); // tip of the arrow
-  arrowMask -= step(arrowTip.y - uv.y, xFromCenter); // diagonal edge
+  float diagonalEdgeX = map(
+    uv.y,
+    arrowBase.y, arrowTip.y,
+    arrowWidth / 2.0, 0.0
+  );
+  arrowMask -= step(diagonalEdgeX, xFromCenter);
 
   float mask = lineMask + arrowMask;
 
