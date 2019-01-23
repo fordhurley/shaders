@@ -3,8 +3,13 @@ precision mediump float;
 #endif
 
 uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_slider1;
 
 #pragma glslify: map = require(../lib/map)
+float map(float value, float inMin, float inMax, float outMin, float outMax) {
+  return outMin + (outMax - outMin) * (value - inMin) / (inMax - inMin);
+}
 
 void main() {
   // Our pretend "uniforms" (uniform within each quad)
@@ -13,6 +18,7 @@ void main() {
   float lineOffset = 35.0; // e.g. node radius
   float arrowHeight = 80.0;
   float arrowWidth = arrowHeight * 1.5;
+  float dashGap = u_slider1 * 300.0;
 
   // Our pretend varyings:
   vec2 uv = gl_FragCoord.xy; // unnormalized
@@ -27,6 +33,9 @@ void main() {
   float xFromCenter = abs(uv.x - arrowTip.x);
   float lineMask = 1.0 - step(lineWidth / 2.0, xFromCenter);
   lineMask -= step(arrowBase.y, uv.y); // line ends at the base of the arrow
+
+  float gapY = mod(uv.y, dashGap);
+  lineMask -= step(gapY, dashGap/2.0);
   lineMask = clamp(lineMask, 0.0, 1.0);
 
   float arrowMask = step(arrowBase.y, uv.y); // base of the arrow
