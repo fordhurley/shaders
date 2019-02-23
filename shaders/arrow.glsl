@@ -7,9 +7,6 @@ uniform vec2 u_mouse;
 uniform float u_slider1;
 
 #pragma glslify: map = require(../lib/map)
-float map(float value, float inMin, float inMax, float outMin, float outMax) {
-  return outMin + (outMax - outMin) * (value - inMin) / (inMax - inMin);
-}
 
 void main() {
   // Our pretend "uniforms" (uniform within each quad)
