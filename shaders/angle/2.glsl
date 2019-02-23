@@ -2,7 +2,6 @@
 
 uniform vec2 u_resolution;
 uniform float u_time;
-uniform vec2 u_mouse;
 
 #define sqrt2 1.4142
 
