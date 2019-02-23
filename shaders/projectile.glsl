@@ -51,8 +51,17 @@ void main() {
   position = projectileWithDrag(0.5, gravity, mass, pos0, vel0, t);
   color += vec3(0.0, 1.0, 0.0) * circle(position.xy, radius, uv);
 
-  position = projectileWithDrag(2.0, gravity, mass, pos0, vel0, t);
+  position = projectileWithDrag(1.0, gravity, mass, pos0, vel0, t);
   color += vec3(0.0, 0.0, 1.0) * circle(position.xy, radius, uv);
+
+  position = projectileWithDrag(2.0, gravity, mass, pos0, vel0, t);
+  color += vec3(0.5, 0.0, 1.0) * circle(position.xy, radius, uv);
+
+  position = projectileWithDrag(3.0, gravity, mass, pos0, vel0, t);
+  color += vec3(0.0, 0.5, 1.0) * circle(position.xy, radius, uv);
+
+  position = projectileWithDrag(4.0, gravity, mass, pos0, vel0, t);
+  color += vec3(1.0, 0.0, 0.5) * circle(position.xy, radius, uv);
 
   gl_FragColor = vec4(color, 1.0);
 }
