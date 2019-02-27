@@ -2,7 +2,6 @@
 #pragma glslify: hash = require('../../lib/hash');
 
 uniform vec2 u_resolution;
-uniform float u_time;
 
 #define pi 3.14159
 #define sqrt2 1.41421
