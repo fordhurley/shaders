@@ -1,3 +1,5 @@
+precision mediump float;
+
 vec3 projectile(vec3 acceleration, vec3 pos0, vec3 vel0, float t) {
   vec3 position = pos0;
   position += vel0 * t;

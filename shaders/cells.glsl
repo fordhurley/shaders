@@ -1,3 +1,5 @@
+precision mediump float;
+
 #pragma glslify: colormap = require('glsl-colormap/portland')
 
 #pragma glslify: map = require(../lib/map)
