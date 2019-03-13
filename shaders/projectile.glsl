@@ -34,12 +34,12 @@ void main() {
   float aspect = u_resolution.x / u_resolution.y;
   uv.x *= aspect;
 
-  float loopTime = 2.5;
+  float loopTime = 3.0;
 
   vec3 gravity = vec3(0.0, -1.0, 0.0);
   float mass = 2.0;
   vec3 pos0 = vec3(0.0);
-  vec3 vel0 = vec3(0.5, 1.3, 0.0);
+  vec3 vel0 = vec3(0.35, 1.3, 0.0);
   const float radius = 0.02;
 
   float t = mod(u_time, loopTime);
