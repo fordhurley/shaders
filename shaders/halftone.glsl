@@ -1,3 +1,5 @@
+precision mediump float;
+
 #pragma glslify: map = require(../lib/map)
 #pragma glslify: clamp01 = require(../lib/clamp01)
 
@@ -49,7 +51,7 @@ void main() {
 
   color = mix(color, streakColor, streaks(uv));
 
-  vec2 gridSize = u_resolution / 40.0;
+  vec2 gridSize = vec2(16.0);
   color = mix(color, dotColor, dots(uv, gridSize));
 
   gl_FragColor = vec4(color, 1.0);

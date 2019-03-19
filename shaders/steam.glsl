@@ -1,3 +1,5 @@
+precision mediump float;
+
 #pragma glslify: map = require(../lib/map)
 #pragma glslify: cubicPulse = require(../lib/iq/cubicPulse)
 #pragma glslify: gain = require(../lib/iq/gain)
@@ -55,8 +57,8 @@ vec4 cloud(vec2 p, float t) {
 }
 
 vec3 gradient(vec2 uv) {
-  const vec3 startColor = vec3(0.969, 0.067, 0.063);
-  const vec3 endColor = vec3(0.443, 0, 0.588);
+  const vec3 startColor = vec3(0.167, 0.233, 0.254);
+  const vec3 endColor = vec3(0.0, 0.0, 0.0);
   const vec2 startUV = vec2(0.0, 1.0);
   const vec2 endUV = vec2(1.0, 0.0);
 

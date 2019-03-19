@@ -1,3 +1,5 @@
+precision mediump float;
+
 #pragma glslify: valueNoise = require("../lib/valueNoise")
 #pragma glslify: map = require('../lib/map')
 
@@ -21,7 +23,7 @@ void main() {
   float aspect = u_resolution.x / u_resolution.y;
 
   uv = map(uv, 0.0, 1.0, -1.0, 1.0);
-  uv.y += 1.2;
+  uv.y += 1.4;
 
   float r = length(uv);
   float theta = atan(uv.y, uv.x);
@@ -34,12 +36,17 @@ void main() {
   float v = map(valueNoise(vec2(r, theta - u_time)), -1.0, 1.0, 0.0, 1.0);
   v += map(valueNoise(vec2(r * 1.0, theta * 2.0 - u_time) + 12.392), -1.0, 1.0, 0.0, 0.5);
   v /= 1.5;
+  v = gain(v, 4.4);
 
-  v = gain(v, 2.4);
-
-  vec3 bg = vec3(0.0, 0.2, 0.0);
-  vec3 fg = vec3(0.0, 0.8, 0.0);
+  vec3 bg = vec3(0.161, 0.502, 0.725);
+  vec3 fg = vec3(0.427, 0.835, 0.98);
   vec3 color = mix(bg, fg, v);
+
+  v = map(valueNoise(vec2(r + 19.9, theta - u_time + 14.302)), -1.0, 1.0, 0.0, 1.0);
+  v += map(valueNoise(vec2(r * 1.0 - 192.3, theta * 2.0 - u_time + 1293.02) + 12.392), -1.0, 1.0, 0.0, 0.5);
+  v /= 2.5;
+  v = gain(v, 5.4);
+  color += v;
 
   gl_FragColor = vec4(color, 1.0);
 }

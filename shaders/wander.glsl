@@ -1,3 +1,6 @@
+precision mediump float;
+precision mediump int;
+
 #pragma glslify: hsv2rgb = require(glsl-hsv2rgb)
 
 #pragma glslify: map = require(../lib/map)
