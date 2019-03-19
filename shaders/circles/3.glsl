@@ -11,17 +11,17 @@ uniform vec2 u_resolution;
 #define sqrt2 1.41421
 
 float circleGrid(vec2 uv, vec2 spacing) {
+  float lineWidth = 0.08;
   float edgeWidth = 0.04;
 
   vec2 cellUV = mod(uv, 1.0 + spacing);
 
   float r = 2.0 * distance(cellUV, vec2(0.5));
-  float ring = smoothstep(
-    1.0 - edgeWidth,
-    1.0,
+  float ring = 1.0 - smoothstep(
+    1.0 - lineWidth - 2.0 * edgeWidth,
+    1.0 - lineWidth - edgeWidth,
     r
   );
-
 
   return ring;
 }
