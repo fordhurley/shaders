@@ -43,13 +43,13 @@ void main() {
 
   vec3 color = vec3(0.94);
 
-  color = drawCircle(color, vec3(0.973, 0.855, 0.451), uv, vec2(0.0, -0.5), 1.7);
-  color = drawCircle(color, vec3(0.992, 0.663, 0.365), uv, vec2(-0.05, -0.15), 1.6);
-  color = drawCircle(color, vec3(0.494, 0.722, 0.463), uv, vec2(0.12, -0.3), 1.5);
-  color = drawCircle(color, vec3(0.773, 0.596, 0.725), uv, vec2(-0.1, -0.15), 1.2);
-  color = drawCircle(color, vec3(0.588, 0.796, 0.78), uv, vec2(0.2, 0.16), 1.14);
-  color = drawCircle(color, vec3(0.455, 0.588, 0.745), uv, vec2(-0.07, 0.35), 0.9);
-  color = drawCircle(color, vec3(1, 0.714, 0.741), uv, vec2(0.02, 0.55), 0.7);
+  color = drawCircle(color, vec3(1, 0.714, 0.741), uv, vec2(0.45), 1.0);
+  color = drawCircle(color, vec3(0.455, 0.588, 0.745), uv, vec2(0.3), 1.0);
+  color = drawCircle(color, vec3(0.588, 0.796, 0.78), uv, vec2(0.15), 1.0);
+  color = drawCircle(color, vec3(0.773, 0.596, 0.725), uv, vec2(0.0), 1.0);
+  color = drawCircle(color, vec3(0.494, 0.722, 0.463), uv, vec2(-0.15), 1.0);
+  color = drawCircle(color, vec3(0.992, 0.663, 0.365), uv, vec2(-0.3), 1.0);
+  color = drawCircle(color, vec3(0.973, 0.855, 0.451), uv, vec2(-0.45), 1.0);
 
   gl_FragColor = vec4(color, 1.0);
 }
