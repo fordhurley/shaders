@@ -1,3 +1,5 @@
+precision highp float;
+
 #pragma glslify: colorizeSDF = require(../lib/colorizeSDF)
 
 float rectSDF(vec3 p, vec2 size) {

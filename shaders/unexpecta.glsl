@@ -1,3 +1,5 @@
+precision mediump float;
+
 const float PI = 3.14159;
 const float TWOPI = 2.0 * PI;
 

@@ -1,3 +1,5 @@
+precision mediump float;
+
 // Building a mask to be used on a torus to look like frosting on a donut. The
 // torus will have uv arranged so that u is longitudinal (around the outer
 // circumference), and v is around the "tube" with 0 and 1 at the bottom. The

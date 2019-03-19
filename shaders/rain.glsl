@@ -1,3 +1,5 @@
+precision mediump float;
+
 #pragma glslify: valueNoise = require("../lib/valueNoise")
 #pragma glslify: map = require("../lib/map")
 

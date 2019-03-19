@@ -1,3 +1,5 @@
+precision mediump float;
+
 #pragma glslify: clamp01 = require(../../lib/clamp01)
 
 #define sqrt2 1.414213562

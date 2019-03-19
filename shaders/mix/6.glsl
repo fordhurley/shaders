@@ -1,3 +1,5 @@
+precision mediump float;
+
 #pragma glslify: clamp01 = require(../../lib/clamp01)
 #pragma glslify: map = require(../../lib/map)
 

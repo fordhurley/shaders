@@ -1,3 +1,5 @@
+precision mediump float;
+
 #pragma glslify: noise = require(glsl-noise/simplex/2d)
 #pragma glslify: map = require(../lib/map)
 #pragma glslify: smoothStepUpDown = require(../lib/smoothStepUpDown)

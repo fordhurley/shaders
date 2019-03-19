@@ -1,3 +1,5 @@
+precision highp float;
+
 uniform sampler2D noiseTex; //  ../textures/noise.png
 
 vec3 grain(vec2 uv) {

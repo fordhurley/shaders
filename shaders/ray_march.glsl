@@ -1,3 +1,5 @@
+precision highp float;
+
 #pragma glslify: noise = require('glsl-noise/simplex/4d')
 
 uniform vec2 u_resolution;

@@ -1,3 +1,5 @@
+precision highp float;
+
 // radius at which it reaches 50% black (1 is at a corner):
 const float vignetteRadius = 1.2;
 const float vignetteSharpness = 1.0;

@@ -1,3 +1,5 @@
+precision mediump float;
+
 #pragma glslify: map = require('../../lib/map');
 
 uniform sampler2D noiseTex; //  ../../textures/noise.png

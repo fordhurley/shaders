@@ -1,3 +1,5 @@
+precision mediump float;
+
 #define PI2 6.283185307
 
 uniform vec2 u_resolution;

@@ -1,3 +1,5 @@
+precision mediump float;
+
 #pragma glslify: smoothUnion = require(../lib/iq/smoothUnion)
 
 uniform vec2 u_resolution;

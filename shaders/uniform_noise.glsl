@@ -1,3 +1,5 @@
+precision highp float;
+
 // Used in valueNoise
 vec2 hash(vec2 st) {
   st = vec2(dot(st, vec2(0.040, -0.250)), dot(st, vec2(269.5, 183.3)));

@@ -1,3 +1,5 @@
+precision highp float;
+
   // The star will be centered on st=(0, 0) and extend
   // from -size to +size.
 float star(vec2 st, float sharpness, float size) {

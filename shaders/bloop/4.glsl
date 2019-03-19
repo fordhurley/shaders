@@ -1,3 +1,5 @@
+precision highp float;
+
 #pragma glslify: gradient = require(../../lib/gradient)
 #pragma glslify: hash = require(../../lib/hash)
 #pragma glslify: impulse = require(../../lib/iq/impulse)

@@ -1,3 +1,5 @@
+precision mediump float;
+
 vec3 gradient(vec2 uv) {
   const vec3 startColor = vec3(0.753, 0, 0);
   const vec3 endColor = vec3(0.412, 0, 0.831);

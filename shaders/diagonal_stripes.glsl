@@ -1,3 +1,5 @@
+precision mediump float;
+
 #pragma glslify: map = require('../lib/map')
 
 uniform vec2 u_resolution;

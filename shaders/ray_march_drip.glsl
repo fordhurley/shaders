@@ -1,3 +1,5 @@
+precision highp float;
+
 uniform sampler2D tex; //  ../textures/nyc_night.jpg
 uniform sampler2D texBlurred; //  ../textures/nyc_night_blur.jpg
 

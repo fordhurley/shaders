@@ -1,3 +1,5 @@
+precision mediump float;
+
 #define PI 3.14159
 
 #pragma glslify: map = require(../lib/map)

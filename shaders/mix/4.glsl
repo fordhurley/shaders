@@ -1,3 +1,5 @@
+precision mediump float;
+
 #define sqrt2 1.414213562
 
 uniform vec2 u_resolution;

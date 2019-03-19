@@ -1,10 +1,11 @@
+precision highp float;
+
 #pragma glslify: colorizeSDF = require(../lib/colorizeSDF)
 
 float circleSDF(vec3 p, float radius) {
   float dist = length(p.xy) - radius;
   return max(dist, p.z);
 }
-
 
 uniform vec2 u_resolution;
 uniform vec2 u_mouse;

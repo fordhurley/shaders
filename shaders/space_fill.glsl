@@ -1,3 +1,5 @@
+precision highp float;
+
 #pragma glslify: lookAt = require(glsl-look-at)
 
 #pragma glslify: map = require(../lib/map)

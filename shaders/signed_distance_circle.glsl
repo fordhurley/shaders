@@ -1,3 +1,5 @@
+precision highp float;
+
 #pragma glslify: colorizeSDF = require(../lib/colorizeSDF)
 
 float circleSDF(vec2 st, float radius) {
@@ -7,7 +9,6 @@ float circleSDF(vec2 st, float radius) {
 float outline(float d, float w) {
   return 1.0 - step(w/2.0, d) - (1.0 - step(-w/2.0, d));
 }
-
 
 uniform vec2 u_resolution;
 uniform vec2 u_mouse;

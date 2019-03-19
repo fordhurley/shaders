@@ -1,3 +1,5 @@
+precision highp float;
+
 float checker(vec2 st, float size) {
   vec2 i = floor(st/size);
   float v = mod(i.x + i.y, 2.0);

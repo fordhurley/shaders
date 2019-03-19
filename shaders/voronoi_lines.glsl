@@ -1,3 +1,5 @@
+precision highp float;
+
 #pragma glslify: map = require(../lib/map)
 #pragma glslify: hash = require(../lib/hash)
 

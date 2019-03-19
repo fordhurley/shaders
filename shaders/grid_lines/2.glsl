@@ -1,3 +1,5 @@
+precision highp float;
+
 #pragma glslify: cubicPulse = require(../../lib/iq/cubicPulse)
 #pragma glslify: map = require(../../lib/map)
 

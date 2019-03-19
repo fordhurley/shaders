@@ -1,3 +1,5 @@
+precision mediump float;
+
 #pragma glslify: gradient = require(../lib/gradient)
 
 uniform vec2 u_resolution;

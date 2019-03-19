@@ -1,9 +1,11 @@
+precision highp float;
+
 #pragma glslify: colorizeSDF = require(../lib/colorizeSDF)
+
+// #define DEBUG // comment to show the final image
 
 uniform sampler2D tex; //  ../textures/nyc_night.jpg
 uniform sampler2D texBlurred; //  ../textures/nyc_night_blur.jpg
-
-#define DEBUG // comment to show the final image
 
 float rect(vec2 st, vec2 size) {
   vec2 d = abs(st) - size/2.0;

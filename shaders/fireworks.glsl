@@ -1,3 +1,5 @@
+precision mediump float;
+
 #pragma glslify: hsv2rgb = require(glsl-hsv2rgb)
 
 #pragma glslify: hash = require(../lib/hash)

@@ -1,3 +1,5 @@
+precision highp float;
+
 #pragma glslify: simplexNoise = require(glsl-noise/simplex/2d)
 
 #pragma glslify: map = require(../lib/map)

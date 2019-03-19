@@ -1,3 +1,5 @@
+precision mediump float;
+
 #pragma glslify: smoothUnion = require(../lib/iq/smoothUnion)
 
 float circleSDF(vec2 st, float radius) {

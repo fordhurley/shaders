@@ -1,3 +1,5 @@
+precision highp float;
+
 #pragma glslify: cubicPulse = require(../../lib/iq/cubicPulse)
 
 uniform vec2 u_resolution;

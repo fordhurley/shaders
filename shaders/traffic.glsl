@@ -1,4 +1,5 @@
-uniform vec2 u_resolution;
+precision mediump float;
+
 uniform float u_time;
 
 #define sqrt2over2 0.707107
