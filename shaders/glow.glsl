@@ -1,4 +1,4 @@
-precision mediump float;
+precision highp float;
 
 #pragma glslify: valueNoise = require("../lib/valueNoise")
 #pragma glslify: map = require('../lib/map')
@@ -11,8 +11,8 @@ precision mediump float;
 //
 // http://iquilezles.org/www/articles/functions/functions.htm
 float gain(float x, float k) {
-  float a = 0.5 * pow(2.0*((x<0.5)?x:1.0-x), k);
-  return (x<0.5)?a:1.0-a;
+  float a = 0.5 * pow(2.0 * ((x<0.5) ? x : 1.0-x), k);
+  return (x<0.5) ? a : 1.0-a;
 }
 
 uniform vec2 u_resolution;
@@ -26,12 +26,11 @@ void main() {
   uv.y += 1.4;
 
   float r = length(uv);
+  r /= 2.0;
+
   float theta = atan(uv.y, uv.x);
   theta = map(theta, 0.0, 6.28, 0.0, 1.0);
-
-  r /= 2.0;
   theta *= 45.0;
-
 
   float v = map(valueNoise(vec2(r, theta - u_time)), -1.0, 1.0, 0.0, 1.0);
   v += map(valueNoise(vec2(r * 1.0, theta * 2.0 - u_time) + 12.392), -1.0, 1.0, 0.0, 0.5);
@@ -44,7 +43,7 @@ void main() {
 
   v = map(valueNoise(vec2(r + 19.9, theta - u_time + 14.302)), -1.0, 1.0, 0.0, 1.0);
   v += map(valueNoise(vec2(r * 1.0 - 192.3, theta * 2.0 - u_time + 1293.02) + 12.392), -1.0, 1.0, 0.0, 0.5);
-  v /= 2.5;
+  v /= 2.0;
   v = gain(v, 5.4);
   color += v;
 
