@@ -138,9 +138,9 @@ void main() {
 
   #ifdef DEBUG
     // Move the mouse horizontally to visualize the field and the shape together.
-    vec3 color = mix(shape, field, u_mouse.x);
+    vec3 color = mix(shape, field, u_mouse.x / u_resolution.x);
     // Move the mouse vertically to visualize the normals.
-    color = mix(color, normal, u_mouse.y);
+    color = mix(color, normal, u_mouse.y / u_resolution.y);
   #else
     vec3 view = vec3(0.0, 0.0, -1.0);
     vec3 refraction = refract(view, normal, 0.5);

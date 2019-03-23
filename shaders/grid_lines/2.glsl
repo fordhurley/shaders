@@ -16,7 +16,6 @@ void main() {
   float t = u_time;
   vec2 center = vec2(sin(t), cos(t));
   center = map(center, -1.0, 1.0, 0.25, 0.75);
-  // center = u_mouse;
   float radius = 2.0 * distance(uv, center);
 
   vec2 st = uv * 25.0;

@@ -23,12 +23,12 @@ void main() {
   float d = circleSDF(st, 0.5);
 
   // Move the mouse vertically to change the width of the outline:
-  float w = u_mouse.y;
+  float w = u_mouse.y / u_resolution.y;
   vec3 shape = vec3(outline(d, w));
 
   // Move the mouse horizontally to show the field:
   vec3 field = colorizeSDF(d);
-  vec3 color = mix(shape, field, 1.0 - u_mouse.x);
+  vec3 color = mix(shape, field, 1.0 - u_mouse.x / u_resolution.x);
 
   gl_FragColor = vec4(color, 1.0);
 }

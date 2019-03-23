@@ -10,7 +10,7 @@ void main() {
 
   const vec3 startColor = vec3(1.0, 0.0, 0.0);
   const vec3 endColor = vec3(0.0, 0.0, 1.0);
-  vec2 startUV = u_mouse;
+  vec2 startUV = u_mouse / u_resolution;
   const vec2 endUV = vec2(1.0, 1.0);
 
   vec3 color = gradient(uv, startColor, endColor, startUV, endUV);

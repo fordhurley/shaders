@@ -86,7 +86,7 @@ void main() {
   offset.x += t * scrollSpeed;
 
   vec2 st = uv * repeat + offset;
-  vec3 p = vec3(st, u_mouse.x);
+  vec3 p = vec3(st, u_mouse.x / u_resolution.x);
 
   float warpSpeed = 0.3;
   vec4 cloudColor = cloud(p, t * warpSpeed);

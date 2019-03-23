@@ -33,7 +33,7 @@ void main() {
   vec3 color = vec3(0.0);
 
   vec3 p = vec3(st, 0.0);
-  p.z = u_mouse.x * 2.0 - 1.0; // [-1, 1]
+  p.z = u_mouse.x / u_resolution.x * 2.0 - 1.0; // [-1, 1]
   float d = rectSDF(p, vec2(1.0, 0.5));
   color += 1.0 - step(0.0, d);
 

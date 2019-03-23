@@ -73,9 +73,10 @@ void main() {
     vec3 pointOnSurface = eyePos + viewDir * d;
     vec3 normalOnSurface = normal(pointOnSurface);
 
+    vec2 mouse = u_mouse / u_resolution;
     vec3 lightPos = vec3(-1.0, 1.0, 1.0);
-    if (u_mouse.x > 0.0 && u_mouse.y > 0.0) {
-      lightPos.xy = u_mouse * 2.0 - 1.0;
+    if (mouse.x > 0.0 && mouse.y > 0.0) {
+      lightPos.xy = mouse * 2.0 - 1.0;
     }
     vec3 lightDir = normalize(-lightPos);
 

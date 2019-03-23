@@ -18,11 +18,12 @@ float chevron(vec2 uv, float lineWidth) {
 
 void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution;
+  vec2 mouse = u_mouse / u_resolution;
 
-  float repeat = 20.0 * clamp(0.25, 0.75, u_mouse.y);
+  float repeat = 20.0 * clamp(0.25, 0.75, mouse.y);
   uv *= repeat;
 
-  float lineWidth = clamp(0.01, 0.99, u_mouse.x);
+  float lineWidth = clamp(0.01, 0.99, mouse.x);
   vec3 color = vec3(1.0) * chevron(uv, lineWidth);
 
   gl_FragColor = vec4(color, 1.0);

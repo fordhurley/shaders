@@ -19,7 +19,7 @@ void main() {
   vec3 normal = texture2D(normalMap, uv).xyz;
   normal = 2.0 * normal - 1.0; // map to [-1, 1] range
 
-  vec2 mouse = 2.0 * u_mouse - 1.0; // map to [-1, 1] range
+  vec2 mouse = 2.0 * u_mouse / u_resolution - 1.0; // map to [-1, 1] range
   vec3 lightDirection = vec3(mouse, 1.0); // where it's coming from
 
   float light = dot(normal, lightDirection * lightIntensity);

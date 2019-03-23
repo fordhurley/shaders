@@ -17,9 +17,11 @@ void main() {
 
   vec2 st = uv * 2.0 - 1.0; // [-1, 1] in xy
 
+  vec2 mouse = u_mouse / u_resolution;
+
   vec3 p = vec3(st, 0.0);
   // Move mouse vertically to change z:
-  p.z = u_mouse.y * 2.0 - 1.0;
+  p.z = mouse.y * 2.0 - 1.0;
 
   float d = circleSDF(p, 0.5);
   vec3 shape = vec3(1.0 - step(0.0, d));
@@ -27,7 +29,7 @@ void main() {
   vec3 field = colorizeSDF(d);
 
   // Move mouse horizontally to visualize field:
-  vec3 color = mix(shape, field, u_mouse.x);
+  vec3 color = mix(shape, field, mouse.x);
 
   gl_FragColor = vec4(color, 1.0);
 }
