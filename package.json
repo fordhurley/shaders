@@ -1,7 +1,7 @@
 {
   "name": "shaders",
   "scripts": {
-    "serve": "shade --port 4321"
+    "shaded": "shaded --port 4321"
   },
   "dependencies": {
     "glsl-camera-ray": "^1.0.0",
@@ -9,6 +9,6 @@
     "glsl-hsv2rgb": "^1.0.0",
     "glsl-look-at": "^1.0.0",
     "glsl-noise": "0.0.0",
-    "shade": "file:../shade"
+    "shaded": "file:../shaded"
   }
 }
