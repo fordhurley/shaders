@@ -7,4 +7,4 @@ Install dependencies and start the server:
 
 Open http://localhost:4321/shaders in your browser.
 
-Many of these shaders can be seen live at fordhurley.com/shaders.
+Many of these shaders can be seen live at https://fordhurley.com/shaders.
