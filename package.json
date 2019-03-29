@@ -9,6 +9,6 @@
     "glsl-hsv2rgb": "^1.0.0",
     "glsl-look-at": "^1.0.0",
     "glsl-noise": "0.0.0",
-    "shaded": "file:../shaded"
+    "shaded": "^1.0.3"
   }
 }
