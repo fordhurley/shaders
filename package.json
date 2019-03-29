@@ -1,7 +1,7 @@
 {
   "name": "shaders",
   "scripts": {
-    "shaded": "shaded --port 4321"
+    "shaded": "shaded --port 4321 --open shaders"
   },
   "dependencies": {
     "glsl-camera-ray": "^1.0.0",
